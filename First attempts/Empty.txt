@@ -1,1 +1,5 @@
 nothing
+add .css .html .js files
+trial page to see how the files work together
+you can change the theme on the page
+light-theme, dark-theme
