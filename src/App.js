@@ -20,6 +20,25 @@ function App() {
     const removePost = (post) => {
         setPosts(posts.filter(p => p.id !== post.id))
     }
+    const changePost = (editPost) =>{
+        const copy = posts
+        copy.map((post) => {
+            if(editPost.id === post.id){
+                post.title = editPost.title
+                post.place = editPost.place
+                post.body = editPost.body
+                post.cost = editPost.cost
+                post.category = editPost.category
+                post.cnt = editPost.cnt
+                post.images = editPost.images
+                //post.images.map((img,index) =>{
+                  //  return editPost.images[index]
+                //})
+            }
+            return post
+        })
+        setPosts(copy)
+    }
 
     return (
         <div className="App">
@@ -31,7 +50,7 @@ function App() {
             </MyModal>
             <hr style={{margin: '15px 0'}}/>
             <PostFilter filter = {filter} setFilter={setFilter}/>
-            <PostList remove={removePost} posts={sortedAndSearchedPosts} title="Список постов"/>
+            <PostList remove={removePost} posts={sortedAndSearchedPosts} setPosts={changePost} title="Список постов"/>
         </div>
     );
 }

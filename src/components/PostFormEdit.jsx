@@ -7,51 +7,48 @@ import MySelect from "./UI/select/MySelect";
 import MyFileInput from "./UI/MyFileInput/MyFileInput";
 import ImgList from "./UI/ImgList/ImgList";
 
-const PostForm = ({create, visible, setVisible}) => {
-    const [post, setPost] = useState({title: '', body: '', cost: '', category: '', place: '',cnt: 0 , images: []})
+const PostFormEdit = ({edit, visible, setVisible, thisPost}) => {
+    const [pos, setPos] = useState({...thisPost, images: thisPost.images})
     const [colorTitle, setColorTitle] = useState("green")
     const [colorCost, setColorCost] = useState("green")
     const [colorPlace, setColorPlace] = useState("green")
-    const addNewPost = (e) => {
+    const editPost = (e) => {
         e.preventDefault()
         if(valid()) {
-            const newPost = {
-                ...post, id: Date.now()
-            }
-            create(newPost)
-            setPost({title: '', body: '', cost: '', category: '', place: '',cnt: 0 , images: []})
+            edit(pos)
             setColorTitle("green")
             setColorCost("green")
             setColorPlace("green")
+            setVisible(false)
         }
         else {
-            if(post.title === '') {
+            if(pos.title === '') {
                 setColorTitle("red")
             } else {
                 setColorTitle("green")
             }
-            if(post.cost === '') {
+            if(pos.cost === '') {
                 setColorCost("red")
             } else {
                 setColorCost("green")
             }
-            if(post.place === '') {
+            if(pos.place === '') {
                 setColorPlace("red")
             } else {
                 setColorPlace("green")
             }
         }
     }
-    const clearPost = (e) => {
+    const clear = (e) => {
         e.preventDefault()
         setColorTitle("green")
         setColorCost("green")
         setColorPlace("green")
-        setPost({title: '', body: '', cost: '', category: '', place: '',cnt: 0 , images: []})
+        setPos({...pos, title: '', body: '', cost: '', category: '', place: '',cnt: 0 , images: []})
     }
 
     const valid = () => {
-        return post.title !== '' && post.cost !== '' && post.place !== '';
+        return pos.title !== '' && pos.cost !== '' && pos.place !== '';
     }
 
     const rootClasses = [cl.myModal]
@@ -73,42 +70,42 @@ const PostForm = ({create, visible, setVisible}) => {
                 Новое объявление
             </div>
             <MyInput
-                value={post.title}
-                onChange={e => setPost({...post, title: e.target.value})}
+                value={pos.title}
+                onChange={e => setPos({...pos, title: e.target.value})}
                 type="text"
                 placeholder="Название"
                 color = {colorTitle}
             />
             <MyInput
-                value = {post.body}
-                onChange={e=>setPost({...post, body: e.target.value})}
+                value = {pos.body}
+                onChange={e=>setPos({...pos, body: e.target.value})}
                 type="text"
                 placeholder="Описание"
                 color = "green"
             />
             <MyInput
-                value={post.cost}
-                onChange={e => setPost({...post, cost: e.target.value})}
+                value={pos.cost}
+                onChange={e => setPos({...pos, cost: e.target.value})}
                 type="text"
                 placeholder="Стоимость"
                 color = {colorCost}
             />
             <MyInput
-                value={post.place}
-                onChange={e => setPost({...post, place: e.target.value})}
+                value={pos.place}
+                onChange={e => setPos({...pos, place: e.target.value})}
                 type="text"
                 placeholder="Адрес"
                 color = {colorPlace}
             />
-            <ImgList imgs={post.images} />
+            <ImgList imgs={pos.images} />
             <MyFileInput
                 onChange = {(e) =>
-                    setPost({...post, cnt: post.cnt + 1 , images: [...post.images, e.target.files]})
+                    setPos({...pos, cnt: pos.cnt + 1 , images: [...pos.images, e.target.files]})
                 }
             />
             <MySelect
-                value = {post.category}
-                onChange={selectedCategory => setPost({...post, category: selectedCategory})}
+                value = {pos.category}
+                onChange={selectedCategory => setPos({...pos, category: selectedCategory})}
                 defaultValue="Категории"
                 options={[
                     {value: 'Продажа', name: 'Продажа'},
@@ -117,10 +114,10 @@ const PostForm = ({create, visible, setVisible}) => {
                     {value: 'Услуга', name: 'Услуга'}
                 ]}
             />
-            <MyButton onClick={addNewPost}>Создать пост</MyButton>
-            <MyButton onClick={clearPost}>Очистить поля</MyButton>
+            <MyButton onClick={editPost}>Сохранить объявление</MyButton>
+            <MyButton onClick={clear}>Очистить поля</MyButton>
         </form>
     );
 };
 
-export default PostForm;
+export default PostFormEdit;
