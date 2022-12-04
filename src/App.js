@@ -26,8 +26,8 @@ function App() {
             <MyButton style = {{marginTop: '30px'}} onClick = {() => setModal(true)}>
                 Создать пост
             </MyButton>
-            <MyModal visible={modal} setVisible = {setModal}>
-                <PostForm create={createPost}/>
+            <MyModal visible={modal}>
+                <PostForm create={createPost} visible={modal} setVisible= {setModal}/>
             </MyModal>
             <hr style={{margin: '15px 0'}}/>
             <PostFilter filter = {filter} setFilter={setFilter}/>

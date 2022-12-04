@@ -29,5 +29,7 @@
 }
 
 .cross{
+    justify-content: space-between;
     size: 30px;
+    float: right;
 }

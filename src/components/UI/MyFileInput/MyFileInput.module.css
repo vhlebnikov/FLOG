@@ -1,0 +1,16 @@
+.input{
+    display: none
+}
+
+.button{
+    height: 40px;
+    width: 100px;
+    text-align: center;
+    background-color: #ffffff;
+    border: 2px solid #3dcb0e;
+    border-radius: 5px;
+}
+
+.text{
+    opacity: 60%;
+}
