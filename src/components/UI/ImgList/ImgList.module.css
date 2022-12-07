@@ -1,3 +1,5 @@
 .list{
-    border: 2px solid #3dcb0e;
+    border: 2px dotted #ffffff;
+    text-align: left;
+    width: max-content;
 }

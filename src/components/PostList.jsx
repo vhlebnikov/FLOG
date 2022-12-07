@@ -6,7 +6,7 @@ const PostList = ({posts, title, remove, setPosts}) => {
     if (!posts.length) {
         return (
             <h1 style={{textAlign: 'center'}}>
-                Нет постов больше(
+                Объявлений нет
             </h1>
         )
     }

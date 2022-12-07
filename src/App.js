@@ -1,57 +1,59 @@
-import React, {useState} from "react";
+import React from "react";
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import './styles/App.css'
-import PostList from "./components/PostList";
-import MyButton from "./components/UI/button/MyButton";
-import PostForm from "./components/PostForm";
-import PostFilter from "./components/PostFilter";
-import MyModal from "./components/UI/MyModal/MyModal";
-import {usePosts} from "./hooks/usePosts";
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import Login from "../src/pages/Login";
+import SignUp from "../src/pages/SignUp";
+import Adds from "../src/pages/Adds";
+
 
 function App() {
-    const [posts, setPosts] = useState([])
-    const [filter, setFilter] = useState({sort: '',query: ''})
-    const [modal, setModal] = useState(false)
-    const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
-
-    const createPost = (newPost) => {
-        setPosts([...posts, newPost])
-        setModal(false)
-    }
-    const removePost = (post) => {
-        setPosts(posts.filter(p => p.id !== post.id))
-    }
-    const changePost = (editPost) =>{
-        const copy = posts
-        copy.map((post) => {
-            if(editPost.id === post.id){
-                post.title = editPost.title
-                post.place = editPost.place
-                post.body = editPost.body
-                post.cost = editPost.cost
-                post.category = editPost.category
-                post.cnt = editPost.cnt
-                post.images = editPost.images
-                //post.images.map((img,index) =>{
-                  //  return editPost.images[index]
-                //})
-            }
-            return post
-        })
-        setPosts(copy)
-    }
-
     return (
-        <div className="App">
-            <MyButton style = {{marginTop: '30px'}} onClick = {() => setModal(true)}>
-                Создать пост
-            </MyButton>
-            <MyModal visible={modal}>
-                <PostForm create={createPost} visible={modal} setVisible= {setModal}/>
-            </MyModal>
-            <hr style={{margin: '15px 0'}}/>
-            <PostFilter filter = {filter} setFilter={setFilter}/>
-            <PostList remove={removePost} posts={sortedAndSearchedPosts} setPosts={changePost} title="Список постов"/>
-        </div>
+        <Router>
+            <div className="App">
+                <nav className="navbar navbar-expand-lg navbar-dark fixed-top">
+                    <div className="container">
+                        <Link className="navbar-brand" to={'/adds'}>
+                            FLOG
+                        </Link>
+                        <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
+                            <ul className="navbar-nav ml-auto">
+
+                                <li className="nav-item">
+                                    <Link className="nav-link" to={'/sign-in'}>
+                                        Login
+                                    </Link>
+                                </li>
+
+                                <li className="nav-item">
+                                    <Link className="nav-link" to={'/sign-up'}>
+                                        Sign up
+                                    </Link>
+                                </li>
+
+                                <li className="nav-item">
+                                    <Link className="nav-link" to={'/adds'}>
+                                        All ads
+                                    </Link>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+
+                <div className="auth-wrapper">
+                    <div className="auth-inner">
+                        <Routes>
+                            <Route exact path="/" element={<Login />} />
+                            <Route path="/sign-in" element={<Login />} />
+                            <Route path="/sign-up" element={<SignUp />} />
+                            <Route path="/adds" element={<Adds />} />
+                        </Routes>
+                    </div>
+                </div>
+            </div>
+        </Router>
     );
 }
 

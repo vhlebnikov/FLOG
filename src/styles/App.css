@@ -1,16 +1,123 @@
-*{
-    margin: 0;
-    padding: 0;
+.App {
+    text-align: center;
+}
+
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.App-link {
+    color: #133612;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+* {
     box-sizing: border-box;
 }
 
-#root {
+body {
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
+    font-weight: 400;
+    font-family: sans-serif;
+    background: #ffffff;
+    /*background: -webkit-linear-gradient(to right, #d4e79e, #8dc58b, rgba(189, 208, 159, 0.37));
+    background: linear-gradient(to right, #d4e79e, #8dc58b, rgba(189, 208, 159, 0.37)); */
+
 }
 
-.App {
-    width: 800px;
+body, html, .App, #root, .outer {
+    width: 100%;
+    height: 100%;
+}
+
+.navbar-dark {
+    background-color: #133612;
+    box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
+}
+
+.outer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: left;
+}
+
+.inner {
+    width: 450px;
+    margin: auto;
+    background: #ffffff;
+    box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
+    padding: 40px 55px 45px 55px;
+    border-radius: 15px;
+    transition: all .3s;
+}
+
+.outer .form-control:focus {
+    border-color: #133612;
+    box-shadow: none;
+}
+
+.outer h3 {
+    text-align: center;
+    margin: 0;
+    line-height: 1;
+    padding-bottom: 20px;
+}
+
+.custom-control-label {
+    font-weight: 400;
+}
+
+.forgot-password,
+.forgot-password a {
+    text-align: right;
+    font-size: 13px;
+    padding-top: 10px;
+    color: #7f7d7d;
+    margin: 0;
+}
+
+.forgot-password a {
+    color: #133612;
+}
+
+.cross{
+    justify-content: space-between;
+    size: 30px;
+    float: right;
+}
+
+.heading{
+    align-items: center;
+    padding: 10px;
+    font-size: 22px;
 }
 
 .post{
@@ -20,16 +127,4 @@
     margin-top: 15px;
     justify-content: space-between;
     align-items: center;
-}
-
-.heading{
-    align-items: center;
-    padding: 10px;
-    font-size: 22px;
-}
-
-.cross{
-    justify-content: space-between;
-    size: 30px;
-    float: right;
 }
