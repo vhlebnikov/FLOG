@@ -54,6 +54,19 @@ class AdController {
         )
         return res.json(ad)
     }
+
+    async deleteOne(req, res, next) {
+        const {id} = req.params
+        const ad = await Ad.destroy(
+            {
+                where: {id},
+            }
+        )
+        if (ad < 1) {
+            return next(ApiError.internal('Объявление с таким ID не найдена'))
+        }
+        return res.json('Успешно удалено')
+    }
 }
 
 module.exports = new AdController()

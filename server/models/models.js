@@ -29,10 +29,10 @@ const Type = sequelize.define('type', {
     name: {type: DataTypes.STRING, unique: true, allowNull: false},
 })
 
-// const Tag = sequelize.define('tag', {
-//     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-//     name: {type: DataTypes.STRING, unique: true, allowNull: false},
-// })
+const Tag = sequelize.define('tag', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, unique: true, allowNull: false},
+})
 
 const AdInfo = sequelize.define('ad_info', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
@@ -40,9 +40,9 @@ const AdInfo = sequelize.define('ad_info', {
     description: {type: DataTypes.STRING, allowNull: false},
 })
 
-// const TagAd = sequelize.define('tag_ad', {
-//     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-// })
+const TagAd = sequelize.define('tag_ad', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+})
 
 User.hasOne(Favourites)
 Favourites.belongsTo(User)
@@ -59,8 +59,8 @@ AdInfo.belongsTo(Ad)
 Type.hasMany(Ad)
 Ad.belongsTo(Type)
 
-// Tag.belongsToMany(Ad, {through: TagAd})
-// Ad.belongsToMany(Tag, {through: TagAd})
+Tag.belongsToMany(Ad, {through: TagAd})
+Ad.belongsToMany(Tag, {through: TagAd})
 
 module.exports = {
     User,
@@ -69,6 +69,6 @@ module.exports = {
     Ad,
     AdInfo,
     Type,
-    // Tag,
-    // TagAd,
+    Tag,
+    TagAd,
 }
