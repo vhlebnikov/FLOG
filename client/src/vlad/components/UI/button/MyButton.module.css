@@ -1,0 +1,21 @@
+.myBtn{
+    margin-top: 5px;
+    margin-right: 5px;
+    padding: 5px 15px;
+    color: #2a7e09;
+    font-size: 14px;
+    background: transparent;
+    border: 2px solid #198754;
+    cursor: pointer;
+}
+
+.myActBtn{
+    margin-top: 5px;
+    margin-right: 5px;
+    padding: 5px 15px;
+    color: #154205;
+    font-size: 14px;
+    background-color: #c4b6c3;
+    border: 2px solid #1b5705;
+    cursor: pointer;
+}
