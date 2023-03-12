@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import MyModal from "../vlad/components/UI/MyModal/MyModal";
+import MyModal from "../components/MyModal/MyModal";
 import PostForm from "../vlad/components/PostForm";
 import PostFilter from "../vlad/components/PostFilter";
 import PostList from "../vlad/components/PostList";
 import {usePosts} from "../vlad/hooks/usePosts";
-import {Button, Container, Row} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 
 const Shop = () => {
     const [posts, setPosts] = useState([])
@@ -39,11 +39,6 @@ const Shop = () => {
     }
     return (
         <Container className="Album">
-            <Row>
-                <Button variant="success" className="my-3 text-center" onClick={() => setModal(true)}>
-                    Создать объявление
-                </Button>
-            </Row>
             <MyModal visible={modal}>
                 <PostForm create={createPost} visible={modal} setVisible={setModal}/>
             </MyModal>

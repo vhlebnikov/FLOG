@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import MyButton from "./UI/button/MyButton";
-import MyModal from "./UI/MyModal/MyModal"
+import MyModal from "../../components/MyModal/MyModal"
 import FullPostItem from "./FullPostItem";
 import PostFormEdit from "./PostFormEdit";
 

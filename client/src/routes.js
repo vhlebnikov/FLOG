@@ -1,9 +1,18 @@
 import Admin from "./pages/Admin";
-import {AD_ROUTE, ADMIN_ROUTE, FAVOURITES_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE} from "./utils/consts";
+import {
+    ACCOUNT_ROUTE,
+    AD_ROUTE,
+    ADMIN_ROUTE,
+    FAVOURITES_ROUTE,
+    LOGIN_ROUTE,
+    REGISTRATION_ROUTE,
+    SHOP_ROUTE
+} from "./utils/consts";
 import Favourites from "./pages/Favourites";
 import Shop from "./pages/Shop";
 import Auth from "./pages/Auth";
 import AdPage from "./pages/AdPage";
+import Account from "./pages/Account";
 
 export const authRoutes = [
     {
@@ -13,6 +22,10 @@ export const authRoutes = [
     {
         path: FAVOURITES_ROUTE,
         Component: Favourites
+    },
+    {
+        path: ACCOUNT_ROUTE,
+        Component: Account
     }
 ]
 

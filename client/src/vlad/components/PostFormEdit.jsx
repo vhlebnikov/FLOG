@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import MyInput from "./UI/input/MyInput";
 import MyButton from "./UI/button/MyButton";
 import cross from "./Pictures/cross.png"
-import cl from "./UI/MyModal/MyModal.module.css";
+import cl from "../../components/MyModal/MyModal.module.css";
 import MySelect from "./UI/select/MySelect";
 import MyFileInput from "./UI/MyFileInput/MyFileInput";
 import ImgList from "./UI/ImgList/ImgList";

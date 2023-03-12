@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import cl from "./UI/MyModal/MyModal.module.css";
+import cl from "../../components/MyModal/MyModal.module.css";
 import cross from "./Pictures/cross.png"
 
 const FullPostItem = ({visible, setVisible, post}) => {
