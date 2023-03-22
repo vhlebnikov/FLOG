@@ -6,6 +6,8 @@ import cl from "./UI/MyModal/MyModal.module.css";
 import MySelect from "./UI/select/MySelect";
 import MyFileInput from "./UI/MyFileInput/MyFileInput";
 import ImgList from "./UI/ImgList/ImgList";
+import {Form} from "react-bootstrap";
+import "../styles/App.css";
 
 const PostForm = ({create, visible, setVisible}) => {
     const [post, setPost] = useState({title: '', body: '', cost: '', category: '', place: '',cnt: 0 , images: []})
@@ -69,9 +71,9 @@ const PostForm = ({create, visible, setVisible}) => {
     return (
         <form>
             <img src={cross} onClick={close} height="20" width="27" alt={cross} className = "cross"/>
-            <div className = "heading">
+            <h2 className = "heading text-center my-2">
                 Новое объявление
-            </div>
+            </h2>
             <MyInput
                 value={post.title}
                 onChange={e => setPost({...post, title: e.target.value})}
@@ -100,25 +102,29 @@ const PostForm = ({create, visible, setVisible}) => {
                 placeholder="Адрес"
                 color = {colorPlace}
             />
-            <ImgList imgs={post.images} />
-            <MyFileInput
-                onChange = {(e) =>
-                    setPost({...post, cnt: post.cnt + 1 , images: [...post.images, e.target.files]})
-                }
-            />
-            <MySelect
-                value = {post.category}
-                onChange={selectedCategory => setPost({...post, category: selectedCategory})}
-                defaultValue="Категории"
-                options={[
-                    {value: 'Продажа', name: 'Продажа'},
-                    {value: 'Покупка', name: 'Покупка'},
-                    {value: 'Мероприятие', name: 'Мероприятие'},
-                    {value: 'Услуга', name: 'Услуга'}
-                ]}
-            />
-            <MyButton onClick={addNewPost}>Создать пост</MyButton>
-            <MyButton onClick={clearPost}>Очистить поля</MyButton>
+            <Form className="d-flex justify-content-between mt-3">
+                <MyFileInput
+                    onChange = {(e) =>
+                        setPost({...post, cnt: post.cnt + 1 , images: [...post.images, e.target.files]})
+                    }
+                />
+                <ImgList imgs={post.images} />
+            </Form>
+            <Form className="d-flex justify-content-between mt-2">
+                <MySelect
+                    value = {post.category}
+                    onChange={selectedCategory => setPost({...post, category: selectedCategory})}
+                    defaultValue="Категории"
+                    options={[
+                        {value: 'Продажа', name: 'Продажа'},
+                        {value: 'Покупка', name: 'Покупка'},
+                        {value: 'Мероприятие', name: 'Мероприятие'},
+                        {value: 'Услуга', name: 'Услуга'}
+                    ]}
+                />
+                <MyButton onClick={addNewPost}>Создать пост</MyButton>
+                <MyButton onClick={clearPost}>Очистить поля</MyButton>
+            </Form>
         </form>
     );
 };
