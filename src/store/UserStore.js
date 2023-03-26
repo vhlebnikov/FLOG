@@ -4,9 +4,11 @@ export default class UserStore {
     constructor() {
         this._isAuth = true
         this._user = {
-            name : 'name',
-            email : 'email',
-            password : 'fsfeef'
+            name : '',
+            email : '',
+            address : '',
+            number : '',
+            password : ''
         }
         makeAutoObservable(this)
     }
