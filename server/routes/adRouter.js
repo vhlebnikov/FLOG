@@ -1,11 +1,13 @@
 const Router = require('express')
 const router = new Router()
 const adController = require('../controllers/adController')
-const checkRole = require('../middleware/checkRoleMiddleware')
+const authMiddleWare = require('../middleware/authMiddleware')
 
-router.post('/', adController.create)
 router.get('/', adController.getAll)
 router.get('/:id', adController.getOne)
-router.delete('/:id', checkRole('ADMIN'), adController.deleteOne)
+router.get('/user/:id', adController.getAds)
+router.post('/', authMiddleWare, adController.create)
+router.put('/:id', authMiddleWare, adController.update)
+router.delete('/:id', authMiddleWare, adController.delete)
 
 module.exports = router

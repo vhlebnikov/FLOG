@@ -1,74 +1,86 @@
 const sequelize = require('../db')
-const {DataTypes} = require('sequelize')
+const {DataTypes, STRING} = require('sequelize')
 
 const User = sequelize.define('user', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    email: {type: DataTypes.STRING, unique: true,},
+    email: {type: DataTypes.STRING, unique: true},
     username: {type: DataTypes.STRING},
     password: {type: DataTypes.STRING},
+    confirmed: {type: DataTypes.BOOLEAN, defaultValue: false},
+    activationLink: {type: STRING},
     role: {type: DataTypes.STRING, defaultValue: "USER"},
 })
 
-const Favourites = sequelize.define('favourites', {
+const Contact = sequelize.define('contact', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, allowNull: false},
+    contact: {type: DataTypes.STRING, allowNull: false},
 })
 
-const FavouritesAd = sequelize.define('favourites_ad', {
+const Price = sequelize.define('price', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    type: {type: DataTypes.INTEGER, allowNull: false},
+    start: {type: DataTypes.INTEGER},
+    end: {type: DataTypes.INTEGER},
+})
+
+const Info = sequelize.define('info', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, allowNull: false},
+    description: {type: DataTypes.STRING, allowNull: false},
+})
+
+const Category = sequelize.define('category', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, unique: true},
+})
+
+const SubCategory = sequelize.define('subCategory', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, unique: true},
+})
+
+const SubSubCategory = sequelize.define('subSubCategory', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, unique: true},
 })
 
 const Ad = sequelize.define('ad', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false},
-    price: {type: DataTypes.INTEGER, allowNull: false},
-    img: {type: DataTypes.STRING, allowNull: false},
+    image: {type: DataTypes.STRING(1000), allowNull: false},
+    name: {type: DataTypes.STRING, allowNull: false},
+    description: {type: DataTypes.STRING},
+    address: {type: DataTypes.STRING},
 })
 
-const Type = sequelize.define('type', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false},
-})
+User.hasMany(Ad)
+Ad.belongsTo(User)
 
-const Tag = sequelize.define('tag', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false},
-})
+User.hasMany(Contact, {as: 'contact'})
+Contact.belongsTo(User)
 
-const AdInfo = sequelize.define('ad_info', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    title: {type: DataTypes.STRING, allowNull: false},
-    description: {type: DataTypes.STRING, allowNull: false},
-})
+Ad.hasMany(Info, {as: 'info'})
+Info.belongsTo(Ad)
 
-const TagAd = sequelize.define('tag_ad', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-})
+Price.hasOne(Ad)
+Ad.belongsTo(Price)
 
-User.hasOne(Favourites)
-Favourites.belongsTo(User)
+Category.hasMany(SubCategory)
+SubCategory.belongsTo(Category)
 
-Favourites.hasMany(FavouritesAd)
-FavouritesAd.belongsTo(Favourites)
+SubCategory.hasMany(SubSubCategory)
+SubSubCategory.belongsTo(SubCategory)
 
-FavouritesAd.hasOne(Ad)
-Ad.belongsTo(FavouritesAd)
-
-Ad.hasMany(AdInfo, {as: 'info'})
-AdInfo.belongsTo(Ad)
-
-Type.hasMany(Ad)
-Ad.belongsTo(Type)
-
-Tag.belongsToMany(Ad, {through: TagAd})
-Ad.belongsToMany(Tag, {through: TagAd})
+SubSubCategory.hasMany(Ad)
+Ad.belongsTo(SubSubCategory)
 
 module.exports = {
     User,
-    Favourites,
-    FavouritesAd,
+    Contact,
+    Price,
+    Info,
+    Category,
+    SubCategory,
+    SubSubCategory,
     Ad,
-    AdInfo,
-    Type,
-    Tag,
-    TagAd,
 }
