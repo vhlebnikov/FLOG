@@ -1,6 +1,6 @@
 const uuid = require('uuid')
 const path = require('path')
-const {Ad, Info, Price, SubSubCategory} = require('../models/models')
+const {Ad, Info, Price, SubSubCategory, SubCategory} = require('../models/models')
 const ApiError = require('../error/ApiError')
 const jwt = require("jsonwebtoken");
 
@@ -46,17 +46,69 @@ class AdController {
         }
     }
 
-    async getAll(req, res) {
-        let {subSubCategoryId, limit, page} = req.query
+    async getAll(req, res, next) {
+        let {categoryId, subCategoryId, subSubCategoryId, limit, page} = req.query
         page = page || 1
         limit = limit || 9
+        if (page <= 0 || limit <= 0) {
+            return next(ApiError.badRequest('Неверные данные запроса'))
+        }
         let offset = page * limit - limit
         let ads;
+        let c = 0;
         if (subSubCategoryId) {
             ads = await Ad.findAndCountAll({
                 where: {subSubCategoryId: subSubCategoryId},
                 limit, offset
             })
+        } else if (subCategoryId) {
+            const {rows} = await SubSubCategory.findAndCountAll({
+                where: {subCategoryId: subCategoryId}
+            })
+
+            for (const ssc of rows) {
+                let {count, rows} = await Ad.findAndCountAll({
+                    where: {subSubCategoryId: ssc.id}
+                });
+                if (!ads) {
+                    ads = rows
+                } else {
+                    ads = rows.concat(ads)
+                }
+                c += count
+            }
+            let pagAds = []
+            if (ads) {
+                pagAds = ads.slice(offset, Number(offset) + Number(limit))
+            }
+            return res.json({count: c, rows: pagAds})
+        } else if (categoryId) {
+            const {rows} = await SubCategory.findAndCountAll({
+                where: {categoryId: categoryId}
+            })
+
+            for (const sc of rows) {
+                const {rows} = await SubSubCategory.findAndCountAll({
+                    where: {subCategoryId: sc.id}
+                })
+
+                for (const ssc of rows) {
+                    let {count, rows} = await Ad.findAndCountAll({
+                        where: {subSubCategoryId: ssc.id}
+                    });
+                    if (!ads) {
+                        ads = rows
+                    } else {
+                        ads = rows.concat(ads)
+                    }
+                    c += count
+                }
+            }
+            let pagAds = []
+            if (ads) {
+                pagAds = ads.slice(offset, Number(offset) + Number(limit))
+            }
+            return res.json({count: c, rows: pagAds})
         } else {
             ads = await Ad.findAndCountAll({
                 limit, offset

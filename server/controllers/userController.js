@@ -1,7 +1,7 @@
 const ApiError = require('../error/ApiError');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const {User, Contact, Info} = require('../models/models')
+const {User, Contact} = require('../models/models')
 const nodemailer = require("nodemailer");
 const uuid = require('uuid');
 
@@ -68,6 +68,13 @@ class UserController {
         const hashPassword = await bcrypt.hash(password, 5)
         const activationLink = uuid.v4()
         const user = await User.create({email, username, role, password: hashPassword, activationLink})
+
+        await Contact.create({
+            name: "Почта",
+            contact: email,
+            userId: user.id
+        });
+
         await confirmation(user.email, user.id, `${process.env.API_URL}/api/user/activate/${activationLink}`)
 
         const token = generateJwt(user.id, user.email, user.username, user.role)
