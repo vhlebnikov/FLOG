@@ -1,6 +1,6 @@
 const uuid = require('uuid')
 const path = require('path')
-const {Ad, Info, Price} = require('../models/models')
+const {Ad, Info, Price, SubSubCategory} = require('../models/models')
 const ApiError = require('../error/ApiError')
 const jwt = require("jsonwebtoken");
 
@@ -8,7 +8,7 @@ class AdController {
     async create(req, res, next) {
         try {
             let {name, description, address, subSubCategoryId, price, info} = req.body
-            console.log(req.body)
+
             const {image} = req.files
             let fileName = uuid.v4() + ".jpg"
             await image.mv(path.resolve(__dirname, "..", "static", fileName))
@@ -47,24 +47,14 @@ class AdController {
     }
 
     async getAll(req, res) {
-        let {categoryId, subCategoryId, subSubCategoryId, limit, page} = req.query
+        let {subSubCategoryId, limit, page} = req.query
         page = page || 1
         limit = limit || 9
         let offset = page * limit - limit
         let ads;
         if (subSubCategoryId) {
             ads = await Ad.findAndCountAll({
-                where: {subSubCategoryId},
-                limit, offset
-            })
-        } else if (subCategoryId) {
-            ads = await Ad.findAndCountAll({
-                where: {subCategoryId},
-                limit, offset
-            })
-        } else if (categoryId) {
-            ads = await Ad.findAndCountAll({
-                where: {categoryId},
+                where: {subSubCategoryId: subSubCategoryId},
                 limit, offset
             })
         } else {
@@ -133,6 +123,9 @@ class AdController {
                 },
             )
 
+            if (!ad) {
+                next(ApiError.badRequest('Такого объявления не существует'))
+            }
             const token = req.headers.authorization.split(' ')[1]
             const user = jwt.verify(token, process.env.SECRET_KEY)
 
