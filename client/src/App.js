@@ -9,7 +9,7 @@ import NavBar from "./components/NavBar";
 import {Spinner} from "react-bootstrap";
 import {check} from "./http/userApi";
 
-const App = () => {
+const App = observer(() => {
     const {user} = useContext(Context)
     const [loading, setLoading] = useState(true)
 
@@ -30,7 +30,7 @@ const App = () => {
           <AppRouter/>
       </BrowserRouter>
   );
-};
+});
 
 export default App;
 
