@@ -1,0 +1,7 @@
+export const SHOP_PAGE = '/'
+export const CREATE_AD_PAGE = '/creating'
+export const PROFILE_PAGE = '/profile'
+export const AD_PAGE = '/ad'
+export const EDIT_PROFILE_PAGE = '/edit_profile'
+export const AUTH_PAGE = '/auth'
+export const REGISTRATION_PAGE = '/registration'
