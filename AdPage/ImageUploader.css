@@ -1,0 +1,85 @@
+body {
+    background-color: #E7E5E5; /* replace with your desired color */
+}
+
+.thumbnail {
+    max-width: 200px;
+    max-height: 300px;
+    object-fit: contain;
+}
+
+.component-5 {
+    width: 8%;
+    height: 8%;
+    object-fit: contain;
+    position: fixed;
+    left: 0;
+    top: 20%;
+}
+
+
+
+/* Main content */
+.main {
+    margin-top: 30px; /* Add a top margin to avoid content overlay */
+}
+
+
+
+
+
+.image-2 {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    position: absolute;
+    left: 150px;
+    top: 100px;
+}
+
+.image-2 div {
+    width: 200px;
+    height: 300px;
+    background-position: center;
+    background-size: cover;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.image-button {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    position: fixed; /* Set the navbar to fixed position */
+    top: 20%; /* Position the navbar at the top of the page */
+    width: 10%;
+}
+
+.image-button div {
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-size: cover;
+}
+
+
+.image-button2 {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    position: fixed; /* Set the navbar to fixed position */
+    top: 20%; /* Position the navbar at the top of the page */
+    right: 0;
+}
+
+.image-button2 div {
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-size: cover;
+}
+
