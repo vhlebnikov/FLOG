@@ -129,40 +129,46 @@ body, html, .App, #root, .outer {
     align-items: center;
 }
 
-.thumbnail {
+.thumbnailPersonal {
     max-width: 200px;
-    max-height: 300px;
+    max-height: 280px;
     position: absolute;
-    margin-left: 200px;
-    object-fit: contain;
+    top: 50%;
+    left: 30%;
+    transform: translate(-50%, -50%)
 }
 
 
-.image-2 {
+.image-2Personal {
     border: none;
     background-color: transparent;
     cursor: pointer;
 }
 
-.image-2 div {
+.image-2Personal div {
     width: 200px;
-    height: 300px;
+    height: 280px;
     background-position: center;
     position: absolute;
-    margin-left: 100px;
-    object-fit: contain;
+    top: 50%;
+    left: 32.5%;
+    transform: translate(-50%, -50%)
 }
 
 .forPersonal {
-    margin-left: 35%;
+    margin-left: 5%;
     margin-bottom: 3%;
     background-position: center;
     background-size: cover;
     height: 30px;
 }
 
+.blockPersonal {
+    float: inside;
+}
+
 .personalInput {
-    width : 50%;
+    width : 70%;
     height: 30px;
     outline: none;
     padding-left: 15px;
@@ -170,7 +176,7 @@ body, html, .App, #root, .outer {
 }
 
 .personalButton {
-    padding-left: 35%;
+    padding-left: 5%;
 }
 
 .personalMain {

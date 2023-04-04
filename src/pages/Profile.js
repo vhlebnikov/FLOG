@@ -1,7 +1,7 @@
 import React, {useContext, useState} from 'react';
 import {Context} from "../index";
-import ImageUploader from "../utils/ImageUploader";
-import Button from 'react-bootstrap/Button';
+import ImageUploader from "../utils/ImageUploaderProfile";
+import {Button, Col, Container, Row} from 'react-bootstrap';
 
 const Profile = () => {
     const {user} = useContext(Context)
@@ -27,50 +27,59 @@ const Profile = () => {
     }
 
     return (
-        <div className="personalMain">
-            <h1 className="header1">Персональные данные</h1>
-            <ImageUploader/>
-            <div className="forPersonal">
-                Имя:
-                {isEditing
-                    ? (<input className = "personalInput"
-                              type="text"
-                              value={user.name}
-                              onChange={(event) => setName(event.target.value)}/>)
-                    : (<div>{user.name}</div>)}
-            </div>
-            <div className="forPersonal">
-                Email:
-                {isEditing
-                    ? (<input className = "personalInput"
-                              type="text"
-                              value={user.email}
-                              onChange={(event) => setEmail(event.target.value)}/>)
-                    : (<div>{user.email}</div>)}
-            </div>
-            <div className="forPersonal">
-                Телефон:
-                {isEditing
-                    ? (<input className = "personalInput"
-                              type="text"
-                              value={user.number}
-                              onChange={(event) => setNumber(event.target.value)}/>)
-                    : (<div>{user.number}</div>)}
-            </div>
-            <div className="forPersonal">
-                Адрес:
-                {isEditing
-                    ? (<input className = "personalInput"
-                              type="text"
-                              value={user.address}
-                              onChange={(event) => setAddress(event.target.value)}/>)
-                    : (<div>{user.address}</div>)}
-            </div>
-            <label className="personalButton">
-            {isEditing ? (<Button variant="outline-success" onClick={handleSave}>Сохранить</Button>) : (<Button variant="outline-success" onClick={handleEditing}>Редактировать</Button>)}
-            </label>
-            <h1 className="header1">Ваши объявления</h1>
-        </div>
+        <Container className="personalMain">
+            <Row>
+                <h1 className="header1">Персональные данные</h1>
+                <Col xs={4}>
+                <ImageUploader/>
+                </Col>
+                <Col xs={8} className="blockPersonal">
+                    <br/>
+                <div className="forPersonal">
+                    Имя:
+                    {isEditing
+                        ? (<input className = "personalInput"
+                                  type="text"
+                                  value={user.name}
+                                  onChange={(event) => setName(event.target.value)}/>)
+                        : (<div>{user.name}</div>)}
+                </div>
+                <div className="forPersonal">
+                    Email:
+                    {isEditing
+                        ? (<input className = "personalInput"
+                                  type="text"
+                                  value={user.email}
+                                  onChange={(event) => setEmail(event.target.value)}/>)
+                        : (<div>{user.email}</div>)}
+                </div>
+                <div className="forPersonal">
+                    Телефон:
+                    {isEditing
+                        ? (<input className = "personalInput"
+                                type="text"
+                                value={user.number}
+                                onChange={(event) => setNumber(event.target.value)}/>)
+                        : (<div>{user.number}</div>)}
+                </div>
+                <div className="forPersonal">
+                    Адрес:
+                    {isEditing
+                        ? (<input className = "personalInput"
+                                type="text"
+                                value={user.address}
+                                onChange={(event) => setAddress(event.target.value)}/>)
+                        : (<div>{user.address}</div>)}
+                </div>
+                <label className="personalButton">
+                {isEditing ? (<Button variant="outline-success" onClick={handleSave}>Сохранить</Button>) : (<Button variant="outline-success" onClick={handleEditing}>Редактировать</Button>)}
+                </label>
+                </Col>
+            </Row>
+            <Row className="d-flex flex-column m-3">
+                <h1 className="header1">Ваши объявления</h1>
+            </Row>
+        </Container>
     );
 }
 

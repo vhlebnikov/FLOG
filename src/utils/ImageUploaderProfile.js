@@ -3,7 +3,7 @@ import photo from "../vlad/components/Pictures/photo.png"
 //import { Resizer } from "react-image-file-resizer";
 
 
-function ImageUploader() {
+function ImageUploaderProfile() {
     const [selectedFile, setSelectedFile] = useState(null);
 
     const handleFileChange = (event) => {
@@ -13,9 +13,9 @@ function ImageUploader() {
     const imageStyle = selectedFile ? { backgroundImage: `url(${selectedFile})` } : { backgroundImage: `url(${photo})` };
 
     return (
-        <div className="image-2">
+        <div className="image-2Personal">
             {selectedFile ? (
-                <img className="thumbnail" src={selectedFile} alt="selected" />
+                <img className="thumbnailPersonal" src={selectedFile} alt="selected" />
             ) : (
                 <label>
                     <div>
@@ -30,4 +30,4 @@ function ImageUploader() {
     );
 }
 
-export default ImageUploader;
+export default ImageUploaderProfile;
