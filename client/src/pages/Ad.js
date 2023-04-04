@@ -35,6 +35,12 @@ const Ad = () => {
     const navigate = useNavigate();
     const {user} = useContext(Context);
 
+    const description = [
+        {id:1, title: 'Характеристика 1', description: 'шерсть мягкая'},
+        {id:2, title: 'Характеристика 2', description: 'зубки острые'},
+        {id:3, title: 'Характеристика 3', description: 'приземляется на лапы'},
+    ]
+
     return (
 
         <Container>
@@ -76,14 +82,21 @@ const Ad = () => {
                     <br/>
                     <br/>
                     <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
+
                 </Col>
             </Row>
             <Row className="d-flex flex-column m-3">
+
+                <h1>Характеристики</h1>
+                <br/>
+                {description.map((info, index) =>
+                    <Row key={info.id} style={{background: index % 2 === 0 ? 'lightgray' : 'transparent', padding: 10}}>
+                        {info.title}: {info.description}
+                    </Row>
+                )}
+
             </Row>
+
         </Container>
     );
 
