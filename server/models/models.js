@@ -3,72 +3,72 @@ const {DataTypes} = require('sequelize')
 
 const User = sequelize.define('user', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    email: {type: DataTypes.STRING, unique: true,},
+    email: {type: DataTypes.STRING, unique: true},
     username: {type: DataTypes.STRING},
     password: {type: DataTypes.STRING},
     role: {type: DataTypes.STRING, defaultValue: "USER"},
 })
 
-const Favourites = sequelize.define('favourites', {
+const Price = sequelize.define('price', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    type: {type: DataTypes.INTEGER, allowNull: false},
+    start: {type: DataTypes.INTEGER},
+    end: {type: DataTypes.INTEGER},
 })
 
-const FavouritesAd = sequelize.define('favourites_ad', {
+const Info = sequelize.define('info', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, allowNull: false},
+    description: {type: DataTypes.STRING, allowNull: false},
+})
+
+const Category = sequelize.define('category', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, unique: true},
+})
+
+const SubCategory = sequelize.define('subCategory', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, unique: true},
+})
+
+const SubSubCategory = sequelize.define('subSubCategory', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, unique: true},
 })
 
 const Ad = sequelize.define('ad', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false},
-    price: {type: DataTypes.INTEGER, allowNull: false},
-    img: {type: DataTypes.STRING, allowNull: false},
+    image: {type: DataTypes.STRING, allowNull: false},
+    name: {type: DataTypes.STRING, allowNull: false},
+    description: {type: DataTypes.STRING},
+    address: {type: DataTypes.STRING},
 })
 
-const Type = sequelize.define('type', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false},
-})
+User.hasMany(Ad)
+Ad.belongsTo(User)
 
-const Tag = sequelize.define('tag', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false},
-})
+Ad.hasMany(Info)
+Info.belongsTo(Ad)
 
-const AdInfo = sequelize.define('ad_info', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    title: {type: DataTypes.STRING, allowNull: false},
-    description: {type: DataTypes.STRING, allowNull: false},
-})
+Ad.hasOne(Price)
+Price.belongsTo(Ad)
 
-const TagAd = sequelize.define('tag_ad', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-})
+Category.hasMany(SubCategory)
+SubCategory.belongsTo(Category)
 
-User.hasOne(Favourites)
-Favourites.belongsTo(User)
+SubCategory.hasMany(SubSubCategory)
+SubSubCategory.belongsTo(SubCategory)
 
-Favourites.hasMany(FavouritesAd)
-FavouritesAd.belongsTo(Favourites)
-
-FavouritesAd.hasOne(Ad)
-Ad.belongsTo(FavouritesAd)
-
-Ad.hasMany(AdInfo, {as: 'info'})
-AdInfo.belongsTo(Ad)
-
-Type.hasMany(Ad)
-Ad.belongsTo(Type)
-
-Tag.belongsToMany(Ad, {through: TagAd})
-Ad.belongsToMany(Tag, {through: TagAd})
+SubSubCategory.hasMany(Ad)
+Ad.belongsTo(SubSubCategory)
 
 module.exports = {
     User,
-    Favourites,
-    FavouritesAd,
+    Price,
+    Info,
+    Category,
+    SubCategory,
+    SubSubCategory,
     Ad,
-    AdInfo,
-    Type,
-    Tag,
-    TagAd,
 }
