@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react';
 import {Context} from "../index";
-import ImageUploader from "../utils/ImageUploaderProfile";
+import ImageUploaderProfile from "../utils/ImageUploaderProfile";
 import {Button, Col, Container, Row} from 'react-bootstrap';
 
 const Profile = () => {
@@ -31,7 +31,7 @@ const Profile = () => {
             <Row>
                 <h1 className="header1">Персональные данные</h1>
                 <Col xs={4}>
-                <ImageUploader/>
+                <ImageUploaderProfile/>
                 </Col>
                 <Col xs={8} className="blockPersonal">
                     <br/>
