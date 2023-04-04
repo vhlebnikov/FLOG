@@ -68,3 +68,16 @@ thumbnailPersonal {
     margin-bottom: 40px;
     text-align: center;
 }
+
+.colored-block {
+    background-color: #00A347;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}

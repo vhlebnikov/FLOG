@@ -70,6 +70,7 @@ const Ad = () => {
                     <Row className="d-flex flex-column align-items-center">
 
                         <br/>
+
                         <div className="forPersonal">
                             <h2>Название: </h2>
                             {isEditing
@@ -82,14 +83,17 @@ const Ad = () => {
 
                         </div>
                         <div className="forPersonal">
-                            <h4>Описание:</h4>
-                            {isEditing
-                                ? (<input className = "personalInput"
-                                          type="text"
-                                          value={ad.title}
-                                          onChange={(event) => setTitle(event.target.value)}/>)
-                                :
-                            <h4><div> {ad.description}</div></h4>}
+                            <br/>
+
+                                <h4>Описание: </h4>
+                                {isEditing
+                                    ? (<input className = "personalInput"
+                                              type="text"
+                                              value={ad.title}
+                                              onChange={(event) => setTitle(event.target.value)}/>)
+                                    :
+                                    <h4><div> {ad.description}</div></h4>}
+
                         </div>
                     </Row>
                 </Col>
@@ -122,8 +126,6 @@ const Ad = () => {
                     <div>Адрес: {ad.address}</div>
                     <div>Цена: {ad.price_id}</div>
                     <br/>
-                    <br/>
-
                     <br/>
                     <br/>
                     <br/>
@@ -179,4 +181,7 @@ export default Ad;
                         ? <CategoryDownFall/>
                         : <div>Категория: {adD.category}</div>}
 
+<div className="colored-block">
+                        текст
+                    </div>
  */
