@@ -35,7 +35,7 @@ export const publicRoutes = [
         Component: Shop
     },
     {
-        path: AD_PAGE + '/id',
+        path: AD_PAGE + '/:id',
         Component: Ad
     },
     {

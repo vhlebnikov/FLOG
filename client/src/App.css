@@ -6,3 +6,65 @@
     box-sizing: content-box;
     width: 100%;
 }
+
+thumbnailPersonal {
+    max-width: 200px;
+    max-height: 280px;
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    transform: translate(-50%, -50%)
+}
+
+
+.image-2Personal {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.image-2Personal div {
+    width: 200px;
+    height: 280px;
+    background-position: center;
+    position: absolute;
+    top: 50%;
+    left: 32.5%;
+    transform: translate(-50%, -50%)
+}
+
+.forPersonal2 {
+    margin-left: 5%;
+    margin-bottom: 3%;
+    background-position: center;
+    background-size: cover;
+    height: 30px;
+}
+
+.blockPersonal {
+    float: inside;
+}
+
+.personalInput {
+    width : 70%;
+    height: 30px;
+    outline: none;
+    padding-left: 15px;
+    border-radius: 10px;
+}
+
+.personalButton {
+    padding-left: 5%;
+}
+
+.personalMain {
+    height: 70%;
+    width: 100%;
+    margin-top: 40px;
+}
+
+.shit {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    text-align: center;
+}
