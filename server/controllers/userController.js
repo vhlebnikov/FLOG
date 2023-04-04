@@ -77,8 +77,8 @@ class UserController {
 
         await confirmation(user.email, user.id, `${process.env.API_URL}/api/user/activate/${activationLink}`)
 
-        const token = generateJwt(user.id, user.email, user.username, user.role)
-        return res.json({token})
+        // const token = generateJwt(user.id, user.email, user.username, user.role)
+        return res.json({message: "Пользователь успешно зарегистрирован"})
     }
 
     async activate(req, res, next) {
