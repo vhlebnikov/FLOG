@@ -1,9 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Card, Col, Container, Image, Row} from "react-bootstrap";
+import {Button, Card, Col, Container, Image, Nav, Row} from "react-bootstrap";
 import ImageUploader2 from "../dasha/ImageUploader.css";
 import ImageUploader from "../dasha/ImageUploader.js";
 import photo from "../dasha/photo.png"
-import {PROFILE_PAGE} from "../utils/consts";
+import {AUTH_PAGE, CREATE_AD_PAGE, PROFILE_PAGE} from "../utils/consts";
 import {useLocation, useNavigate} from "react-router-dom";
 import {Context} from "../index";
 import {useParams} from 'react-router-dom';
@@ -32,8 +32,24 @@ const Ad = () => {
     }, []);
 
 
+    const [nameLoc, setName] = useState('')
+    const [titleLoc, setTitle] = useState('')
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [isEditing, setEditing] = useState(false)
     const navigate = useNavigate();
     const {user} = useContext(Context);
+    const handleEditing = () => {
+        setEditing(true)
+    }
+
+    const handleSave = () => {
+        setEditing(false)
+        user.setUser({
+            name: nameLoc,
+            title: titleLoc,
+            password : user.password
+        })
+    }
 
     const description = [
         {id:1, title: 'Характеристика 1', description: 'шерсть мягкая'},
@@ -46,7 +62,9 @@ const Ad = () => {
         <Container>
             <Row>
                 <Col md={4}>
-                    <div><Image className='image-2' width={280 } height={200} src={ad.image}/></div>
+                    {isEditing
+                        ? (<ImageUploader/>)
+                        : <div><Image className='image-2' width={280 } height={200} src={ad.image}/></div>}
                 </Col>
                 <Col md={4}>
                     <Row className="d-flex flex-column align-items-center">
@@ -54,29 +72,61 @@ const Ad = () => {
                         <br/>
                         <div className="forPersonal">
                             <h2>Название: </h2>
-                            <h2><div>{ad.name}</div> </h2>
+                            {isEditing
+                                ? (<input className = "personalInput"
+                                          type="text"
+                                          value={ad.name}
+                                          onChange={(event) => setName(event.target.value)}/>)
+                                :
+                            <h2><div>{ad.name}</div> </h2>}
 
                         </div>
                         <div className="forPersonal">
                             <h4>Описание:</h4>
-                            <h4><div> {ad.description}</div></h4>
+                            {isEditing
+                                ? (<input className = "personalInput"
+                                          type="text"
+                                          value={ad.title}
+                                          onChange={(event) => setTitle(event.target.value)}/>)
+                                :
+                            <h4><div> {ad.description}</div></h4>}
                         </div>
                     </Row>
                 </Col>
                 <Col md={4}>
                     <br/>
                     <Button variant={"outline-dark"} onClick={() => navigate(PROFILE_PAGE)}>Продавец</Button>
+                    {user.isAuth ?
+                        <>
+                            <div >
+                                {isEditing ? (<button className="image-button2" onClick={handleSave}>
+                                        <div style={{ backgroundImage: `url(${component6})` }}></div>
+                                    </button>)
+                                    :
+                                    (<button className="image-button2" onClick={handleEditing}>
+                                        <div style={{ backgroundImage: `url(${component6})` }}></div>
+                                    </button>)}
+                            </div>
+                        </>
+                        :
+                        <div></div>
 
+                    }
                     <div >
 
                     </div>
                     <br/>
-                    <div>Категория: {ad.sub_sub_category_id}</div>
+                    {isEditing
+                        ? <CategoryDownFall/>
+                        : <div>Категория: {ad.sub_sub_category_id}</div>}
                     <div>Адрес: {ad.address}</div>
                     <div>Цена: {ad.price_id}</div>
                     <br/>
                     <br/>
 
+                    <br/>
+                    <br/>
+                    <br/>
                     <br/>
                     <br/>
                     <br/>
