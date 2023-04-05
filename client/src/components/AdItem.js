@@ -20,7 +20,10 @@ const AdItem = ({ad}) => {
                 <Card.Body>
                     <Card.Title>{ad.name}</Card.Title>
                     <Card.Text>
-                        {price.start}
+
+                        <div>
+                        Цена: {price.start ? price.start : 'Нет'}
+                    </div>
                     </Card.Text>
                     <Card.Text>
                         {ad.description}
