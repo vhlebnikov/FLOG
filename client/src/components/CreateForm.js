@@ -2,10 +2,10 @@ import React, {useContext, useState} from 'react';
 import {Context} from "../index";
 import {Button, Col, Form, Row} from "react-bootstrap";
 import {observer} from "mobx-react-lite";
+import {createAd} from "../http/adAPI";
 
-const CreateForm = observer(({show, onHide}) => {
+const CreateForm = observer(() => {
     const {ad} = useContext(Context)
-    const {user} = useContext(Context)
     const [file, setFile] = useState(null)
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
@@ -18,17 +18,15 @@ const CreateForm = observer(({show, onHide}) => {
 
 
     const addAd = () => {
-        console.log(price)
         const formData = new FormData()
-        formData.append('id', Date.now())
-        formData.append('img', file)
+        formData.append('image', file)
         formData.append('name', name)
         formData.append('description', description)
         formData.append('address', address)
-        formData.append('user_id', user.id)
-        formData.append('price_id', price)
-        formData.append('sub_sub_category_id', 15)
+        formData.append('price', `{"type":1,"start":${price}}`)
+        formData.append('subSubCategoryId', 13)
         ad.setAds(formData)
+        createAd(formData)
     }
 
     return (
@@ -61,10 +59,9 @@ const CreateForm = observer(({show, onHide}) => {
                 placeholder="description"
             />
             <Form.Control
-                value={file}
                 className="mt-3"
                 type="file"
-                onChange={e => setFile(e.target.value)}
+                onChange={selectFile}
             />
 
             <Button className="mt-3" variant="outline-success" onClick={addAd}>Добавить</Button>

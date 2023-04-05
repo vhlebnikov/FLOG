@@ -117,6 +117,15 @@ class AdController {
         return res.json(ads)
     }
 
+    async getPrice(req, res) {
+        const {id} = req.params
+        const price = await Price.findOne({
+            where: {id}
+        })
+
+        return res.json(price)
+    }
+
     async getOne(req, res) {
         const {id} = req.params
         const ad = await Ad.findOne({

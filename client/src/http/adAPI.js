@@ -5,6 +5,11 @@ export const getAllAds = async (categoryId, subCategoryId, subSubCategoryId, lim
     return data
 }
 
+export const getPrice = async (id) => {
+    const {data} = await $host.get('api/ad/price/' + id)
+    return data
+}
+
 export const getOneAd = async (id) => {
     const {data} = await $host.get('api/ad/' + id)
     return data
@@ -17,6 +22,7 @@ export const getAdsForUser = async (id) => {
 
 export const createAd = async (device) => {
     const {data} = await $authHost.post('api/ad', device)
+    return data
 }
 
 export const updateAd = async (id, device) => {

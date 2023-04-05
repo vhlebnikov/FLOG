@@ -1,12 +1,18 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {Button, Col, Container, Row} from "react-bootstrap";
 import TypeBar from "../components/TypeBar";
 import AdsList from "../components/AdsList";
 import {Context} from "../index";
 import ShopNavBar from "../components/ShopNavBar";
 import ShopCanvas from "../components/ShopCanvas";
+import {getAllAds} from "../http/adAPI";
 
 const Shop = () => {
+    const {ad} = useContext(Context)
+
+    useEffect(() => {
+        getAllAds(null, null, null, 10, 1).then(data => ad.setAds(data.rows))
+    })
     return (
         <Container>
             <ShopNavBar/>
