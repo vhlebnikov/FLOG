@@ -8,10 +8,10 @@ const AdItem = ({ad}) => {
     const navigate = useNavigate()
 
     const [price, setPrice] = useState(0)
-    // так плохо, постоянно идут запросы на получение данных
+
     useEffect(() => {
         getPrice(ad.priceId).then(data => setPrice(data))
-    })
+    }, [])
 
     return (
         <Col md={3} className={"mt-3"} onClick={() => navigate(AD_PAGE + '/' + ad.id)}>
@@ -20,8 +20,7 @@ const AdItem = ({ad}) => {
                 <Card.Body>
                     <Card.Title>{ad.name}</Card.Title>
                     <Card.Text>
-
-                        <div>
+                    <div>
                         Цена: {price.start ? price.start : 'Нет'}
                     </div>
                     </Card.Text>

@@ -13,16 +13,11 @@ const CreateForm = observer(() => {
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
     const [address, setAddress] = useState('')
-    const [prices, setPrices] = useState([{type:'start', price: null}, {type:'end', price: null}])
     const [info, setInfo] = useState([])
-    const [priceType, setPriceType] = useState(0)
+    const [price, setPrice] = useState({type: 0, start: 0, end: 0})
 
     const selectFile = e => {
         setFile(e.target.files[0])
-    }
-
-    const changePrice = (type, value) => {
-        setPrices(prices.map(i => i.type = type ? {...i, price: value} : i))
     }
 
     const addInfo = () => {
@@ -35,17 +30,22 @@ const CreateForm = observer(() => {
         setInfo(info.map(i => i.number === number ? {...i, [key]: value} : i))
     }
 
+    const changePrice = (key, value) => {
+        setPrice({...price, [key]: value})
+    }
+
     const addAd = () => {
-        const formData = new FormData()
-        formData.append('image', file)
-        formData.append('name', name)
-        formData.append('description', description)
-        formData.append('address', address)
-        formData.append('price', `{"type":${priceType}, "start":${prices[0].price}, "end":${prices[1].price}}`)
-        formData.append('subSubCategoryId', 13)
-        formData.append('info', JSON.stringify(info))
-        ad.setAds(formData)
-        createAd(formData)
+        console.log(price)
+        // const formData = new FormData()
+        // formData.append('image', file)
+        // formData.append('name', name)
+        // formData.append('description', description)
+        // formData.append('address', address)
+        // formData.append('price', JSON.stringify(price))
+        // formData.append('subSubCategoryId', 13)
+        // formData.append('info', JSON.stringify(info))
+        // ad.setAds(formData)
+        // createAd(formData)
     }
 
     return (
@@ -54,28 +54,28 @@ const CreateForm = observer(() => {
             <Dropdown className="mt-3">
                 <Dropdown.Toggle className="expensive-button" variant="success" >{"Выберите тип цены"}</Dropdown.Toggle>
                 <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => setPriceType(0)}>{"Без цены"}</Dropdown.Item>
-                    <Dropdown.Item onClick={() => setPriceType(1)}>{"Определенная цена"}</Dropdown.Item>
-                    <Dropdown.Item onClick={() => setPriceType(2)}>{"Интервал"}</Dropdown.Item>
+                    <Dropdown.Item onClick={() => changePrice('type', 0)}>{"Без цены"}</Dropdown.Item>
+                    <Dropdown.Item onClick={() => changePrice('type', 1)}>{"Определенная цена"}</Dropdown.Item>
+                    <Dropdown.Item onClick={() => changePrice('type', 2)}>{"Интервал"}</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>
-            {priceType === 0 ?
+            {price.type === 0 ?
                 null
                 :
                 <Row>
                     <Col md={4}>
                         <Form.Control
-                            value={prices[0].price}
+                            value={price.start}
                             type="number"
                             onChange={(e) => changePrice('start', Number(e.target.value))}
                             className="mt-3"
                             placeholder="цена"
                         />
                     </Col>
-                    {priceType === 2 ?
+                    {price.type === 2 ?
                         <Col md={4}>
                             <Form.Control
-                                value={prices[1].price}
+                                value={price.end}
                                 type="number"
                                 onChange={(e) => changePrice('end', Number(e.target.value))}
                                 className="mt-3"

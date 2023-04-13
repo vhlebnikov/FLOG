@@ -27,7 +27,10 @@ class CategoryController {
         })
 
         const {subCategory} = req.body
-        try {
+
+        if (!category) {
+            return next(ApiError.badRequest('Категория с таким id не найдена'))
+        } else {
             if (subCategory) {
                 for (const c of subCategory) {
                     await SubCategory.create({
@@ -36,11 +39,9 @@ class CategoryController {
                     })
                 }
             }
-
-            return res.json(subCategory)
-        } catch (e) {
-            return next(ApiError.badRequest('Такие подкатегории уже есть'))
         }
+
+        return res.json(subCategory)
     }
 
     async addSubSubCategory(req, res, next) {
@@ -51,8 +52,9 @@ class CategoryController {
         })
 
         const {subSubCategory} = req.body
-
-        try {
+        if (!subCategory) {
+            return next(ApiError.badRequest('Подкатегория с таким id не найдена'))
+        } else {
             if (subSubCategory) {
                 for (const c of subSubCategory) {
                     await SubSubCategory.create({
@@ -61,11 +63,9 @@ class CategoryController {
                     })
                 }
             }
-
-            return res.json(subSubCategory)
-        } catch (e) {
-            return next(ApiError.badRequest('Такие подподкатегории уже есть'))
         }
+
+        return res.json(subSubCategory)
     }
 
     async deleteCategory(req, res) {
@@ -141,6 +141,10 @@ class CategoryController {
             where: {id: id}
         })
 
+        if (!name) {
+            return next(ApiError.badRequest('Не передано поле name'))
+        }
+
         if (category) {
             try {
                 category.name = name
@@ -153,7 +157,7 @@ class CategoryController {
         return res.json(category)
     }
 
-    async updateSubCategory(req, res, next) {
+    async updateSubCategory(req, res) {
         const {id} = req.params
         const {name} = req.body
 
@@ -161,19 +165,19 @@ class CategoryController {
             where: {id: id}
         })
 
+        if (!name) {
+            return next(ApiError.badRequest('Не передано поле name'))
+        }
+
         if (subCategory) {
-            try {
-                subCategory.name = name
-                await subCategory.save()
-            } catch (e) {
-                return next(ApiError.badRequest('Такое имя уже занято'))
-            }
+            subCategory.name = name
+            await subCategory.save()
         }
 
         return res.json(subCategory)
     }
 
-    async updateSubSubCategory(req, res, next) {
+    async updateSubSubCategory(req, res) {
         const {id} = req.params
         const {name} = req.body
 
@@ -181,13 +185,13 @@ class CategoryController {
             where: {id: id}
         })
 
+        if (!name) {
+            return next(ApiError.badRequest('Не передано поле name'))
+        }
+
         if (subSubCategory) {
-            try {
-                subSubCategory.name = name
-                await subSubCategory.save()
-            } catch (e) {
-                return next(ApiError.badRequest('Такое имя уже занято'))
-            }
+            subSubCategory.name = name
+            await subSubCategory.save()
         }
 
         return res.json(subSubCategory)
@@ -209,7 +213,7 @@ class CategoryController {
         })
 
         if (!subCategory) {
-            return next(ApiError.badRequest('Нет подкатегории с таким id'))
+            return next(ApiError.badRequest('Нет подкатегории для подподкатегории с таким id'))
         }
 
         const category = await Category.findOne({
@@ -217,7 +221,7 @@ class CategoryController {
         })
 
         if (!category) {
-            return next(ApiError.badRequest('Нет категории с таким id'))
+            return next(ApiError.badRequest('Нет категории для подкатегории с таким id'))
         }
 
         const route = {category, subCategory, subSubCategory}

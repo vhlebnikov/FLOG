@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken')
 const {User, Contact} = require('../models/models')
 const nodemailer = require("nodemailer");
 const uuid = require('uuid');
+const path = require("path");
+const fs = require("fs");
 
 const generateJwt = (id, email, username, role) => {
     return jwt.sign(
@@ -86,7 +88,7 @@ class UserController {
             const activationLink = req.params.link
             const user = await User.findOne({where: {activationLink}})
             if (!user) {
-                return  next(ApiError.badRequest('Неккоректная ссылка активации'))
+                return next(ApiError.badRequest('Неккоректная ссылка активации'))
             }
             user.confirmed = true
             await user.save()
@@ -118,12 +120,58 @@ class UserController {
         return res.json({token})
     }
 
-    async getUser(req, res) {
+    async getUser(req, res, next) {
         const {id} = req.params
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должно быть числом'))
+        }
         const user = await User.findOne({
             where: {id},
-            include: [{model: Contact, as: 'contact'}]
+            // include: [{model: Contact, as: 'contact'}] // возможно не возвращать
         })
+        return res.json(user)
+    }
+
+    async setRole(req, res) {
+        const {id} = req.params
+        const {role} = req.body
+        const user = await User.findOne({
+            where: {id}
+        })
+
+        if (user) {
+            user.role = role
+            await user.save()
+        }
+
+        return res.json(user)
+    }
+
+    async updateData(req, res) {
+        const {username} = req.body
+        const {image} = req.files
+
+        const token = req.headers.authorization.split(' ')[1]
+        const userAuth = jwt.verify(token, process.env.SECRET_KEY)
+
+        const user = await User.findOne({where: userAuth.id})
+
+        if (user.image) {
+            fs.unlinkSync(path.resolve(__dirname, "..", "static", user.image))
+        }
+
+        if (image) {
+            let fileName = uuid.v4() + ".jpg"
+            await image.mv(path.resolve(__dirname, "..", "static", fileName))
+            user.image = fileName
+            await user.save()
+        }
+
+        if (username) {
+            user.username = username
+            await user.save()
+        }
+
         return res.json(user)
     }
 
@@ -193,6 +241,37 @@ class UserController {
         }
 
         return res.json(contacts)
+    }
+
+    async checkPassword(req, res) {
+        const {password} = req.body
+
+        const token = req.headers.authorization.split(' ')[1]
+        const userAuth = jwt.verify(token, process.env.SECRET_KEY)
+
+        const user = await User.findOne({where: userAuth.id})
+        let comparePassword = null
+        if (user && password) {
+            comparePassword = bcrypt.compareSync(password, user.password)
+        }
+
+        return res.json(comparePassword)
+    }
+
+    async updatePassword(req, res) {
+        const {password} = req.body
+
+        const token = req.headers.authorization.split(' ')[1]
+        const userAuth = jwt.verify(token, process.env.SECRET_KEY)
+
+        const user = await User.findOne({where: userAuth.id})
+
+        if (user && password) {
+            user.password = await bcrypt.hash(password, 5)
+            await user.save()
+        }
+
+        return res.json(user)
     }
 }
 

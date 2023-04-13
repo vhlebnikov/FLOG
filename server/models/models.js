@@ -1,5 +1,5 @@
 const sequelize = require('../db')
-const {DataTypes, STRING} = require('sequelize')
+const {DataTypes} = require('sequelize')
 
 const User = sequelize.define('user', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
@@ -7,8 +7,9 @@ const User = sequelize.define('user', {
     username: {type: DataTypes.STRING},
     password: {type: DataTypes.STRING},
     confirmed: {type: DataTypes.BOOLEAN, defaultValue: false},
-    activationLink: {type: STRING},
+    activationLink: {type: DataTypes.STRING},
     role: {type: DataTypes.STRING, defaultValue: "USER"},
+    image: {type: DataTypes.STRING(1000)}
 })
 
 const Contact = sequelize.define('contact', {
@@ -37,21 +38,40 @@ const Category = sequelize.define('category', {
 
 const SubCategory = sequelize.define('subCategory', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true},
+    name: {type: DataTypes.STRING},
 })
 
 const SubSubCategory = sequelize.define('subSubCategory', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true},
+    name: {type: DataTypes.STRING},
 })
 
 const Ad = sequelize.define('ad', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    image: {type: DataTypes.STRING(1000), allowNull: false},
     name: {type: DataTypes.STRING, allowNull: false},
     description: {type: DataTypes.STRING},
     address: {type: DataTypes.STRING},
+    status: {type: DataTypes.INTEGER, allowNull: false}
 })
+
+const Image = sequelize.define('image', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    image: {type: DataTypes.STRING(1000), allowNull: false}
+})
+
+const Comment = sequelize.define('comment', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    text: {type: DataTypes.TEXT}
+})
+
+Ad.hasMany(Comment)
+Comment.belongsTo(Ad)
+
+User.hasMany(Comment)
+Comment.belongsTo(User)
+
+Ad.hasMany(Image, {as: 'image'})
+Image.belongsTo(Ad)
 
 User.hasMany(Ad)
 Ad.belongsTo(User)
@@ -83,4 +103,6 @@ module.exports = {
     SubCategory,
     SubSubCategory,
     Ad,
+    Image,
+    Comment
 }
