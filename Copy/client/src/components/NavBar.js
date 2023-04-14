@@ -17,6 +17,7 @@ const NavBar = observer(() => {
         localStorage.removeItem('token')
         navigate(SHOP_PAGE)
     }
+
     const changeId = () => {
         getMyId().then(data => {
             setId(data)

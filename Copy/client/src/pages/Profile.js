@@ -14,10 +14,18 @@ const Profile = () => {
     const [numberLoc, setNumber] = useState('')
     const [addressLoc, setAddress] = useState('')
     const params = useParams();
-    const id = parseInt(params.id)
+    const pageId = parseInt(params.id)
+    const [id,setId] = useState(0)
 
     const handleEditing = () => {
         setEditing(true)
+    }
+
+    const changeId = () => {
+        getMyId().then(data => {
+            setId(data)
+        })
+        return id
     }
 
     const handleSave = () => {
@@ -75,7 +83,7 @@ const Profile = () => {
                                       onChange={(event) => setAddress(event.target.value)}/>)
                             : (<div>{user.address}</div>)}
                     </div>
-                    {isEditing ? id === getMyId() :
+                    {isEditing ? changeId() === pageId :
                         <label className="personalButton">
                             {isEditing ? (<Button variant="outline-success" onClick={handleSave}>Сохранить</Button>) : (
                                 <Button variant="outline-success" onClick={handleEditing}>Редактировать</Button>)}
