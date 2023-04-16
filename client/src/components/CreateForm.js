@@ -2,14 +2,15 @@ import React, {useContext, useState} from 'react';
 import {Context} from "../index";
 import {Button, Col, Dropdown, Form, Row} from "react-bootstrap";
 import {observer} from "mobx-react-lite";
-import {createAd} from "../http/adAPI";
+import {createAd} from "../http/adApi";
 import {useNavigate} from "react-router-dom";
 import {SHOP_PAGE} from "../utils/consts";
+import {login} from "../http/userApi";
 
 const CreateForm = observer(() => {
     const navigate = useNavigate()
     const {ad} = useContext(Context)
-    const [file, setFile] = useState(null)
+    const [file, setFile] = useState([])
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
     const [address, setAddress] = useState('')
@@ -17,7 +18,7 @@ const CreateForm = observer(() => {
     const [price, setPrice] = useState({type: 0, start: 0, end: 0})
 
     const selectFile = e => {
-        setFile(e.target.files[0])
+        setFile([...file, e.target.files[0]])
     }
 
     const addInfo = () => {
@@ -35,17 +36,18 @@ const CreateForm = observer(() => {
     }
 
     const addAd = () => {
-        console.log(price)
-        // const formData = new FormData()
-        // formData.append('image', file)
-        // formData.append('name', name)
-        // formData.append('description', description)
-        // formData.append('address', address)
-        // formData.append('price', JSON.stringify(price))
-        // formData.append('subSubCategoryId', 13)
-        // formData.append('info', JSON.stringify(info))
-        // ad.setAds(formData)
-        // createAd(formData)
+        const formData = new FormData()
+        formData.append('image', file)
+        formData.append('name', name)
+        formData.append('description', description)
+        formData.append('address', address)
+        formData.append('status', 1)
+        formData.append('subSubCategoryId', 13)
+        formData.append('price', JSON.stringify(price))
+        formData.append('info', JSON.stringify(info))
+        ad.setAds(formData)
+        createAd(formData)
+        navigate(SHOP_PAGE)
     }
 
     return (

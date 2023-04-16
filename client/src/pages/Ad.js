@@ -11,8 +11,8 @@ import AdStore from '../store/AdStore.js'
 
 import component6 from "../dasha/Component6.png";
 import CategoryDownFall from "../dasha/CategoryDownFall";
-import {getOneAd, getPrice} from "../http/adAPI";
-import {getInfo} from "../http/infoAPI"
+import {getOneAd, getPrice} from "../http/adApi";
+import {getInfo} from "../http/infoApi"
 
 
 const Ad = () => {

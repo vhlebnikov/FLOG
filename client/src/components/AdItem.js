@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Button, Card, Col} from "react-bootstrap";
 import {AD_PAGE} from "../utils/consts";
 import {useNavigate} from "react-router-dom";
-import {getPrice} from "../http/adAPI";
+import {getPrice} from "../http/adApi";
 
 const AdItem = ({ad}) => {
     const navigate = useNavigate()
@@ -20,9 +20,7 @@ const AdItem = ({ad}) => {
                 <Card.Body>
                     <Card.Title>{ad.name}</Card.Title>
                     <Card.Text>
-                    <div>
                         Цена: {price.start ? price.start : 'Нет'}
-                    </div>
                     </Card.Text>
                     <Card.Text>
                         {ad.description}

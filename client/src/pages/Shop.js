@@ -5,7 +5,7 @@ import AdsList from "../components/AdsList";
 import {Context} from "../index";
 import ShopNavBar from "../components/ShopNavBar";
 import ShopCanvas from "../components/ShopCanvas";
-import {getAllAds} from "../http/adAPI";
+import {getAllAds} from "../http/adApi";
 
 const Shop = () => {
     const {ad} = useContext(Context)

@@ -1,13 +1,13 @@
 import React, {useContext} from 'react';
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
-import {Container, ListGroup, Row} from "react-bootstrap";
+import {Row} from "react-bootstrap";
 import AdItem from "./AdItem";
 
 const AdsList = observer(() => {
     const {ad} = useContext(Context)
     return (
-        <Row fluid>
+        <Row fluid={+true}>
             {ad.ads.map(ad =>
                 <AdItem key = {ad.id} ad = {ad}/>
             )}

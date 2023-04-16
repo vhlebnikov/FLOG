@@ -7,6 +7,10 @@ class CommentController {
         const {id} = req.params
         const {text} = req.body
 
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
+
         const ad = await Ad.findOne({where: {id}})
         if (!ad) {
             return next(ApiError.badRequest('Нет объявления с таким id'))
@@ -20,8 +24,12 @@ class CommentController {
         return res.json(comment)
     }
 
-    async getAllComments(req, res) {
+    async getAllComments(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
 
         const comments = await Comment.findAndCountAll({where: {adId: id}})
 
@@ -30,6 +38,10 @@ class CommentController {
 
     async deleteComment(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
 
         const token = req.headers.authorization.split(' ')[1]
         const user = jwt.verify(token, process.env.SECRET_KEY)

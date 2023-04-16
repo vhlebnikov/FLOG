@@ -38,7 +38,8 @@ const confirmation = async (email, userId, link) => {
                     <div>
                         <h1>Для активации аккаунта перейдите по ссылке</h1>
                         <a href="${link}">${link}</a>
-                    </div>
+                    </div>  
+                    
             `
             })
         })
@@ -88,11 +89,14 @@ class UserController {
             const activationLink = req.params.link
             const user = await User.findOne({where: {activationLink}})
             if (!user) {
-                return next(ApiError.badRequest('Неккоректная ссылка активации'))
+                return next(ApiError.badRequest('Некорректная ссылка активации'))
             }
             user.confirmed = true
             await user.save()
-            return res.redirect(process.env.CLIENT_URL)
+
+            const token = generateJwt(user.id, user.email, user.username, user.role)
+
+            return res.redirect(process.env.CLIENT_URL + '/activation/' + token)
         } catch(e) {
             next(e)
         }
@@ -122,19 +126,27 @@ class UserController {
 
     async getUser(req, res, next) {
         const {id} = req.params
+
         if (isNaN(id)) {
-            return next(ApiError.badRequest('id должно быть числом'))
+            return next(ApiError.badRequest('id должен быть числом'))
         }
+
         const user = await User.findOne({
             where: {id},
             // include: [{model: Contact, as: 'contact'}] // возможно не возвращать
         })
+
         return res.json(user)
     }
 
-    async setRole(req, res) {
+    async setRole(req, res, next) {
         const {id} = req.params
         const {role} = req.body
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
+
         const user = await User.findOne({
             where: {id}
         })
@@ -142,6 +154,21 @@ class UserController {
         if (user) {
             user.role = role
             await user.save()
+        }
+
+        return res.json(user)
+    }
+
+    async getCurrentUserId(req, res, next) {
+        const token = req.headers.authorization.split(' ')[1]
+        const userAuth = jwt.verify(token, process.env.SECRET_KEY)
+
+        const user = await User.findOne({
+            where: {id: userAuth.id}
+        })
+
+        if (!user) {
+            return next(ApiError.badRequest('Пользователь не найден'))
         }
 
         return res.json(user)

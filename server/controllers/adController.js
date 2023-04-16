@@ -145,8 +145,13 @@ class AdController {
         return res.json(ads)
     }
 
-    async getPrice(req, res) {
+    async getPrice(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
+
         const price = await Price.findOne({
             where: {id}
         })
@@ -154,8 +159,13 @@ class AdController {
         return res.json(price)
     }
 
-    async getOne(req, res) {
+    async getOne(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
+
         const ad = await Ad.findOne({
                 where: {id},
                 include: [{model: Info, as: 'info'}, {model: Image, as: 'image'}],
@@ -165,8 +175,13 @@ class AdController {
         return res.json(ad)
     }
 
-    async getAds(req, res) {
+    async getAds(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
+
         const ads = await Ad.findAndCountAll({
             where: {userId: id},
             include: [{model: Image, as: 'image'}],
@@ -178,6 +193,10 @@ class AdController {
 
     async delete(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
 
         const ad = await Ad.findOne({
             where: {id},
@@ -222,6 +241,11 @@ class AdController {
             let {image} = req.files
 
             const {id} = req.params
+
+            if (isNaN(id)) {
+                return next(ApiError.badRequest('id должен быть числом'))
+            }
+
             const ad = await Ad.findOne({
                     where: {id: id}
                 },

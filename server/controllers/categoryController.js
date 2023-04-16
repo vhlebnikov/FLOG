@@ -22,6 +22,10 @@ class CategoryController {
     async addSubCategory(req, res, next) {
         const {id} = req.params
 
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
+
         const category = await Category.findOne({
             where: {id}
         })
@@ -47,6 +51,10 @@ class CategoryController {
     async addSubSubCategory(req, res, next) {
         const {id} = req.params
 
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
+
         const subCategory = await SubCategory.findOne({
             where: {id}
         })
@@ -68,8 +76,12 @@ class CategoryController {
         return res.json(subSubCategory)
     }
 
-    async deleteCategory(req, res) {
+    async deleteCategory(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
 
         const category = await Category.findOne({
             where: {id: id}
@@ -99,8 +111,12 @@ class CategoryController {
         return res.json(category)
     }
 
-    async deleteSubCategory(req, res) {
+    async deleteSubCategory(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
 
         const subCategory = await SubCategory.findOne({
             where: {id: id}
@@ -119,8 +135,12 @@ class CategoryController {
         return res.json(subCategory)
     }
 
-    async deleteSubSubCategory(req, res) {
+    async deleteSubSubCategory(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
 
         const subSubCategory = await SubSubCategory.findOne({
             where: {id: id}
@@ -136,6 +156,10 @@ class CategoryController {
     async updateCategory(req, res, next) {
         const {id} = req.params
         const {name} = req.body
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
 
         const category = await Category.findOne({
             where: {id: id}
@@ -157,9 +181,13 @@ class CategoryController {
         return res.json(category)
     }
 
-    async updateSubCategory(req, res) {
+    async updateSubCategory(req, res, next) {
         const {id} = req.params
         const {name} = req.body
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
 
         const subCategory = await SubCategory.findOne({
             where: {id: id}
@@ -177,9 +205,13 @@ class CategoryController {
         return res.json(subCategory)
     }
 
-    async updateSubSubCategory(req, res) {
+    async updateSubSubCategory(req, res, next) {
         const {id} = req.params
         const {name} = req.body
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
 
         const subSubCategory = await SubSubCategory.findOne({
             where: {id: id}
@@ -199,6 +231,10 @@ class CategoryController {
 
     async getCategoryRoute(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
 
         const subSubCategory = await SubSubCategory.findOne({
             where: {id: id}
@@ -236,8 +272,13 @@ class CategoryController {
 
     }
 
-    async getSubCategory(req, res) {
+    async getSubCategory(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
+
         const subCategory = await SubCategory.findAll({
             where: {categoryId: id}
         })
@@ -245,8 +286,13 @@ class CategoryController {
         return res.json(subCategory)
     }
 
-    async getSubSubCategory(req, res) {
+    async getSubSubCategory(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
+
         const subSubCategory = await SubSubCategory.findAll({
             where: {subCategoryId: id}
         })

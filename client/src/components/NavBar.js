@@ -7,8 +7,8 @@ import {AUTH_PAGE, CREATE_AD_PAGE, PROFILE_PAGE, SHOP_PAGE} from "../utils/const
 import {Context} from "../index";
 
 const NavBar = observer(() => {
-    const navigate = useNavigate()
     const {user} = useContext(Context)
+    const navigate = useNavigate()
     const logOut = () => {
         user.setUser({})
         user.setIsAuth(false)
