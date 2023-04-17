@@ -5,6 +5,14 @@ const ApiError = require('../error/ApiError')
 const jwt = require("jsonwebtoken");
 const fs = require('fs')
 
+function isIterable(obj) {
+    // checks for null and undefined
+    if (obj == null) {
+        return false;
+    }
+    return typeof obj[Symbol.iterator] === 'function';
+}
+
 class AdController {
     async create(req, res, next) {
         try {
@@ -41,9 +49,18 @@ class AdController {
 
             const ad = await Ad.create({name, description, address, userId, priceId, status, subSubCategoryId})
 
-            for (const i of image) {
+            if (isIterable(image)) {
+                for (const i of image) {
+                    let fileName = uuid.v4() + ".jpg"
+                    await i.mv(path.resolve(__dirname, "..", "static", fileName))
+                    await Image.create({
+                        image: fileName,
+                        adId: ad.id
+                    });
+                }
+            } else {
                 let fileName = uuid.v4() + ".jpg"
-                await i.mv(path.resolve(__dirname, "..", "static", fileName))
+                await image.mv(path.resolve(__dirname, "..", "static", fileName))
                 await Image.create({
                     image: fileName,
                     adId: ad.id
@@ -290,29 +307,40 @@ class AdController {
             }
 
             await ad.save()
+            if (image) {
+                const oldImage = await Image.findAll({where: {adId: ad.id}})
+                if (oldImage) {
+                    oldImage.forEach(i => {
+                        fs.unlinkSync(path.resolve(__dirname, "..", "static", i.image))
+                        i.destroy()
+                    })
+                }
 
-            const oldImage = await Image.findAll({where: {adId: ad.id}})
-            if (oldImage) {
-                oldImage.forEach(i => {
-                    fs.unlinkSync(path.resolve(__dirname, "..", "static", i.image))
-                    i.destroy()
-                })
+                if (isIterable(image)) {
+                    for (const i of image) {
+                        let fileName = uuid.v4() + ".jpg"
+                        await i.mv(path.resolve(__dirname, "..", "static", fileName))
+                        await Image.create({
+                            image: fileName,
+                            adId: ad.id
+                        });
+                    }
+                } else {
+                    let fileName = uuid.v4() + ".jpg"
+                    await image.mv(path.resolve(__dirname, "..", "static", fileName))
+                    await Image.create({
+                        image: fileName,
+                        adId: ad.id
+                    });
+                }
             }
 
-            for (const i of image) {
-                let fileName = uuid.v4() + ".jpg"
-                await i.mv(path.resolve(__dirname, "..", "static", fileName))
-                await Image.create({
-                    image: fileName,
-                    adId: ad.id
-                });
-            }
-
-            const oldInfo = await Info.findAll({where: {adId: ad.id}})
-            if (oldInfo) {
-                oldInfo.forEach(i => i.destroy())
-            }
             if (info) {
+                const oldInfo = await Info.findAll({where: {adId: ad.id}})
+                if (oldInfo) {
+                    oldInfo.forEach(i => i.destroy())
+                }
+
                 info = JSON.parse(info)
                 for (const i of info) {
                     await Info.create({
@@ -322,6 +350,7 @@ class AdController {
                     });
                 }
             }
+
             return res.json(ad)
         } catch (e) {
             next(ApiError.badRequest(e.message))

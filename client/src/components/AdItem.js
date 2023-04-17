@@ -16,7 +16,9 @@ const AdItem = ({ad}) => {
     return (
         <Col md={3} className={"mt-3"} onClick={() => navigate(AD_PAGE + '/' + ad.id)}>
             <Card className="addItem" border={"light"}>
-                <Card.Img variant="top" src={process.env.REACT_APP_API_URL + ad.image} />
+                {ad.image.map(image =>
+                    <Card.Img key={image.id} variant="top" src={process.env.REACT_APP_API_URL + image.image} />
+                )}
                 <Card.Body>
                     <Card.Title>{ad.name}</Card.Title>
                     <Card.Text>
