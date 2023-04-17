@@ -5,8 +5,8 @@ export const addComment = async (id, text) => {
     return data
 }
 
-export const getAllComments = async () => {
-    const {data} = $host.get('api/comment')
+export const getAllComments = async (id) => {
+    const {data} = $host.get('api/comment/' + id)
     return data
 }
 
