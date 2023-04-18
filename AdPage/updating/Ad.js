@@ -34,15 +34,26 @@ const Ad = () => {
     const userId = getUser(id);
     //const price = getPrice(id);
     console.log(id)
-    const adStore = new AdStore();
 
 
     useEffect(() => {
         getOneAd(id).then(data => setAd(data))
         getInfo(id).then(data => setDescription(data))
-        getPrice(ad.priceId).then(data => setPrice(data))
         getAllComments().then(data => setComments(data))
     }, []);
+
+    useEffect(() => {
+        if (ad.priceId) {
+            getPrice(ad.priceId).then(data => setPrice(data));
+        }
+    }, [ad.priceId]);
+
+    console.log(comments)
+    console.log(description)
+    console.log(ad)
+
+
+
 
 
 
@@ -130,11 +141,11 @@ const Ad = () => {
                     {user.isAuth ?
                         <>
                             <div >
-                                {isEditing ? (<button className="image-button2" onClick={handleSave}>
+                                {isEditing ? (<button title="Выйти из сохранения" className="image-button2" onClick={handleSave}>
                                         <div style={{ backgroundImage: `url(${component6})` }}></div>
                                     </button>)
                                     :
-                                    (<button className="image-button2" onClick={handleEditing}>
+                                    (<button title="Редактировать объявление" className="image-button2" onClick={handleEditing}>
                                         <div style={{ backgroundImage: `url(${component6})` }}></div>
                                     </button>)}
                             </div>
@@ -151,10 +162,31 @@ const Ad = () => {
                         ? <CategoryDownFall/>
                         : <div>Категория: {ad.subSubCategoryId}</div>}
                     <div>Адрес: {ad.address}</div>
-                    <div>Цена: {price.start ? price.start : 'Нет'}</div>
-                    <div>Тип цены: {price.type}</div>
-                    {/*<div>Цена начальная: {price.start}</div>*/}
-                    {/*<div>Цена конечная: {price.end}</div>*/}
+
+                    {price ?
+                        (
+                            <div>
+                                {price.type === 0 && (
+                                    <div>
+                                        <div>Без цены</div>
+                                    </div>
+                                )}
+                                {price.type === 1 && (
+                                    <div>
+                                        <div>Цена: {price.start}</div>
+                                    </div>
+                                )}
+                                {price.type === 2 && (
+                                    <div>
+                                        <div>Цена: {price.start} - {price.end}</div>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <p>Загружаем цену...</p>
+                        )}
+
+
                     {ad.status === 1 && (
                         <div>
                             <div>Статус: Открыто</div>
@@ -164,6 +196,11 @@ const Ad = () => {
                         <div>
                             <div>Статус: Забронировано</div>
                         </div>
+                    )}
+                    {ad.status === 3 && (
+                    <div>
+                        <div>Статус: Закрыто</div>
+                    </div>
                     )}
                     <br/>
 
