@@ -34,7 +34,7 @@ const CreateForm = observer(() => {
         setPrice({...price, [key]: value})
     }
 
-    const addAd = () => {
+    const addAd = async () => {
         const formData = new FormData()
         for (const f of file) {
             formData.append('image', f)
@@ -47,8 +47,8 @@ const CreateForm = observer(() => {
         formData.append('price', JSON.stringify(price))
         formData.append('info', JSON.stringify(info))
         ad.setAds(formData)
-        createAd(formData)
-        navigate(SHOP_PAGE) // НОВЫЕ ОБЪЯВЛЕНИЯ ДОБАВЛЯТСЯ ПОСЛЕ ПЕРЕЗАГРУЗКИ СТАНИЦЫ
+        await Promise.resolve(createAd(formData))
+        navigate(SHOP_PAGE)
     }
 
     return (
