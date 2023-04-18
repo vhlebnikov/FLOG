@@ -48,7 +48,7 @@ const CreateForm = observer(() => {
         formData.append('info', JSON.stringify(info))
         ad.setAds(formData)
         createAd(formData)
-        navigate(SHOP_PAGE) // НОВЫЕ ОБЪЯВЛЕНИЯ ДОБАВЛЯЮЬСЯ ПОСЛЕ ПЕРЕЗАГРУЗКИ СТАНИЦЫ
+        navigate(SHOP_PAGE) // НОВЫЕ ОБЪЯВЛЕНИЯ ДОБАВЛЯТСЯ ПОСЛЕ ПЕРЕЗАГРУЗКИ СТАНИЦЫ
     }
 
     return (
