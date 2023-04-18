@@ -3,6 +3,7 @@ import {Button, Card, Col} from "react-bootstrap";
 import {AD_PAGE} from "../utils/consts";
 import {useNavigate} from "react-router-dom";
 import {getPrice} from "../http/adApi";
+import Carousel from "react-bootstrap/Carousel";
 
 const AdItem = ({ad}) => {
     const navigate = useNavigate()
@@ -14,12 +15,17 @@ const AdItem = ({ad}) => {
     }, [])
 
     return (
-        <Col md={3} className={"mt-3"} onClick={() => navigate(AD_PAGE + '/' + ad.id)}>
+        <Col md={3} className={"mt-3"}>
             <Card className="addItem" border={"light"}>
+                <Carousel slide={false} interval={null}>
                 {ad.image.map(image =>
-                    <Card.Img key={image.id} variant="top" src={process.env.REACT_APP_API_URL + image.image} />
+                        <Carousel.Item key={image.id}>
+                            <Card.Img key={image.id} variant="top" src={process.env.REACT_APP_API_URL + image.image} />
+                        </Carousel.Item>
+                    // <Card.Img key={image.id} variant="top" src={process.env.REACT_APP_API_URL + image.image} />
                 )}
-                <Card.Body>
+                </Carousel>
+                <Card.Body onClick={() => navigate(AD_PAGE + '/' + ad.id)}>
                     <Card.Title>{ad.name}</Card.Title>
                     <Card.Text>
                         Цена: {price.start ? price.start : 'Нет'}

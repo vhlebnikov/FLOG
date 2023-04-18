@@ -1,48 +1,66 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Card, Col, Container, Image, Nav, Row} from "react-bootstrap";
-import ImageUploader2 from "../dasha/ImageUploader.css";
+import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
 import ImageUploader from "../dasha/ImageUploader.js";
-import photo from "../dasha/photo.png"
-import {AUTH_PAGE, CREATE_AD_PAGE, PROFILE_PAGE} from "../utils/consts";
-import {useLocation, useNavigate} from "react-router-dom";
+import {AD_PAGE, PROFILE_PAGE, SHOP_PAGE} from "../utils/consts";
+import {useNavigate} from "react-router-dom";
 import {Context} from "../index";
 import {useParams} from 'react-router-dom';
-import AdStore from '../store/AdStore.js'
-
 import component6 from "../dasha/Component6.png";
 import CategoryDownFall from "../dasha/CategoryDownFall";
-import {getOneAd, getPrice} from "../http/adApi";
+import {deleteAd, getOneAd, getPrice, updateAd} from "../http/adApi";
 import {getInfo} from "../http/infoApi"
+import {getUser} from "../http/userApi";
+import {getAllComments} from "../http/commentApi";
+import Carousel from 'react-bootstrap/Carousel';
 
 
 const Ad = () => {
-    //const ad = {id: 1, name: "First and Cool", price: 1000, category: 'mhe', img: photo}
-    const [ad, setAd] = useState({info: []});
-    const [description, setDescription] = useState([]);
-    const params = useParams();
-    console.log(params);
-    const num = parseInt(params.id);
-    console.log(num)
-    //const id = 3;
-    const adStore = new AdStore();
-    /*useEffect(() => {
-        fetchOneAd(id).then(data => setAd(data))
-    }, []) */
+    const navigate = useNavigate()
+    const {user} = useContext(Context)
+    const {ads} = useContext(Context)
 
-    useEffect(() => {
-        getOneAd(num).then(data => setAd(data))
-        getInfo(num).then(data => setDescription(data))
-        // const ad = adStore.getAdById(num);
-        // setAd(ad);
-    }, []);
+    const [ad, setAd] = useState({info: []})
+    const [description, setDescription] = useState([])
+    const [price, setPrice] = useState(0)
+    const [images, setImages] = useState([])
 
+    const [showComments, setShowComments] = useState(false)
+    const [comments, setComments] = useState([])
+    const [newComment, setNewComment] = useState("")
 
     const [nameLoc, setName] = useState('')
     const [titleLoc, setTitle] = useState('')
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('')
     const [isEditing, setEditing] = useState(false)
-    const navigate = useNavigate();
-    const {user} = useContext(Context);
+    const [newName, setNewName] = useState('')
+
+    const params = useParams()
+    const id = parseInt(params.id)
+    const userId = getUser(id)
+    //const price = getPrice(id);
+
+    const fetchData = async () => {
+        await Promise.resolve(getOneAd(id)).then(data => setAd(data))
+        await Promise.resolve(getInfo(id)).then(data => setDescription(data))
+        await Promise.resolve(getAllComments(id)).then(data => setComments(data))
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, []);
+
+    useEffect(() => {
+        if (ad.priceId) {
+            getPrice(ad.priceId).then(data => setPrice(data))
+        }
+    }, [ad.priceId])
+
+    useEffect(() => {
+        if (ad.image) {
+            setImages(ad.image)
+        }
+    }, [ad.image])
+
     const handleEditing = () => {
         setEditing(true)
     }
@@ -56,6 +74,18 @@ const Ad = () => {
         })
     }
 
+    const handleDelete = async () => {
+        await Promise.resolve(deleteAd(ad.id)).then(navigate(SHOP_PAGE)) // тут оно не успевает удаляться и отображается на главной странице
+    }
+
+    const addAd = async () => {
+        const formData = new FormData()
+        formData.append('name', newName)
+
+        ad.setAds(formData)
+        await Promise.resolve(updateAd(ad.id, formData))
+    }
+
     return (
 
         <Container>
@@ -63,7 +93,24 @@ const Ad = () => {
                 <Col md={4}>
                     {isEditing
                         ? (<ImageUploader/>)
-                        : <div><Image className='image-2' width={280 } height={200} src={process.env.REACT_APP_API_URL + ad.image}/></div>}
+                        :
+                        (images.length !== 0
+                            ? (<Carousel slide={false} interval={null}>
+                                    {images.map(i => (
+                                        <Carousel.Item key={i.id}>
+                                            <img
+                                                className='image-2'
+                                                width={400}
+                                                height={300}
+                                                src={process.env.REACT_APP_API_URL + i.image}
+                                            />
+                                        </Carousel.Item>
+                                    ))}
+                                </Carousel>)
+                            : <div>Загрузка картинок</div>
+                        )
+                        // <div><Image className='image-2' width={280 } height={200} src={process.env.REACT_APP_API_URL + ad.image}/></div>
+                    }
                 </Col>
                 <Col md={4}>
                     <Row className="d-flex flex-column align-items-center">
@@ -73,25 +120,24 @@ const Ad = () => {
                         <div className="forPersonal">
                             <h2>Название: </h2>
                             {isEditing
-                                ? (<input className = "personalInput"
-                                          type="text"
-                                          value={ad.name}
-                                          onChange={(event) => setName(event.target.value)}/>)
+                                ?
+                                (<Form.Control value={newName} onChange={e => setNewName(e.target.value)} className="mt-3" placeholder="name"/>)
+
                                 :
-                            <h2><div>{ad.name}</div> </h2>}
+                                <h2><div>{ad.name}</div> </h2>}
 
                         </div>
                         <div className="forPersonal">
                             <br/>
 
-                                <h4>Описание: </h4>
-                                {isEditing
-                                    ? (<input className = "personalInput"
-                                              type="text"
-                                              value={ad.title}
-                                              onChange={(event) => setTitle(event.target.value)}/>)
-                                    :
-                                    <h4><div> {ad.description}</div></h4>}
+                            <h4>Описание: </h4>
+                            {isEditing
+                                ? (<input className = "personalInput"
+                                          type="text"
+                                          value={ad.title}
+                                          onChange={(event) => setTitle(event.target.value)}/>)
+                                :
+                                <h4><div> {ad.description}</div></h4>}
 
                         </div>
                     </Row>
@@ -102,11 +148,11 @@ const Ad = () => {
                     {user.isAuth ?
                         <>
                             <div >
-                                {isEditing ? (<button className="image-button2" onClick={handleSave}>
+                                {isEditing ? (<button title="Выйти из сохранения" className="image-button2" onClick={handleSave}>
                                         <div style={{ backgroundImage: `url(${component6})` }}></div>
                                     </button>)
                                     :
-                                    (<button className="image-button2" onClick={handleEditing}>
+                                    (<button title="Редактировать объявление" className="image-button2" onClick={handleEditing}>
                                         <div style={{ backgroundImage: `url(${component6})` }}></div>
                                     </button>)}
                             </div>
@@ -123,14 +169,54 @@ const Ad = () => {
                         ? <CategoryDownFall/>
                         : <div>Категория: {ad.subSubCategoryId}</div>}
                     <div>Адрес: {ad.address}</div>
-                    <div>Цена: {ad.priceId}</div>
-                    {/*<div>Тип цены: {price.type}</div>*/}
-                    {/*<div>Цена начальная: {price.start}</div>*/}
-                    {/*<div>Цена конечная: {price.end}</div>*/}
+
+                    {price ?
+                        (
+                            <div>
+                                {price.type === 0 && (
+                                    <div>
+                                        <div>Без цены</div>
+                                    </div>
+                                )}
+                                {price.type === 1 && (
+                                    <div>
+                                        <div>Цена: {price.start}</div>
+                                    </div>
+                                )}
+                                {price.type === 2 && (
+                                    <div>
+                                        <div>Цена: {price.start} - {price.end}</div>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <p>Загружаем цену...</p>
+                        )}
+
+
+                    {ad.status === 1 && (
+                        <div>
+                            <div>Статус: Открыто</div>
+                        </div>
+                    )}
+                    {ad.status === 2 && (
+                        <div>
+                            <div>Статус: Забронировано</div>
+                        </div>
+                    )}
+                    {ad.status === 3 && (
+                        <div>
+                            <div>Статус: Закрыто</div>
+                        </div>
+                    )}
                     <br/>
-                    <br/>
-                    <br/>
-                    <br/>
+
+                    <Button variant={"outline-dark"} onClick={handleDelete}>Удалить объявление</Button>
+                    {isEditing
+                        ? <Button variant={"outline-dark"} onClick={addAd}>Сохранить изменения</Button>
+                        : null
+                    }
+
                     <br/>
                     <br/>
                     <br/>
@@ -150,6 +236,26 @@ const Ad = () => {
                 )}
 
             </Row>
+            <Row className="d-flex flex-column m-3">
+
+
+                <h1>Комментарии</h1>
+                {showComments
+                    ?
+                    <div>
+                        <ul>
+                            {comments.map((comment) => (
+                                <li key={comment.id}>
+                                    <strong>{comment.userId}:</strong> {comment.text}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    : <div><Button variant={"outline-dark"} onClick={() => setShowComments(true)}>Отобразить комментарии</Button>
+                    </div>}
+
+            </Row>
 
         </Container>
     );
@@ -157,33 +263,3 @@ const Ad = () => {
 };
 
 export default Ad;
-
-/*
-<div className="forPersonal">
-                            <h2>Название: </h2>
-                            {isEditing
-                                ? (<input className = "personalInput"
-                                          type="text"
-                                          value={ad.name}
-                                          onChange={(event) => setName(event.target.value)}/>)
-                                : (<div>{ad.name}</div>)}
-
-                        </div>
-
-                    //
-                    Описание:
-                            {isEditing
-                                ? (<input className = "personalInput"
-                                          type="text"
-                                          value={ad.title}
-                                          onChange={(event) => setTitle(event.target.value)}/>)
-                                : (<div>{ad.title}</div>)}
-
- {isEditing
-                        ? <CategoryDownFall/>
-                        : <div>Категория: {adD.category}</div>}
-
-<div className="colored-block">
-                        текст
-                    </div>
- */
