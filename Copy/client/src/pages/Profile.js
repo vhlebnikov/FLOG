@@ -3,22 +3,26 @@ import {Context} from "../index";
 import {Button, Col, Container, Row} from 'react-bootstrap';
 import ImageUploader from "../dasha/ImageUploader";
 import {useParams} from "react-router-dom";
-import {getMyId} from "../http/userApi";
+import {getMyId, getUser} from "../http/userApi";
 
 
 const Profile = () => {
-    const {user} = useContext(Context)
     const [isEditing, setEditing] = useState(false)
     const [nameLoc, setName] = useState('')
-    const [emailLoc, setEmail] = useState('')
-    const [numberLoc, setNumber] = useState('')
-    const [addressLoc, setAddress] = useState('')
     const params = useParams();
     const pageId = parseInt(params.id)
-    const [id,setId] = useState(0)
+    const [id,setId] = useState(1)
+    const [user,setU] = useState(useContext(Context))
 
     const handleEditing = () => {
         setEditing(true)
+    }
+
+    const getU = (uId) => {
+        getUser(pageId).then(data => {
+            setU(data)
+        })
+        return user
     }
 
     const changeId = () => {
@@ -31,11 +35,15 @@ const Profile = () => {
     const handleSave = () => {
         setEditing(false)
         user.setUser({
-            name: nameLoc,
-            email: emailLoc,
-            number: numberLoc,
-            address: addressLoc,
-            password : user.password
+            username: nameLoc,
+            id : user.id,
+            email: user.email,
+            password: user.password,
+            confirmed: user.confirmed,
+            activationLink: user.activationLink,
+            role : user.role,
+            createdAt : user.createdAt,
+            updatedAt : user.updatedAt
         })
     }
 
@@ -52,42 +60,16 @@ const Profile = () => {
                         {isEditing
                             ? (<input className = "personalInput"
                                       type="text"
-                                      value={user.name}
+                                      value={getU(pageId).username}
                                       onChange={(event) => setName(event.target.value)}/>)
-                            : (<div>{user.name}</div>)}
+                            : (<div>{getU(pageId).username}</div>)}
                     </div>
-                    <div className="forPersonal2">
-                        Email:
-                        {isEditing
-                            ? (<input className = "personalInput"
-                                      type="text"
-                                      value={user.email}
-                                      onChange={(event) => setEmail(event.target.value)}/>)
-                            : (<div>{user.email}</div>)}
-                    </div>
-                    <div className="forPersonal2">
-                        Телефон:
-                        {isEditing
-                            ? (<input className = "personalInput"
-                                      type="text"
-                                      value={user.number}
-                                      onChange={(event) => setNumber(event.target.value)}/>)
-                            : (<div>{user.number}</div>)}
-                    </div>
-                    <div className="forPersonal2">
-                        Адрес:
-                        {isEditing
-                            ? (<input className = "personalInput"
-                                      type="text"
-                                      value={user.address}
-                                      onChange={(event) => setAddress(event.target.value)}/>)
-                            : (<div>{user.address}</div>)}
-                    </div>
-                    {isEditing ? changeId() === pageId :
+                    {changeId() === pageId ?
                         <label className="personalButton">
                             {isEditing ? (<Button variant="outline-success" onClick={handleSave}>Сохранить</Button>) : (
                                 <Button variant="outline-success" onClick={handleEditing}>Редактировать</Button>)}
                         </label>
+                        : <></>
                     }
                 </Col>
 

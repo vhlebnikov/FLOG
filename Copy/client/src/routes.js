@@ -19,7 +19,7 @@ export const authRoutes = [
         Component: CreateAd
     },
     {
-        path: PROFILE_PAGE + '/:id',
+        path: PROFILE_PAGE + "/:id",
         Component: Profile
     },
     {

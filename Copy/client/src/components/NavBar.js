@@ -8,9 +8,9 @@ import {Context} from "../index";
 import {getMyId} from "../http/userApi";
 
 const NavBar = observer(() => {
-    const [id,setId] = useState(0)
     const navigate = useNavigate()
     const {user} = useContext(Context)
+    const [id,setId] = useState(0)
     const logOut = () => {
         user.setUser({})
         user.setIsAuth(false)
@@ -22,7 +22,10 @@ const NavBar = observer(() => {
         getMyId().then(data => {
             setId(data)
         })
+        console.log(id)
+        return id
     }
+
         return (
         <Navbar variant="dark" className="mainNavBar">
             <Container>
@@ -38,7 +41,8 @@ const NavBar = observer(() => {
                             <Button variant="outline-light" onClick={() => {
                                 changeId()
                                 navigate(PROFILE_PAGE + '/' + id) }}
-                                >Личный кабинет</Button>
+                            >Личный кабинет</Button>
+                            <Button variant="outline-light" className="ms-3" onClick = {() => changeId()}>Тест</Button>
                             <Button variant="outline-light" className="ms-3" onClick={() => logOut()}>Выйти</Button>
                         </Nav>
                     </>

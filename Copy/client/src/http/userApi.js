@@ -19,7 +19,7 @@ export const check = async () => {
 }
 
 export const getMyId = async () => {
-    const {data} = await $authHost.get('api/user/getid')
+    const {data} = await $authHost.get('api/user/id')
     return data
 }
 
