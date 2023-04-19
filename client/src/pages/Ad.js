@@ -12,12 +12,12 @@ import {getInfo} from "../http/infoApi"
 import {getUser} from "../http/userApi";
 import {getAllComments} from "../http/commentApi";
 import Carousel from 'react-bootstrap/Carousel';
+import '../dasha/ImageUploader.css'
 
 
 const Ad = () => {
     const navigate = useNavigate()
     const {user} = useContext(Context)
-    const {ads} = useContext(Context)
 
     const [ad, setAd] = useState({info: []})
     const [description, setDescription] = useState([])
@@ -42,7 +42,7 @@ const Ad = () => {
     const fetchData = async () => {
         await Promise.resolve(getOneAd(id)).then(data => setAd(data))
         await Promise.resolve(getInfo(id)).then(data => setDescription(data))
-        await Promise.resolve(getAllComments(id)).then(data => setComments(data))
+        await Promise.resolve(getAllComments(id)).then(data => setComments(data.rows))
     }
 
     useEffect(() => {
@@ -99,7 +99,7 @@ const Ad = () => {
                                     {images.map(i => (
                                         <Carousel.Item key={i.id}>
                                             <img
-                                                className='image-2'
+                                                // className='image-2'
                                                 width={400}
                                                 height={300}
                                                 src={process.env.REACT_APP_API_URL + i.image}
@@ -109,7 +109,6 @@ const Ad = () => {
                                 </Carousel>)
                             : <div>Загрузка картинок</div>
                         )
-                        // <div><Image className='image-2' width={280 } height={200} src={process.env.REACT_APP_API_URL + ad.image}/></div>
                     }
                 </Col>
                 <Col md={4}>
@@ -147,7 +146,7 @@ const Ad = () => {
                     <Button variant={"outline-dark"} onClick={() => navigate(PROFILE_PAGE)}>Продавец</Button>
                     {user.isAuth ?
                         <>
-                            <div >
+                            <div>
                                 {isEditing ? (<button title="Выйти из сохранения" className="image-button2" onClick={handleSave}>
                                         <div style={{ backgroundImage: `url(${component6})` }}></div>
                                     </button>)
@@ -241,16 +240,18 @@ const Ad = () => {
 
                 <h1>Комментарии</h1>
                 {showComments
-                    ?
-                    <div>
-                        <ul>
-                            {comments.map((comment) => (
-                                <li key={comment.id}>
-                                    <strong>{comment.userId}:</strong> {comment.text}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    ? (comments ?
+                        <div>
+                            <ul>
+                                {comments.map((comment) => (
+                                    <li key={comment.id}>
+                                        <strong>{comment.userId}:</strong> {comment.text}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    : <p>Загрузка комментариев</p>
+                    )
 
                     : <div><Button variant={"outline-dark"} onClick={() => setShowComments(true)}>Отобразить комментарии</Button>
                     </div>}

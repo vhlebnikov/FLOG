@@ -3,6 +3,7 @@ import React, {useContext} from "react";
 import {Button, Container, Nav, Navbar} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
 import {AUTH_PAGE, CREATE_AD_PAGE, PROFILE_PAGE, SHOP_PAGE} from "../utils/consts";
+import {getCurrentUserId} from "../http/userApi";
 
 import {Context} from "../index";
 
@@ -36,7 +37,6 @@ const NavBar = observer(() => {
                     <Nav className="ms-auto" style={{color: 'white'}}>
                         <Button variant="outline-light" onClick={() => navigate(AUTH_PAGE)}>Авторизация</Button>
                     </Nav>
-
                 }
             </Container>
         </Navbar>
