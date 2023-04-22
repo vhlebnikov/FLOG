@@ -1,12 +1,20 @@
 const sequelize = require('../db')
-const {DataTypes} = require('sequelize')
+const {DataTypes, STRING} = require('sequelize')
 
 const User = sequelize.define('user', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     email: {type: DataTypes.STRING, unique: true},
     username: {type: DataTypes.STRING},
     password: {type: DataTypes.STRING},
+    confirmed: {type: DataTypes.BOOLEAN, defaultValue: false},
+    activationLink: {type: STRING},
     role: {type: DataTypes.STRING, defaultValue: "USER"},
+})
+
+const Contact = sequelize.define('contact', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, allowNull: false},
+    contact: {type: DataTypes.STRING, allowNull: false},
 })
 
 const Price = sequelize.define('price', {
@@ -39,7 +47,7 @@ const SubSubCategory = sequelize.define('subSubCategory', {
 
 const Ad = sequelize.define('ad', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    image: {type: DataTypes.STRING, allowNull: false},
+    image: {type: DataTypes.STRING(1000), allowNull: false},
     name: {type: DataTypes.STRING, allowNull: false},
     description: {type: DataTypes.STRING},
     address: {type: DataTypes.STRING},
@@ -48,11 +56,14 @@ const Ad = sequelize.define('ad', {
 User.hasMany(Ad)
 Ad.belongsTo(User)
 
-Ad.hasMany(Info)
+User.hasMany(Contact, {as: 'contact'})
+Contact.belongsTo(User)
+
+Ad.hasMany(Info, {as: 'info'})
 Info.belongsTo(Ad)
 
-Ad.hasOne(Price)
-Price.belongsTo(Ad)
+Price.hasOne(Ad)
+Ad.belongsTo(Price)
 
 Category.hasMany(SubCategory)
 SubCategory.belongsTo(Category)
@@ -65,6 +76,7 @@ Ad.belongsTo(SubSubCategory)
 
 module.exports = {
     User,
+    Contact,
     Price,
     Info,
     Category,

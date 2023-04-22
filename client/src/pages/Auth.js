@@ -3,7 +3,8 @@ import {observer} from "mobx-react-lite";
 import {useContext, useState} from "react";
 import {Context} from "../index";
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import {AUTH_PAGE, REGISTRATION_PAGE} from "../utils/consts";
+import {AUTH_PAGE, REGISTRATION_PAGE, SHOP_PAGE} from "../utils/consts";
+import {login, registration} from "../http/userApi";
 
 const Auth = observer(() => {
     const {user} = useContext(Context)
@@ -13,6 +14,24 @@ const Auth = observer(() => {
     const [email, setEmail] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+
+    const click = async () => {
+        try {
+            let data;
+            if (isLogin) {
+                data = await login(email, password);
+                user.setUser(data)
+                user.setIsAuth(true)
+                navigate(SHOP_PAGE)
+            } else {
+                data = await registration(email, password, username);
+                alert(data.message)
+                navigate(AUTH_PAGE)
+            }
+        } catch (e) {
+            alert(e.response.data.message)
+        }
+    }
 
     return (
         <Container
@@ -56,7 +75,9 @@ const Auth = observer(() => {
                             </Nav>
                         }
                         <Button
-                            variant={"outline-success"}
+                            variant={"success"}
+                            className="btn-expensive"
+                            onClick={click}
                         >
                             {isLogin ? 'Войти' : 'Регистрация'}
                         </Button>
