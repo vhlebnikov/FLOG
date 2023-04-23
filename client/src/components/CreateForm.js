@@ -5,6 +5,7 @@ import {observer} from "mobx-react-lite";
 import {createAd} from "../http/adApi";
 import {redirect, useNavigate} from "react-router-dom";
 import {SHOP_PAGE} from "../utils/consts";
+import {wait} from "@testing-library/user-event/dist/utils";
 
 const CreateForm = observer(() => {
     const navigate = useNavigate()
@@ -46,7 +47,6 @@ const CreateForm = observer(() => {
         formData.append('subSubCategoryId', 13)
         formData.append('price', JSON.stringify(price))
         formData.append('info', JSON.stringify(info))
-        ad.setAds(formData)
         await Promise.resolve(createAd(formData))
         navigate(SHOP_PAGE)
     }
@@ -71,7 +71,7 @@ const CreateForm = observer(() => {
                             value={price.start}
                             type="number"
                             onChange={(e) => changePrice('start', Number(e.target.value))}
-                            className="mt-3"
+                            className="btn-expensive"
                             placeholder="цена"
                         />
                     </Col>
@@ -81,7 +81,7 @@ const CreateForm = observer(() => {
                                 value={price.end}
                                 type="number"
                                 onChange={(e) => changePrice('end', Number(e.target.value))}
-                                className="mt-3"
+                                className="btn-expensive"
                                 placeholder="цена"
                             />
                         </Col>
@@ -113,7 +113,7 @@ const CreateForm = observer(() => {
             />
 
             <Button
-                className="mt-3"
+                className="mt-3 btn-expensive"
                 variant="outline-success"
                 onClick={addInfo}
             >
@@ -138,6 +138,7 @@ const CreateForm = observer(() => {
                     </Col>
                     <Col md={4}>
                         <Button
+                            className="btn-expensive"
                             onClick={() => removeInfo(i.number)}
                             variant={"outline-danger"}
                         >
@@ -146,8 +147,8 @@ const CreateForm = observer(() => {
                     </Col>
                 </Row>
             )}
-
-            <Button className="mt-3" variant="outline-success" onClick={addAd}>Добавить</Button>
+            <hr/>
+            <Button className="mt-3" variant="outline-success btn-expensive" onClick={addAd}>Добавить</Button>
         </Form>
     );
 });

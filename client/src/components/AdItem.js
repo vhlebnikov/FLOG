@@ -16,7 +16,7 @@ const AdItem = ({ad}) => {
 
     return (
         <Col md={3} className={"mt-3"}>
-            <Card className="addItem" border={"light"}>
+            <Card className="shadow-box" border={"light"}>
                 <Carousel slide={false} interval={null}>
                 {ad.image.map(image =>
                         <Carousel.Item key={image.id}>

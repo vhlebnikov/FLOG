@@ -18,24 +18,24 @@ const NavBar = observer(() => {
     }
 
         return (
-        <Navbar variant="dark" className="mainNavBar">
+        <Navbar variant="dark" className="mainNavBar shadow-box">
             <Container>
                 <Navbar.Brand href={SHOP_PAGE}>FLOG</Navbar.Brand>
                 {user.isAuth ?
                     <>
                         <Nav>
-                            <Button variant="outline-light" onClick={() => navigate(CREATE_AD_PAGE)}>
+                            <Button className="btn-expensive" variant="outline-light" onClick={() => navigate(CREATE_AD_PAGE)}>
                                 Создать объявление
                             </Button>
                         </Nav>
                         <Nav className="justify-content-center">
-                            <Button variant="outline-light" onClick={() => navigate(PROFILE_PAGE)}>Личный кабинет</Button>
-                            <Button variant="outline-light" className="ms-3" onClick={() => logOut()}>Выйти</Button>
+                            <Button className="btn-expensive" variant="outline-light" onClick={() => navigate(PROFILE_PAGE + '/' + user.user.id)}>Личный кабинет</Button>
+                            <Button variant="outline-light" className="ms-3 btn-expensive" onClick={() => logOut()}>Выйти</Button>
                         </Nav>
                     </>
                     :
                     <Nav className="ms-auto" style={{color: 'white'}}>
-                        <Button variant="outline-light" onClick={() => navigate(AUTH_PAGE)}>Авторизация</Button>
+                        <Button className="btn-expensive" variant="outline-light" onClick={() => navigate(AUTH_PAGE)}>Авторизация</Button>
                     </Nav>
                 }
             </Container>

@@ -265,7 +265,7 @@ class AdController {
 
             const ad = await Ad.findOne({
                     where: {id: id}
-                },
+                }
             )
 
             if (!ad) {

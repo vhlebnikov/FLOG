@@ -1,8 +1,10 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Context} from "../index";
 import ImageUploaderProfile from "../dasha/ImageUploaderProfile";
 import {Button, Col, Container, Row} from 'react-bootstrap';
 import ImageUploader from "../dasha/ImageUploader";
+import {useParams} from "react-router-dom";
+import {getContacts, getUser} from "../http/userApi";
 
 const Profile = () => {
     const {user} = useContext(Context)
@@ -11,6 +13,17 @@ const Profile = () => {
     const [emailLoc, setEmail] = useState('')
     const [numberLoc, setNumber] = useState('')
     const [addressLoc, setAddress] = useState('')
+
+    const [contacts, setContacts] = useState([])
+
+    const params = useParams()
+    const id = parseInt(params.id)
+
+    useEffect(() => {
+        getUser(id).then(data => user.setUser(data))
+        getContacts(id).then(data => setContacts(data))
+        console.log(contacts)
+    }, [])
 
     const handleEditing = () => {
         setEditing(true)
@@ -48,7 +61,7 @@ const Profile = () => {
                                       type="text"
                                       value={user.name}
                                       onChange={(event) => setName(event.target.value)}/>)
-                            : (<div>{user.name}</div>)}
+                            : (<div>{user.user.username}</div>)}
                     </div>
                     <div className="forPersonal2">
                         Email:
@@ -57,16 +70,24 @@ const Profile = () => {
                                       type="text"
                                       value={user.email}
                                       onChange={(event) => setEmail(event.target.value)}/>)
-                            : (<div>{user.email}</div>)}
+                            : (<div>{user.user.email}</div>)}
                     </div>
                     <div className="forPersonal2">
-                        Телефон:
+                        Контакты:
                         {isEditing
                             ? (<input className = "personalInput"
                                       type="text"
                                       value={user.number}
                                       onChange={(event) => setNumber(event.target.value)}/>)
-                            : (<div>{user.number}</div>)}
+                            : (<div>
+                                <ul>
+                                {contacts.map(contact => (
+                                    <li key={contact.id}>
+                                        <strong>{contact.name}</strong> {contact.contact}
+                                    </li>
+                                ))}
+                                </ul>
+                            </div>)}
                     </div>
                     <div className="forPersonal2">
                         Адрес:

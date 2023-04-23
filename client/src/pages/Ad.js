@@ -1,25 +1,28 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
 import ImageUploader from "../dasha/ImageUploader.js";
-import {AD_PAGE, PROFILE_PAGE, SHOP_PAGE} from "../utils/consts";
+import {PROFILE_PAGE, SHOP_PAGE} from "../utils/consts";
 import {useNavigate} from "react-router-dom";
 import {Context} from "../index";
 import {useParams} from 'react-router-dom';
 import component6 from "../dasha/Component6.png";
 import CategoryDownFall from "../dasha/CategoryDownFall";
-import {deleteAd, getOneAd, getPrice, updateAd} from "../http/adApi";
+import {deleteAd, getAllAds, getOneAd, getPrice, updateAd} from "../http/adApi";
 import {getInfo} from "../http/infoApi"
 import {getUser} from "../http/userApi";
 import {getAllComments} from "../http/commentApi";
 import Carousel from 'react-bootstrap/Carousel';
+import {observer} from "mobx-react-lite";
 import '../dasha/ImageUploader.css'
+import {getCategoryRoute} from "../http/categoryApi";
 
 
-const Ad = () => {
+const Ad = observer(() => {
     const navigate = useNavigate()
     const {user} = useContext(Context)
+    const {ad} = useContext(Context) // общее состояние
 
-    const [ad, setAd] = useState({info: []})
+    const [adState, setAdState] = useState({info: []}) // объявление внутри страницы
     const [description, setDescription] = useState([])
     const [price, setPrice] = useState(0)
     const [images, setImages] = useState([])
@@ -33,14 +36,21 @@ const Ad = () => {
     const [selectedCategory, setSelectedCategory] = useState('')
     const [isEditing, setEditing] = useState(false)
     const [newName, setNewName] = useState('')
+    const [categoryRoute, setCategoryRoute] = useState(null)
+
+    const [usersComments, setUsersComments] = useState([])
 
     const params = useParams()
     const id = parseInt(params.id)
-    const userId = getUser(id)
-    //const price = getPrice(id);
 
     const fetchData = async () => {
-        await Promise.resolve(getOneAd(id)).then(data => setAd(data))
+        await Promise.resolve(getOneAd(id)).then(data => {
+            if (data) {
+                setAdState(data)
+            } else {
+                navigate(SHOP_PAGE)
+            }
+        })
         await Promise.resolve(getInfo(id)).then(data => setDescription(data))
         await Promise.resolve(getAllComments(id)).then(data => setComments(data.rows))
     }
@@ -50,16 +60,27 @@ const Ad = () => {
     }, []);
 
     useEffect(() => {
-        if (ad.priceId) {
-            getPrice(ad.priceId).then(data => setPrice(data))
+        if (adState.priceId) {
+            getPrice(adState.priceId).then(data => setPrice(data))
         }
-    }, [ad.priceId])
+        if (adState.subSubCategoryId) {
+            getCategoryRoute(adState.subSubCategoryId).then(data => setCategoryRoute(data))
+        }
+        if (adState.image) {
+            setImages(adState.image)
+        }
+    }, [adState.priceId, adState.subSubCategoryId, adState.image])
 
     useEffect(() => {
-        if (ad.image) {
-            setImages(ad.image)
+        if (comments) {
+            Promise.allSettled(comments.map(comment => getUser(comment.userId))).then(data => setUsersComments(data))
         }
-    }, [ad.image])
+    }, [comments])
+
+    const getUserForComment = (id) => {
+        const found = usersComments.find(user => user.value.id === id)
+        return found.value
+    }
 
     const handleEditing = () => {
         setEditing(true)
@@ -75,15 +96,17 @@ const Ad = () => {
     }
 
     const handleDelete = async () => {
-        await Promise.resolve(deleteAd(ad.id)).then(navigate(SHOP_PAGE)) // тут оно не успевает удаляться и отображается на главной странице
+        await Promise.resolve(deleteAd(adState.id)).then(() => {
+            getAllAds(null, null, null, 30, 1).then(data => ad.setAds(data.rows))
+        }).then(() => navigate(SHOP_PAGE))
     }
 
     const addAd = async () => {
         const formData = new FormData()
         formData.append('name', newName)
 
-        ad.setAds(formData)
-        await Promise.resolve(updateAd(ad.id, formData))
+        adState.setAds(formData)
+        await Promise.resolve(updateAd(adState.id, formData))
     }
 
     return (
@@ -123,7 +146,7 @@ const Ad = () => {
                                 (<Form.Control value={newName} onChange={e => setNewName(e.target.value)} className="mt-3" placeholder="name"/>)
 
                                 :
-                                <h2><div>{ad.name}</div> </h2>}
+                                <h2><div>{adState.name}</div> </h2>}
 
                         </div>
                         <div className="forPersonal">
@@ -133,18 +156,18 @@ const Ad = () => {
                             {isEditing
                                 ? (<input className = "personalInput"
                                           type="text"
-                                          value={ad.title}
+                                          value={adState.title}
                                           onChange={(event) => setTitle(event.target.value)}/>)
                                 :
-                                <h4><div> {ad.description}</div></h4>}
+                                <h4><div> {adState.description}</div></h4>}
 
                         </div>
                     </Row>
                 </Col>
                 <Col md={4}>
                     <br/>
-                    <Button variant={"outline-dark"} onClick={() => navigate(PROFILE_PAGE)}>Продавец</Button>
-                    {user.isAuth ?
+                    <Button variant={"outline-dark"} onClick={() => navigate(PROFILE_PAGE + '/' + adState.userId)}>Продавец</Button>
+                    {(user.isAuth && adState.userId === user.user.id || user.user.role === "ADMIN" || user.user.role === "MODERATOR") ?
                         <>
                             <div>
                                 {isEditing ? (<button title="Выйти из сохранения" className="image-button2" onClick={handleSave}>
@@ -164,10 +187,20 @@ const Ad = () => {
 
                     </div>
                     <br/>
+
                     {isEditing
                         ? <CategoryDownFall/>
-                        : <div>Категория: {ad.subSubCategoryId}</div>}
-                    <div>Адрес: {ad.address}</div>
+                        : (categoryRoute ? (
+                            <Form>
+                                <div>Категория: {categoryRoute.category.name}</div>
+                                <div>Подкатегория: {categoryRoute.subCategory.name}</div>
+                                <div>Подподкатегория: {categoryRoute.subSubCategory.name}</div>
+                            </Form>
+                        )
+                        : <p>Загружаем категории...</p>)
+                    }
+
+                    <div>Адрес: {adState.address}</div>
 
                     {price ?
                         (
@@ -193,24 +226,27 @@ const Ad = () => {
                         )}
 
 
-                    {ad.status === 1 && (
+                    {adState.status === 1 && (
                         <div>
                             <div>Статус: Открыто</div>
                         </div>
                     )}
-                    {ad.status === 2 && (
+                    {adState.status === 2 && (
                         <div>
                             <div>Статус: Забронировано</div>
                         </div>
                     )}
-                    {ad.status === 3 && (
+                    {adState.status === 3 && (
                         <div>
                             <div>Статус: Закрыто</div>
                         </div>
                     )}
                     <br/>
+                    {(user.isAuth && adState.userId === user.user.id || user.user.role === "ADMIN" || user.user.role === "MODERATOR") ?
+                        <Button variant={"outline-dark"} onClick={handleDelete}>Удалить объявление</Button>
+                        : null
+                    }
 
-                    <Button variant={"outline-dark"} onClick={handleDelete}>Удалить объявление</Button>
                     {isEditing
                         ? <Button variant={"outline-dark"} onClick={addAd}>Сохранить изменения</Button>
                         : null
@@ -245,12 +281,12 @@ const Ad = () => {
                             <ul>
                                 {comments.map((comment) => (
                                     <li key={comment.id}>
-                                        <strong>{comment.userId}:</strong> {comment.text}
+                                        <strong>{getUserForComment(comment.userId).username}</strong> {comment.text}
                                     </li>
                                 ))}
                             </ul>
                         </div>
-                    : <p>Загрузка комментариев</p>
+                    : <p>Загрузка комментариев...</p>
                     )
 
                     : <div><Button variant={"outline-dark"} onClick={() => setShowComments(true)}>Отобразить комментарии</Button>
@@ -261,6 +297,6 @@ const Ad = () => {
         </Container>
     );
 
-};
+});
 
 export default Ad;

@@ -17,14 +17,9 @@ const Shop = () => {
         <Container>
             <ShopNavBar/>
             <Row className="mt-2">
-                <Col md={3}>
-                    <TypeBar/>
-                </Col>
-                <Col md={9}>
+                <Col md={12}>
                     <AdsList/>
-
                 </Col>
-
             </Row>
         </Container>
     );

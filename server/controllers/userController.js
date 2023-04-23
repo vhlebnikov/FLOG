@@ -174,7 +174,7 @@ class UserController {
         return res.json(user)
     }
 
-    async updateData(req, res) {
+    async updateData(req, res, next) {
         const {username} = req.body
         const {image} = req.files
 
@@ -183,11 +183,16 @@ class UserController {
 
         const user = await User.findOne({where: userAuth.id})
 
-        if (user.image) {
-            fs.unlinkSync(path.resolve(__dirname, "..", "static", user.image))
+        if (!user) {
+            return next(ApiError.badRequest("Пользователя с таким id не существует"))
         }
 
         if (image) {
+
+            if (user.image) {
+                fs.unlinkSync(path.resolve(__dirname, "..", "static", user.image))
+            }
+
             let fileName = uuid.v4() + ".jpg"
             await image.mv(path.resolve(__dirname, "..", "static", fileName))
             user.image = fileName
@@ -250,14 +255,15 @@ class UserController {
         const token = req.headers.authorization.split(' ')[1]
         const user = jwt.verify(token, process.env.SECRET_KEY)
 
-        const oldContacts = await Contact.findAll({
-            where: {userId: user.id}
-        })
-        if (oldContacts) {
-            oldContacts.forEach(c => c.destroy())
-        }
-
         if (contacts) {
+
+            const oldContacts = await Contact.findAll({
+                where: {userId: user.id}
+            })
+            if (oldContacts) {
+                oldContacts.forEach(c => c.destroy())
+            }
+
             for (const c of contacts) {
                 await Contact.create({
                     name: c.name,
