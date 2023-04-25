@@ -23,7 +23,7 @@ export const setRole = async (id, role) => {
 }
 
 export const checkPassword = async (password) => {
-    const {data} = await $authHost.post('api/user/password',{password})
+    const {data} = await $authHost.post('api/user/password', {password})
     return data
 }
 
@@ -49,7 +49,8 @@ export const getUser = async (id) => {
 }
 
 export const updateData = async (newData) => {
-    const {data} = await $authHost.put('api/user/data', {newData})
+    const {data} = await $authHost.put('api/user/data', newData)
+    return data
 }
 
 export const updateContacts = async (contacts) => {

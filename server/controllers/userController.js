@@ -176,7 +176,12 @@ class UserController {
 
     async updateData(req, res, next) {
         const {username} = req.body
-        const {image} = req.files
+
+        let newImage
+        if (req.files) {
+            const {image} = req.files
+            newImage = image
+        }
 
         const token = req.headers.authorization.split(' ')[1]
         const userAuth = jwt.verify(token, process.env.SECRET_KEY)
@@ -187,14 +192,14 @@ class UserController {
             return next(ApiError.badRequest("Пользователя с таким id не существует"))
         }
 
-        if (image) {
+        if (newImage) {
 
             if (user.image) {
                 fs.unlinkSync(path.resolve(__dirname, "..", "static", user.image))
             }
 
             let fileName = uuid.v4() + ".jpg"
-            await image.mv(path.resolve(__dirname, "..", "static", fileName))
+            await newImage.mv(path.resolve(__dirname, "..", "static", fileName))
             user.image = fileName
             await user.save()
         }
@@ -249,11 +254,15 @@ class UserController {
         return res.json(contacts)
     }
 
-    async updateContacts(req, res) {
+    async updateContacts(req, res, next) {
         let {contacts} = req.body
 
         const token = req.headers.authorization.split(' ')[1]
         const user = jwt.verify(token, process.env.SECRET_KEY)
+
+        if (!user) {
+            return next(ApiError.internal("Не удалось получить пользователя"))
+        }
 
         if (contacts) {
 

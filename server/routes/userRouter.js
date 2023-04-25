@@ -11,14 +11,14 @@ router.post('/role/:id', checkRole('ADMIN'), userController.setRole)
 router.post('/password', authMiddleware, userController.checkPassword)
 
 router.get('/activate/:link', userController.activate)
-router.get('/current', authMiddleware, userController.getCurrentUserId) // this
+router.get('/current', authMiddleware, userController.getCurrentUserId)
 router.get('/auth', authMiddleware, userController.check)
 router.get('/contacts/:id', authMiddleware, userController.getContacts)
 router.get('/:id', userController.getUser)
 
-router.put('/data', authMiddleware, userController.updateData) // this
+router.put('/data', authMiddleware, userController.updateData)
 router.put('/contacts', authMiddleware, userController.updateContacts)
-router.put('/password', authMiddleware, userController.updatePassword) // this
+router.put('/password', authMiddleware, userController.updatePassword)
 
 router.delete('/contacts', authMiddleware, userController.deleteContacts)
 
