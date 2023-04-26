@@ -12,6 +12,7 @@ import Ad from "./pages/Ad"
 import Auth from "./pages/Auth"
 import EditProfile from "./pages/EditProfile"
 import Profile from "./pages/Profile"
+import Activation from "./pages/Activation"
 
 export const authRoutes = [
     {
@@ -19,17 +20,20 @@ export const authRoutes = [
         Component: CreateAd
     },
     {
-        path: PROFILE_PAGE + "/:id",
+        path: PROFILE_PAGE + '/:id',
         Component: Profile
     },
     {
         path: EDIT_PROFILE_PAGE,
         Component: EditProfile
     }
-
 ]
 
 export const publicRoutes = [
+    {
+        path: '/activation/:id',
+        Component: Activation
+    },
     {
         path: SHOP_PAGE,
         Component: Shop

@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken')
 const {User, Contact} = require('../models/models')
 const nodemailer = require("nodemailer");
 const uuid = require('uuid');
+const path = require("path");
+const fs = require("fs");
 
 const generateJwt = (id, email, username, role) => {
     return jwt.sign(
@@ -36,7 +38,8 @@ const confirmation = async (email, userId, link) => {
                     <div>
                         <h1>Для активации аккаунта перейдите по ссылке</h1>
                         <a href="${link}">${link}</a>
-                    </div>
+                    </div>  
+                    
             `
             })
         })
@@ -86,11 +89,14 @@ class UserController {
             const activationLink = req.params.link
             const user = await User.findOne({where: {activationLink}})
             if (!user) {
-                return  next(ApiError.badRequest('Неккоректная ссылка активации'))
+                return next(ApiError.badRequest('Некорректная ссылка активации'))
             }
             user.confirmed = true
             await user.save()
-            return res.redirect(process.env.CLIENT_URL)
+
+            const token = generateJwt(user.id, user.email, user.username, user.role)
+
+            return res.redirect(process.env.CLIENT_URL + '/activation/' + token)
         } catch(e) {
             next(e)
         }
@@ -118,20 +124,92 @@ class UserController {
         return res.json({token})
     }
 
-    async getUser(req, res) {
+    async getUser(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
+
         const user = await User.findOne({
             where: {id},
-            include: [{model: Contact, as: 'contact'}]
+            // include: [{model: Contact, as: 'contact'}] // возможно не возвращать
         })
+
         return res.json(user)
     }
 
-    async getMyId(req, res) {
+    async setRole(req, res, next) {
+        const {id} = req.params
+        const {role} = req.body
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
+
+        const user = await User.findOne({
+            where: {id}
+        })
+
+        if (user) {
+            user.role = role
+            await user.save()
+        }
+
+        return res.json(user)
+    }
+
+    async getCurrentUserId(req, res, next) {
         const token = req.headers.authorization.split(' ')[1]
-        const user = jwt.verify(token, process.env.SECRET_KEY)
-        const userId = user.id
-        return res.json(userId)
+        const userAuth = jwt.verify(token, process.env.SECRET_KEY)
+
+        const user = await User.findOne({
+            where: {id: userAuth.id}
+        })
+
+        if (!user) {
+            return next(ApiError.badRequest('Пользователь не найден'))
+        }
+
+        return res.json(user)
+    }
+
+    async updateData(req, res, next) {
+        const {username} = req.body
+
+        let newImage
+        if (req.files) {
+            const {image} = req.files
+            newImage = image
+        }
+
+        const token = req.headers.authorization.split(' ')[1]
+        const userAuth = jwt.verify(token, process.env.SECRET_KEY)
+
+        const user = await User.findOne({where: userAuth.id})
+
+        if (!user) {
+            return next(ApiError.badRequest("Пользователя с таким id не существует"))
+        }
+
+        if (newImage) {
+
+            if (user.image) {
+                fs.unlinkSync(path.resolve(__dirname, "..", "static", user.image))
+            }
+
+            let fileName = uuid.v4() + ".jpg"
+            await newImage.mv(path.resolve(__dirname, "..", "static", fileName))
+            user.image = fileName
+            await user.save()
+        }
+
+        if (username) {
+            user.username = username
+            await user.save()
+        }
+
+        return res.json(user)
     }
 
     async addContacts(req, res) {
@@ -176,20 +254,25 @@ class UserController {
         return res.json(contacts)
     }
 
-    async updateContacts(req, res) {
+    async updateContacts(req, res, next) {
         let {contacts} = req.body
 
         const token = req.headers.authorization.split(' ')[1]
         const user = jwt.verify(token, process.env.SECRET_KEY)
 
-        const oldContacts = await Contact.findAll({
-            where: {userId: user.id}
-        })
-        if (oldContacts) {
-            oldContacts.forEach(c => c.destroy())
+        if (!user) {
+            return next(ApiError.internal("Не удалось получить пользователя"))
         }
 
         if (contacts) {
+
+            const oldContacts = await Contact.findAll({
+                where: {userId: user.id}
+            })
+            if (oldContacts) {
+                oldContacts.forEach(c => c.destroy())
+            }
+
             for (const c of contacts) {
                 await Contact.create({
                     name: c.name,
@@ -200,6 +283,37 @@ class UserController {
         }
 
         return res.json(contacts)
+    }
+
+    async checkPassword(req, res) {
+        const {password} = req.body
+
+        const token = req.headers.authorization.split(' ')[1]
+        const userAuth = jwt.verify(token, process.env.SECRET_KEY)
+
+        const user = await User.findOne({where: userAuth.id})
+        let comparePassword = null
+        if (user && password) {
+            comparePassword = bcrypt.compareSync(password, user.password)
+        }
+
+        return res.json(comparePassword)
+    }
+
+    async updatePassword(req, res) {
+        const {password} = req.body
+
+        const token = req.headers.authorization.split(' ')[1]
+        const userAuth = jwt.verify(token, process.env.SECRET_KEY)
+
+        const user = await User.findOne({where: userAuth.id})
+
+        if (user && password) {
+            user.password = await bcrypt.hash(password, 5)
+            await user.save()
+        }
+
+        return res.json(user)
     }
 }
 

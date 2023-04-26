@@ -1,48 +1,87 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Card, Col, Container, Image, Nav, Row} from "react-bootstrap";
-import ImageUploader2 from "../dasha/ImageUploader.css";
+import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
 import ImageUploader from "../dasha/ImageUploader.js";
-import photo from "../dasha/photo.png"
-import {AUTH_PAGE, CREATE_AD_PAGE, PROFILE_PAGE} from "../utils/consts";
-import {useLocation, useNavigate} from "react-router-dom";
+import {PROFILE_PAGE, SHOP_PAGE} from "../utils/consts";
+import {useNavigate} from "react-router-dom";
 import {Context} from "../index";
 import {useParams} from 'react-router-dom';
-import AdStore from '../store/AdStore.js'
-
 import component6 from "../dasha/Component6.png";
 import CategoryDownFall from "../dasha/CategoryDownFall";
-import {getOneAd, getPrice} from "../http/adAPI";
-import {getInfo} from "../http/infoAPI"
+import {deleteAd, getAllAds, getOneAd, getPrice, updateAd} from "../http/adApi";
+import {getInfo} from "../http/infoApi"
+import {getUser} from "../http/userApi";
+import {getAllComments} from "../http/commentApi";
+import Carousel from 'react-bootstrap/Carousel';
+import {observer} from "mobx-react-lite";
+import '../dasha/ImageUploader.css'
+import {getCategoryRoute} from "../http/categoryApi";
 
 
-const Ad = () => {
-    //const ad = {id: 1, name: "First and Cool", price: 1000, category: 'mhe', img: photo}
-    const [ad, setAd] = useState({info: []});
-    const [description, setDescription] = useState([]);
-    const params = useParams();
-    console.log(params);
-    const num = parseInt(params.id);
-    console.log(num)
-    //const id = 3;
-    const adStore = new AdStore();
-    /*useEffect(() => {
-        fetchOneAd(id).then(data => setAd(data))
-    }, []) */
+const Ad = observer(() => {
+    const navigate = useNavigate()
+    const {user} = useContext(Context)
+    const {ad} = useContext(Context) // общее состояние
 
-    useEffect(() => {
-        getOneAd(num).then(data => setAd(data))
-        getInfo(num).then(data => setDescription(data))
-        // const ad = adStore.getAdById(num);
-        // setAd(ad);
-    }, []);
+    const [adState, setAdState] = useState({info: []}) // объявление внутри страницы
+    const [description, setDescription] = useState([])
+    const [price, setPrice] = useState(0)
+    const [images, setImages] = useState([])
 
+    const [showComments, setShowComments] = useState(false)
+    const [comments, setComments] = useState([])
+    const [newComment, setNewComment] = useState("")
 
     const [nameLoc, setName] = useState('')
     const [titleLoc, setTitle] = useState('')
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('')
     const [isEditing, setEditing] = useState(false)
-    const navigate = useNavigate();
-    const {user} = useContext(Context);
+    const [newName, setNewName] = useState('')
+    const [categoryRoute, setCategoryRoute] = useState(null)
+
+    const [usersComments, setUsersComments] = useState([])
+
+    const params = useParams()
+    const id = parseInt(params.id)
+
+    const fetchData = async () => {
+        await Promise.resolve(getOneAd(id)).then(data => {
+            if (data) {
+                setAdState(data)
+            } else {
+                navigate(SHOP_PAGE)
+            }
+        })
+        await Promise.resolve(getInfo(id)).then(data => setDescription(data))
+        await Promise.resolve(getAllComments(id)).then(data => setComments(data.rows))
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, []);
+
+    useEffect(() => {
+        if (adState.priceId) {
+            getPrice(adState.priceId).then(data => setPrice(data))
+        }
+        if (adState.subSubCategoryId) {
+            getCategoryRoute(adState.subSubCategoryId).then(data => setCategoryRoute(data))
+        }
+        if (adState.image) {
+            setImages(adState.image)
+        }
+    }, [adState.priceId, adState.subSubCategoryId, adState.image])
+
+    useEffect(() => {
+        if (comments) {
+            Promise.allSettled(comments.map(comment => getUser(comment.userId))).then(data => setUsersComments(data))
+        }
+    }, [comments])
+
+    const getUserForComment = (id) => {
+        const found = usersComments.find(user => user.value.id === id)
+        return found.value
+    }
+
     const handleEditing = () => {
         setEditing(true)
     }
@@ -56,6 +95,20 @@ const Ad = () => {
         })
     }
 
+    const handleDelete = async () => {
+        await Promise.resolve(deleteAd(adState.id)).then(() => {
+            getAllAds(null, null, null, 30, 1).then(data => ad.setAds(data.rows))
+        }).then(() => navigate(SHOP_PAGE))
+    }
+
+    const addAd = async () => {
+        const formData = new FormData()
+        formData.append('name', newName)
+
+        adState.setAds(formData)
+        await Promise.resolve(updateAd(adState.id, formData))
+    }
+
     return (
 
         <Container>
@@ -63,7 +116,23 @@ const Ad = () => {
                 <Col md={4}>
                     {isEditing
                         ? (<ImageUploader/>)
-                        : <div><Image className='image-2' width={280 } height={200} src={process.env.REACT_APP_API_URL + ad.image}/></div>}
+                        :
+                        (images.length !== 0
+                            ? (<Carousel slide={false} interval={null}>
+                                    {images.map(i => (
+                                        <Carousel.Item key={i.id}>
+                                            <img
+                                                // className='image-2'
+                                                width={400}
+                                                height={300}
+                                                src={process.env.REACT_APP_API_URL + i.image}
+                                            />
+                                        </Carousel.Item>
+                                    ))}
+                                </Carousel>)
+                            : <div>Загрузка картинок</div>
+                        )
+                    }
                 </Col>
                 <Col md={4}>
                     <Row className="d-flex flex-column align-items-center">
@@ -73,40 +142,39 @@ const Ad = () => {
                         <div className="forPersonal">
                             <h2>Название: </h2>
                             {isEditing
-                                ? (<input className = "personalInput"
-                                          type="text"
-                                          value={ad.name}
-                                          onChange={(event) => setName(event.target.value)}/>)
+                                ?
+                                (<Form.Control value={newName} onChange={e => setNewName(e.target.value)} className="mt-3" placeholder="name"/>)
+
                                 :
-                            <h2><div>{ad.name}</div> </h2>}
+                                <h2><div>{adState.name}</div> </h2>}
 
                         </div>
                         <div className="forPersonal">
                             <br/>
 
-                                <h4>Описание: </h4>
-                                {isEditing
-                                    ? (<input className = "personalInput"
-                                              type="text"
-                                              value={ad.title}
-                                              onChange={(event) => setTitle(event.target.value)}/>)
-                                    :
-                                    <h4><div> {ad.description}</div></h4>}
+                            <h4>Описание: </h4>
+                            {isEditing
+                                ? (<input className = "personalInput"
+                                          type="text"
+                                          value={adState.title}
+                                          onChange={(event) => setTitle(event.target.value)}/>)
+                                :
+                                <h4><div> {adState.description}</div></h4>}
 
                         </div>
                     </Row>
                 </Col>
                 <Col md={4}>
                     <br/>
-                    <Button variant={"outline-dark"} onClick={() => navigate(PROFILE_PAGE)}>Продавец</Button>
-                    {user.isAuth ?
+                    <Button variant={"outline-dark"} onClick={() => navigate(PROFILE_PAGE + '/' + adState.userId)}>Продавец</Button>
+                    {(user.isAuth && adState.userId === user.user.id || user.user.role === "ADMIN" || user.user.role === "MODERATOR") ?
                         <>
-                            <div >
-                                {isEditing ? (<button className="image-button2" onClick={handleSave}>
+                            <div>
+                                {isEditing ? (<button title="Выйти из сохранения" className="image-button2" onClick={handleSave}>
                                         <div style={{ backgroundImage: `url(${component6})` }}></div>
                                     </button>)
                                     :
-                                    (<button className="image-button2" onClick={handleEditing}>
+                                    (<button title="Редактировать объявление" className="image-button2" onClick={handleEditing}>
                                         <div style={{ backgroundImage: `url(${component6})` }}></div>
                                     </button>)}
                             </div>
@@ -119,18 +187,71 @@ const Ad = () => {
 
                     </div>
                     <br/>
+
                     {isEditing
                         ? <CategoryDownFall/>
-                        : <div>Категория: {ad.subSubCategoryId}</div>}
-                    <div>Адрес: {ad.address}</div>
-                    <div>Цена: {ad.priceId}</div>
-                    {/*<div>Тип цены: {price.type}</div>*/}
-                    {/*<div>Цена начальная: {price.start}</div>*/}
-                    {/*<div>Цена конечная: {price.end}</div>*/}
+                        : (categoryRoute ? (
+                            <Form>
+                                <div>Категория: {categoryRoute.category.name}</div>
+                                <div>Подкатегория: {categoryRoute.subCategory.name}</div>
+                                <div>Подподкатегория: {categoryRoute.subSubCategory.name}</div>
+                            </Form>
+                        )
+                        : <p>Загружаем категории...</p>)
+                    }
+
+                    <div>Адрес: {adState.address}</div>
+
+                    {price ?
+                        (
+                            <div>
+                                {price.type === 0 && (
+                                    <div>
+                                        <div>Без цены</div>
+                                    </div>
+                                )}
+                                {price.type === 1 && (
+                                    <div>
+                                        <div>Цена: {price.start}</div>
+                                    </div>
+                                )}
+                                {price.type === 2 && (
+                                    <div>
+                                        <div>Цена: {price.start} - {price.end}</div>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <p>Загружаем цену...</p>
+                        )}
+
+
+                    {adState.status === 1 && (
+                        <div>
+                            <div>Статус: Открыто</div>
+                        </div>
+                    )}
+                    {adState.status === 2 && (
+                        <div>
+                            <div>Статус: Забронировано</div>
+                        </div>
+                    )}
+                    {adState.status === 3 && (
+                        <div>
+                            <div>Статус: Закрыто</div>
+                        </div>
+                    )}
                     <br/>
-                    <br/>
-                    <br/>
-                    <br/>
+                    {(user.isAuth && adState.userId === user.user.id || user.user.role === "ADMIN" || user.user.role === "MODERATOR") ?
+                        <Button variant={"outline-dark"} onClick={handleDelete}>Удалить объявление</Button>
+                        : null
+                    }
+
+                    {isEditing
+                        ? <Button variant={"outline-dark"} onClick={addAd}>Сохранить изменения</Button>
+                        : null
+                    }
+
                     <br/>
                     <br/>
                     <br/>
@@ -150,40 +271,32 @@ const Ad = () => {
                 )}
 
             </Row>
+            <Row className="d-flex flex-column m-3">
+
+
+                <h1>Комментарии</h1>
+                {showComments
+                    ? (comments ?
+                        <div>
+                            <ul>
+                                {comments.map((comment) => (
+                                    <li key={comment.id}>
+                                        <strong>{getUserForComment(comment.userId).username}</strong> {comment.text}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    : <p>Загрузка комментариев...</p>
+                    )
+
+                    : <div><Button variant={"outline-dark"} onClick={() => setShowComments(true)}>Отобразить комментарии</Button>
+                    </div>}
+
+            </Row>
 
         </Container>
     );
 
-};
+});
 
 export default Ad;
-
-/*
-<div className="forPersonal">
-                            <h2>Название: </h2>
-                            {isEditing
-                                ? (<input className = "personalInput"
-                                          type="text"
-                                          value={ad.name}
-                                          onChange={(event) => setName(event.target.value)}/>)
-                                : (<div>{ad.name}</div>)}
-
-                        </div>
-
-                    //
-                    Описание:
-                            {isEditing
-                                ? (<input className = "personalInput"
-                                          type="text"
-                                          value={ad.title}
-                                          onChange={(event) => setTitle(event.target.value)}/>)
-                                : (<div>{ad.title}</div>)}
-
- {isEditing
-                        ? <CategoryDownFall/>
-                        : <div>Категория: {adD.category}</div>}
-
-<div className="colored-block">
-                        текст
-                    </div>
- */

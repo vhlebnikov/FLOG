@@ -1,10 +1,11 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Context} from "../index";
 import {Button, Col, Dropdown, Form, Row} from "react-bootstrap";
 import {observer} from "mobx-react-lite";
-import {createAd} from "../http/adAPI";
-import {useNavigate} from "react-router-dom";
+import {createAd} from "../http/adApi";
+import {redirect, useNavigate} from "react-router-dom";
 import {SHOP_PAGE} from "../utils/consts";
+import {wait} from "@testing-library/user-event/dist/utils";
 
 const CreateForm = observer(() => {
     const navigate = useNavigate()
@@ -13,16 +14,11 @@ const CreateForm = observer(() => {
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
     const [address, setAddress] = useState('')
-    const [prices, setPrices] = useState([{type:'start', price: null}, {type:'end', price: null}])
     const [info, setInfo] = useState([])
-    const [priceType, setPriceType] = useState(0)
+    const [price, setPrice] = useState({type: 0, start: 0, end: 0})
 
     const selectFile = e => {
-        setFile(e.target.files[0])
-    }
-
-    const changePrice = (type, value) => {
-        setPrices(prices.map(i => i.type = type ? {...i, price: value} : i))
+        setFile(Array.from(e.target.files))
     }
 
     const addInfo = () => {
@@ -35,17 +31,24 @@ const CreateForm = observer(() => {
         setInfo(info.map(i => i.number === number ? {...i, [key]: value} : i))
     }
 
-    const addAd = () => {
+    const changePrice = (key, value) => {
+        setPrice({...price, [key]: value})
+    }
+
+    const addAd = async () => {
         const formData = new FormData()
-        formData.append('image', file)
+        for (const f of file) {
+            formData.append('image', f)
+        }
         formData.append('name', name)
         formData.append('description', description)
         formData.append('address', address)
-        formData.append('price', `{"type":${priceType}, "start":${prices[0].price}, "end":${prices[1].price}}`)
+        formData.append('status', 1)
         formData.append('subSubCategoryId', 13)
+        formData.append('price', JSON.stringify(price))
         formData.append('info', JSON.stringify(info))
-        ad.setAds(formData)
-        createAd(formData)
+        await Promise.resolve(createAd(formData))
+        navigate(SHOP_PAGE)
     }
 
     return (
@@ -54,31 +57,31 @@ const CreateForm = observer(() => {
             <Dropdown className="mt-3">
                 <Dropdown.Toggle className="expensive-button" variant="success" >{"Выберите тип цены"}</Dropdown.Toggle>
                 <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => setPriceType(0)}>{"Без цены"}</Dropdown.Item>
-                    <Dropdown.Item onClick={() => setPriceType(1)}>{"Определенная цена"}</Dropdown.Item>
-                    <Dropdown.Item onClick={() => setPriceType(2)}>{"Интервал"}</Dropdown.Item>
+                    <Dropdown.Item onClick={() => changePrice('type', 0)}>{"Без цены"}</Dropdown.Item>
+                    <Dropdown.Item onClick={() => changePrice('type', 1)}>{"Определенная цена"}</Dropdown.Item>
+                    <Dropdown.Item onClick={() => changePrice('type', 2)}>{"Интервал"}</Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>
-            {priceType === 0 ?
+            {price.type === 0 ?
                 null
                 :
                 <Row>
                     <Col md={4}>
                         <Form.Control
-                            value={prices[0].price}
+                            value={price.start}
                             type="number"
                             onChange={(e) => changePrice('start', Number(e.target.value))}
-                            className="mt-3"
+                            className="btn-expensive"
                             placeholder="цена"
                         />
                     </Col>
-                    {priceType === 2 ?
+                    {price.type === 2 ?
                         <Col md={4}>
                             <Form.Control
-                                value={prices[1].price}
+                                value={price.end}
                                 type="number"
                                 onChange={(e) => changePrice('end', Number(e.target.value))}
-                                className="mt-3"
+                                className="btn-expensive"
                                 placeholder="цена"
                             />
                         </Col>
@@ -104,11 +107,13 @@ const CreateForm = observer(() => {
             <Form.Control
                 className="mt-3"
                 type="file"
+                multiple
+                required
                 onChange={selectFile}
             />
 
             <Button
-                className="mt-3"
+                className="mt-3 btn-expensive"
                 variant="outline-success"
                 onClick={addInfo}
             >
@@ -133,6 +138,7 @@ const CreateForm = observer(() => {
                     </Col>
                     <Col md={4}>
                         <Button
+                            className="btn-expensive"
                             onClick={() => removeInfo(i.number)}
                             variant={"outline-danger"}
                         >
@@ -141,8 +147,8 @@ const CreateForm = observer(() => {
                     </Col>
                 </Row>
             )}
-
-            <Button className="mt-3" variant="outline-success" onClick={addAd}>Добавить</Button>
+            <hr/>
+            <Button className="mt-3" variant="outline-success btn-expensive" onClick={addAd}>Добавить</Button>
         </Form>
     );
 });

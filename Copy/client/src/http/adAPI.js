@@ -1,6 +1,6 @@
 import {$authHost, $host} from "./index";
 
-export const getAllAds = async (categoryId, subCategoryId, subSubCategoryId, limit = 5, page) => {
+export const getAllAds = async (categoryId, subCategoryId, subSubCategoryId, limit, page) => {
     const {data} = await $host.get('api/ad', {params: {categoryId, subCategoryId, subSubCategoryId, limit, page}})
     return data
 }

@@ -2,41 +2,26 @@ import {makeAutoObservable} from "mobx";
 
 export default class AdStore {
     constructor() {
-        this._types = [
-            {id: 1, name:"c1"},
-            {id: 2, name:"c2"},
-            {id: 3, name:"c3"}
-        ]
         this._ads = []
-        this._categories = [
-            {id: 1, name:"c1"},
-            {id: 2, name:"c2"},
-            {id: 3, name:"c3"}
-        ]
-        this._subCategories = [
-            {id: 1, name:"sc1"},
-            {id: 1, name:"sc2"},
-            {id: 1, name:"sc3"}
-        ]
-        this._subsubCategories = [
-            {id: 1, name:"ssc1"},
-            {id: 1, name:"ssc2"},
-            {id: 1, name:"ssc3"}
-        ]
+        this._sort = ''
+        this._filter = ''
         makeAutoObservable(this)
     }
 
-
-    get types() {
-        return this._types;
+    get filter() {
+        return this._filter;
     }
 
-    get categories() {
-        return this._categories
+    setFilter(value) {
+        this._filter = value;
     }
 
-    setCategories(value) {
-        this._category = value;
+    get sort() {
+        return this._sort;
+    }
+
+    setSort(value) {
+        this._sort = value;
     }
 
     get ads() {
