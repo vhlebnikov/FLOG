@@ -209,47 +209,51 @@ class AdController {
     }
 
     async delete(req, res, next) {
-        const {id} = req.params
+        try {
+            const {id} = req.params
 
-        if (isNaN(id)) {
-            return next(ApiError.badRequest('id должен быть числом'))
-        }
+            if (isNaN(id)) {
+                return next(ApiError.badRequest('id должен быть числом'))
+            }
 
-        const ad = await Ad.findOne({
-            where: {id},
-            include: [{model: Info, as: 'info'}]
-        })
-        if (!ad) {
-            return next(ApiError.badRequest('Объявление с таким id не существует'))
-        }
-
-        const token = req.headers.authorization.split(' ')[1]
-        const user = jwt.verify(token, process.env.SECRET_KEY)
-        if (ad.userId !== user.id && user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
-            return next(ApiError.badRequest('Вы не можете удалить объявление другого пользователя'))
-        }
-
-        const price = await Price.findOne({where: {id: ad.priceId}})
-        if (price) {
-            price.destroy()
-        }
-
-        const oldInfo = await Info.findAll({where: {adId: ad.id}})
-        if (oldInfo) {
-            oldInfo.forEach(i => i.destroy())
-        }
-
-        const oldImage = await Image.findAll({where: {adId: ad.id}})
-        if (oldImage) {
-            oldImage.forEach(i => {
-                fs.unlinkSync(path.resolve(__dirname, "..", "static", i.image))
-                i.destroy()
+            const ad = await Ad.findOne({
+                where: {id},
+                include: [{model: Info, as: 'info'}]
             })
+            if (!ad) {
+                return next(ApiError.badRequest('Объявление с таким id не существует'))
+            }
+
+            const token = req.headers.authorization.split(' ')[1]
+            const user = jwt.verify(token, process.env.SECRET_KEY)
+            if (ad.userId !== user.id && user.role !== 'ADMIN' && user.role !== 'MODERATOR') {
+                return next(ApiError.badRequest('Вы не можете удалить объявление другого пользователя'))
+            }
+
+            const price = await Price.findOne({where: {id: ad.priceId}})
+            if (price) {
+                price.destroy()
+            }
+
+            const oldInfo = await Info.findAll({where: {adId: ad.id}})
+            if (oldInfo) {
+                oldInfo.forEach(i => i.destroy())
+            }
+
+            const oldImage = await Image.findAll({where: {adId: ad.id}})
+            if (oldImage) {
+                oldImage.forEach(i => {
+                    fs.unlinkSync(path.resolve(__dirname, "..", "static", i.image))
+                    i.destroy()
+                })
+            }
+
+            await ad.destroy()
+
+            return res.json(ad)
+        } catch (e) {
+            next(ApiError.badRequest(e.message))
         }
-
-        await ad.destroy()
-
-        return res.json(ad)
     }
 
     async update(req, res, next) {
@@ -307,6 +311,7 @@ class AdController {
             }
 
             await ad.save()
+
             if (image) {
                 const oldImage = await Image.findAll({where: {adId: ad.id}})
                 if (oldImage) {

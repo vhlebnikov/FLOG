@@ -11,6 +11,10 @@ class CommentController {
             return next(ApiError.badRequest('id должен быть числом'))
         }
 
+        if (!text) {
+            return next(ApiError.badRequest("Введите комментарий"))
+        }
+
         const ad = await Ad.findOne({where: {id}})
         if (!ad) {
             return next(ApiError.badRequest('Нет объявления с таким id'))

@@ -104,6 +104,11 @@ class UserController {
 
     async login(req, res, next) {
         const {email, password} = req.body
+
+        if (!email || !password) {
+            return next(ApiError.badRequest("Не указаны почта и пароль"))
+        }
+
         const user = await User.findOne({where: {email}})
         if (!user) {
             return next(ApiError.internal('Пользователь не найден'))
@@ -145,6 +150,10 @@ class UserController {
 
         if (isNaN(id)) {
             return next(ApiError.badRequest('id должен быть числом'))
+        }
+
+        if (!role) {
+            return next(ApiError.badRequest("Укажите роль"))
         }
 
         const user = await User.findOne({
@@ -231,8 +240,12 @@ class UserController {
         return res.json(contacts)
     }
 
-    async getContacts(req, res) {
+    async getContacts(req, res, next) {
         const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
 
         const contacts = await Contact.findAll({
             where: {userId: id}
@@ -285,33 +298,45 @@ class UserController {
         return res.json(contacts)
     }
 
-    async checkPassword(req, res) {
+    async checkPassword(req, res, next) {
         const {password} = req.body
+
+        if (!password) {
+            return next(ApiError.badRequest("Не указан пароль"))
+        }
 
         const token = req.headers.authorization.split(' ')[1]
         const userAuth = jwt.verify(token, process.env.SECRET_KEY)
 
         const user = await User.findOne({where: userAuth.id})
-        let comparePassword = null
-        if (user && password) {
-            comparePassword = bcrypt.compareSync(password, user.password)
+
+        if (!user) {
+            return next(ApiError.badRequest("Пользоваетель не найден"))
         }
+
+        const comparePassword = bcrypt.compareSync(password, user.password)
 
         return res.json(comparePassword)
     }
 
-    async updatePassword(req, res) {
+    async updatePassword(req, res, next) {
         const {password} = req.body
+
+        if (!password) {
+            return next(ApiError.badRequest("Не указан пароль"))
+        }
 
         const token = req.headers.authorization.split(' ')[1]
         const userAuth = jwt.verify(token, process.env.SECRET_KEY)
 
         const user = await User.findOne({where: userAuth.id})
 
-        if (user && password) {
-            user.password = await bcrypt.hash(password, 5)
-            await user.save()
+        if (!user) {
+            return next(ApiError.badRequest("Пользоваетель не найден"))
         }
+
+        user.password = await bcrypt.hash(password, 5)
+        await user.save()
 
         return res.json(user)
     }
