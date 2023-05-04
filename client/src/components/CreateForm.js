@@ -6,8 +6,8 @@ import {createAd} from "../http/adAPI";
 import {useNavigate} from "react-router-dom";
 import {SHOP_PAGE} from "../utils/consts";
 import PhotoEditor from "./PhotoEditor";
-import AvatarEditor from "react-avatar-editor";
-import * as PropTypes from "prop-types";
+// import AvatarEditor from "react-avatar-editor";
+// import * as PropTypes from "prop-types";
 import Dropzone from 'react-dropzone'
 
 const CreateForm = observer(() => {
@@ -39,7 +39,7 @@ const CreateForm = observer(() => {
         setInfo(info.map(i => i.number === number ? {...i, [key]: value} : i))
     }
 
-    const addAd = () => {
+    const addAd = async () => {
         const formData = new FormData()
         formData.append('image', file)
         formData.append('name', name)
@@ -49,7 +49,8 @@ const CreateForm = observer(() => {
         formData.append('subSubCategoryId', 13)
         formData.append('info', JSON.stringify(info))
         ad.setAds(formData)
-        createAd(formData)
+        await Promise.resolve(createAd(formData))
+        navigate(SHOP_PAGE)
     }
 
     return (
@@ -110,16 +111,16 @@ const CreateForm = observer(() => {
                 type="file"
                 onChange={selectFile}
             />
-            <AvatarEditor
-                image={file}
-                width={250}
-                height={250}
-                border={50}
-                color={[255, 255, 255, 0.6]}
-                scale={1.2}
-                rotate={0}
-                onMouseUp={selectFile}
-            />
+            {/*<AvatarEditor*/}
+            {/*    image={file}*/}
+            {/*    width={250}*/}
+            {/*    height={250}*/}
+            {/*    border={50}*/}
+            {/*    color={[255, 255, 255, 0.6]}*/}
+            {/*    scale={1.2}*/}
+            {/*    rotate={0}*/}
+            {/*    onMouseUp={selectFile}*/}
+            {/*/>*/}
             <hr/>
             <Button
                 className="mt-3 btn-expensive"
