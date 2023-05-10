@@ -84,7 +84,8 @@ card-img-overlay {
 }
 
 .perLi {
-    margin-top: 1%;
+    margin-top: 2.1%;
+    margin-bottom: 2.1%;
 }
 
 .perData {
@@ -96,8 +97,8 @@ card-img-overlay {
     padding-bottom: 1.5%;
 }
 
-.perInput {
-
+.perRow {
+    padding-bottom: 1%;
 }
 
 .form-control:focus {

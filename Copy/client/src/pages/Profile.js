@@ -13,6 +13,7 @@ const Profile = observer(() => {
     const [userLoc, setUserLoc] = useState(undefined)
     const [username, setUsername] = useState(undefined)
     const [image, setImage] = useState(undefined)
+    const [flag, setFlag] = useState(false)
 
     const [isEditing, setEditing] = useState(false)
 
@@ -52,19 +53,25 @@ const Profile = observer(() => {
     }
 
     const handleSave = () => {
-        setEditing(false)
-        if (image || username || contactsLoc) {
-            const formData = new FormData()
-            if (image) {
-                formData.append('image', image)
-            }
-            if (username && username !== userLoc.username) {
-                formData.append('username', username)
-            }
-            updateData(formData).then(data => setUserLoc(data))
+        setFlag(true)
+        if (contactsLoc.includes(i => i.contact === "" || i.name === "")){
+            setFlag(false)
+        }
+        if (flag) {
+            setEditing(false)
+            if (image || username || contactsLoc) {
+                const formData = new FormData()
+                if (image) {
+                    formData.append('image', image)
+                }
+                if (username && username !== userLoc.username) {
+                    formData.append('username', username)
+                }
+                updateData(formData).then(data => setUserLoc(data))
 
-            if (contactsLoc) {
-                updateContacts(contactsLoc).then(data => setContacts(data))
+                if (contactsLoc) {
+                    updateContacts(contactsLoc).then(data => setContacts(data))
+                }
             }
         }
     }
@@ -82,7 +89,7 @@ const Profile = observer(() => {
     }
 
     const changeContactLoc = (key, value, id) => {
-        setContactsLoc(contactsLoc.map(i => i.id === id ? {...i, [key]: value} : i))
+            setContactsLoc(contactsLoc.map(i => i.id === id ? {...i, [key]: value} : i))
     }
 
     return (
@@ -122,7 +129,6 @@ const Profile = observer(() => {
                         {userLoc && userLoc.username ?
                             (isEditing
                                 ? (<Form.Control
-                                    className = "perInput"
                                     type="text"
                                     value={username}
                                     onChange={(event) => setUsername(event.target.value)}
@@ -143,69 +149,77 @@ const Profile = observer(() => {
                                     ? (
                                         <Form>
                                             {contactsLoc.map(i => (
-                                                <Row key={i.id}>
+                                                <Row key={i.id} className="perRow">
                                                     <Col xl={3}>
                                                         <Form.Control
                                                             value={i.name}
                                                             onChange={(e) => changeContactLoc('name', e.target.value, i.id)}
+                                                            required
                                                         />
                                                     </Col>
-                                                    <Col xl={3}>
+                                                    <Col xl={6}>
                                                         <Form.Control
                                                             value={i.contact}
                                                             onChange={(e) => changeContactLoc('contact', e.target.value, i.id)}
+                                                            required
                                                         />
                                                     </Col>
                                                     <Col xl={3}>
                                                         <Button
                                                             className="expensive-button"
                                                             variant="success"
+                                                            type="submit"
                                                             onClick={() => removeContactLoc(i.id)}
                                                         >
                                                             Удалить
                                                         </Button>
                                                     </Col>
                                                 </Row>
+
                                             ))}
-                                            <Button
-                                                className="expensive-button"
-                                                variant="success"
-                                            onClick={addContactLoc}
-                                        >
-                                            Добавить
-                                        </Button>
+                                                <Button
+                                                    className="expensive-button"
+                                                    variant="success"
+                                                    onClick={handleSave}
+                                                    type="submit"
+                                                >
+                                                    Сохранить
+                                                </Button>
+                                                <Button
+                                                    style = {{float:'right'}}
+                                                    className="expensive-button"
+                                                    variant="success"
+                                                    onClick={addContactLoc}
+                                                >
+                                                        Добавить
+                                                </Button>
                                         </Form>
                                     )
                                     : (<div>
                                         <ul>
                                             {contacts.map(contact => (
                                                 <li key={contact.id} className="perLi">
-                                                    <strong>{contact.name}</strong> {contact.contact}
+                                                    <strong>{contact.name}:</strong> {contact.contact}
                                                 </li>
                                             ))}
                                         </ul>
-                                    </div>)
+                                            <Button
+                                    className="expensive-button"
+                                    variant="success"
+                                    onClick={handleEditing}
+                                >Редактировать</Button>
+                                    </div>
+                                    )
                             )
                         : null
                         }
                     </div>
-                </Col>
-                {user.user.id === id ? <Col>
-                    <label>
-                        {isEditing ? (<Button
-                            className="expensive-button"
-                            variant="success"
-                            onClick={handleSave}
-                            >Сохранить</Button>
-                        ) : (
-                            <Button
-                                className="expensive-button"
-                                variant="success"
-                                onClick={handleEditing}
-                            >Редактировать</Button>)}
-                    </label>
+                    </Col>
+                {user.user.id === id
+                    ? <Col>
                     <Button className="expensive-button" variant="success">Сменить пароль</Button>
-                </Col> : null}
+                    </Col>
+                    : null}
             </Row>
             <Row>
                 <h2 className="perHead">Ваши объявления</h2>
