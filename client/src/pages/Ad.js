@@ -1,20 +1,22 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
-import ImageUploader from "../dasha/ImageUploader.js";
-import {PROFILE_PAGE, SHOP_PAGE} from "../utils/consts";
-import {useNavigate} from "react-router-dom";
+import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
+import {PROFILE_PAGE, SHOP_PAGE, NOT_FOUND_AD_PAGE} from "../utils/consts";
+import {Link, useNavigate} from "react-router-dom";
 import {Context} from "../index";
 import {useParams} from 'react-router-dom';
 import component6 from "../dasha/Component6.png";
+import component12 from "../dasha/Component12.png";
 import CategoryDownFall from "../dasha/CategoryDownFall";
 import {deleteAd, getAllAds, getOneAd, getPrice, updateAd} from "../http/adApi";
 import {getInfo} from "../http/infoApi"
 import {getUser} from "../http/userApi";
-import {getAllComments} from "../http/commentApi";
+import {addComment, deleteComment, getAllComments} from "../http/commentApi";
 import Carousel from 'react-bootstrap/Carousel';
 import {observer} from "mobx-react-lite";
 import '../dasha/ImageUploader.css'
 import {getCategoryRoute} from "../http/categoryApi";
+import Circle from "../dasha/Circle";
+import CommentModal from "../dasha/CommentModal";
 
 
 const Ad = observer(() => {
@@ -115,7 +117,7 @@ const Ad = observer(() => {
             <Row>
                 <Col md={4}>
                     {isEditing
-                        ? (<ImageUploader/>)
+                        ? null // image uploader rip
                         :
                         (images.length !== 0
                             ? (<Carousel slide={false} interval={null}>

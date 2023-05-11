@@ -70,3 +70,73 @@ card-img-overlay {
     max-width:100%;
     height:auto;
 }
+
+.perText {
+    margin-left: 7%;
+    margin-top: 2.1%;
+    margin-bottom: 2.1%;
+}
+
+.perHead {
+    margin-top: 1%;
+    margin-bottom: 1%;
+    text-align: center;
+}
+
+.perLi {
+    margin-top: 2.1%;
+    margin-bottom: 2.1%;
+}
+
+.perData {
+    border-width: 4px;
+    border-radius: 30px;
+    border-color: #1b5705;
+    border-style: solid;
+    padding-top: 4.5%;
+    padding-bottom: 1.5%;
+}
+
+.perRow {
+    padding-bottom: 1%;
+}
+
+.form-control:focus {
+    border-color: #154205;
+    box-shadow: 0 0 0 0.2rem rgba(61, 203, 14, 0.46);
+}
+
+.bord {
+    width: 350px;
+    border: 1px solid transparent;
+    margin-top: 10px;
+}
+
+img {
+    max-width: 100%;
+    object-fit: contain;
+}
+
+card-img {
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/*
+circle
+ */
+.circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 20px;
+}
+
+.letters {
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+}

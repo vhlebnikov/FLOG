@@ -13,7 +13,7 @@ export const login = async (email, password) => {
 }
 
 export const sendConfirmationMail = async (email) => {
-    const {data} = await $host.post('api/user/login', {email})
+    const {data} = await $host.post('api/user/confirm', {email})
     return data;
 }
 

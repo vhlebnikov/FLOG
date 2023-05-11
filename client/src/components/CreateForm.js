@@ -15,7 +15,7 @@ const CreateForm = observer(() => {
     const [description, setDescription] = useState('')
     const [address, setAddress] = useState('')
     const [info, setInfo] = useState([])
-    const [price, setPrice] = useState({type: 0, start: 0, end: 0})
+    const [price, setPrice] = useState({type: 0, start: "", end: ""})
 
     const selectFile = e => {
         setFile(Array.from(e.target.files))
@@ -71,7 +71,7 @@ const CreateForm = observer(() => {
                             value={price.start}
                             type="number"
                             onChange={(e) => changePrice('start', Number(e.target.value))}
-                            className="btn-expensive"
+                            className="mt-2"
                             placeholder="цена"
                         />
                     </Col>
@@ -81,7 +81,7 @@ const CreateForm = observer(() => {
                                 value={price.end}
                                 type="number"
                                 onChange={(e) => changePrice('end', Number(e.target.value))}
-                                className="btn-expensive"
+                                className="mt-2"
                                 placeholder="цена"
                             />
                         </Col>

@@ -7,9 +7,19 @@ class CategoryController {
         try {
             if (category) {
                 for (const c of category) {
-                    await Category.create({
+                    const newCategory = await Category.create({
                         name: c.name
                     });
+
+                    const newSubCategory = await SubCategory.create({
+                        name: "Не указано",
+                        categoryId: newCategory.id
+                    })
+
+                    await SubSubCategory.create({
+                        name: "Не указано",
+                        subCategoryId: newSubCategory.id
+                    })
                 }
             }
 
@@ -37,9 +47,14 @@ class CategoryController {
         } else {
             if (subCategory) {
                 for (const c of subCategory) {
-                    await SubCategory.create({
+                    const newSubCategory = await SubCategory.create({
                         name: c.name,
                         categoryId: category.id
+                    })
+
+                    await SubSubCategory.create({
+                        name: "Не указано",
+                        subCategoryId: newSubCategory.id
                     })
                 }
             }
