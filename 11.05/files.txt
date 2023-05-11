@@ -1,0 +1,60 @@
+из папки dasha было
+Circle
+Comment Modal
+Footer
+component12.png
+frog.svg
+
+в pages дабавила NotFoundAd.js
+его также прописала в consts 
+export const NOT_FOUND_AD_PAGE ='/error'
+и 
+routes
+{
+        path: NOT_FOUND_AD_PAGE,
+        Component: NotFoundAd
+    },
+    
+еще снова морока с css
+возможно будут проблемы
+App.css
+
+.bord {
+    width: 350px;
+    border: 1px solid transparent;
+    margin-top: 10px;
+}
+
+img {
+    max-width: 100%;
+    object-fit: contain;
+}
+
+card-img {
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/*
+circle
+ */
+.circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 20px;
+}
+
+.letters {
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+
+AdItem поменялось 
+и размер карточки
+
