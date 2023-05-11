@@ -31,15 +31,54 @@ const confirmation = async (email, userId, link) => {
             transporter.sendMail({
                 from: process.env.GMAIL_USER,
                 to: email,
-                subject: 'Активация аккаунта на ' + process.env.API_URL,
+                subject: 'Активация аккаунта на FLOG ' + process.env.CLIENT_URL,
                 text: '',
                 html:
                     `
                     <div>
-                        <h1>Для активации аккаунта перейдите по ссылке</h1>
-                        <a href="${link}">${link}</a>
-                    </div>  
-                    
+    <td align="center" valign="top" style="padding:0;Margin:0;width:530px">
+        <table cellpadding="0" cellspacing="0" width="100%"
+            role="presentation"
+            <tr style="border-collapse:collapse">
+                <td align="center" style="padding:0;Margin:0"><p>
+                    Подтвердите регистрацию на FLOG</p>
+                </td>
+            </tr>
+        </table>
+    </td>
+    <td valign="top" align="center" style="padding:0;Margin:0;width:530px">
+        <table width="100%" cellspacing="0" cellpadding="0"
+               role="presentation"
+            <tr style="border-collapse:collapse">
+                <td align="center"
+                    style="padding:0;Margin:0;padding-bottom:15px;padding-top:30px">
+                    <span class="es-button-border"
+                            style="border-style:solid;border-color:transparent;background:#0d6936;border-width:0px;display:inline-block;border-radius:5px;width:auto">
+                            <a
+                            href="${link}"
+                            class="es-button" target="_blank"
+                            style="text-decoration:none;color:#ffffff;font-size:18px;display:inline-block;background:#0d6936;border-radius:5px;width:auto;text-align:center;padding:15px 30px;border-color:#0d6936"
+                            >
+                            Подтвердить
+                        </a>
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </td>
+    <td align="center" valign="top" style="padding:0;Margin:0;width:530px">
+        <table cellpadding="0" cellspacing="0" width="100%"
+               role="presentation"
+            <tr style="border-collapse:collapse">
+                <td align="center" style="padding:0;Margin:0"><p
+                        style="line-height:23px;color:#696969;font-size:15px">
+                    Если вы не регистрировались, проигнорируйте это
+                    письмо</p>
+                </td>
+            </tr>
+        </table>
+    </td>
+</div>              
             `
             })
         })
@@ -82,6 +121,32 @@ class UserController {
 
         // const token = generateJwt(user.id, user.email, user.username, user.role)
         return res.json({message: "Пользователь успешно зарегистрирован"})
+    }
+
+    async sendConfirmationMail(req, res, next) {
+        const {email} = req.body
+
+        if (!email) {
+            return next(ApiError.badRequest('Некорректный email'))
+        }
+
+        const user = await User.findOne({where: {email}})
+
+        if (!user) {
+            return next(ApiError.badRequest("Пользователь не найден"))
+        }
+
+        if (user.confirmed) {
+            return next(ApiError.badRequest("Пользователь уже подтверждён"))
+        }
+
+        const activationLink = uuid.v4()
+
+        user.activationLink = activationLink
+        user.save()
+
+        await confirmation(user.email, user.id, `${process.env.API_URL}/api/user/activate/${activationLink}`)
+        return res.json({message: "Письмо отправлено"})
     }
 
     async activate(req, res, next) {
@@ -254,12 +319,15 @@ class UserController {
         return res.json(contacts)
     }
 
-    async deleteContacts(req, res) {
-        const token = req.headers.authorization.split(' ')[1]
-        const user = jwt.verify(token, process.env.SECRET_KEY)
+    async deleteContacts(req, res, next) {
+        const {id} = req.params
+
+        if (isNaN(id)) {
+            return next(ApiError.badRequest('id должен быть числом'))
+        }
 
         const contacts = await Contact.findAll({
-            where: {userId: user.id}
+            where: {userId: id}
         })
         if (contacts) {
             contacts.forEach(c => c.destroy())

@@ -6,6 +6,7 @@ const checkRole = require('../middleware/checkRoleMiddleware')
 
 router.post('/registration', userController.registration)
 router.post('/login', userController.login)
+router.post('/confirm', userController.sendConfirmationMail)
 router.post('/contacts', authMiddleware, userController.addContacts)
 router.post('/role/:id', checkRole('ADMIN'), userController.setRole)
 router.post('/password', authMiddleware, userController.checkPassword)
@@ -20,7 +21,7 @@ router.put('/data', authMiddleware, userController.updateData)
 router.put('/contacts', authMiddleware, userController.updateContacts)
 router.put('/password', authMiddleware, userController.updatePassword)
 
-router.delete('/contacts', authMiddleware, userController.deleteContacts)
+router.delete('/contacts/:id', checkRole('ADMIN'), userController.deleteContacts)
 
 
 module.exports = router
