@@ -163,7 +163,7 @@ const Profile = observer(() => {
         } else {
             setContactsError(null)
             setEditing(false)
-            if (image || username || contactsLoc) {
+            if (image || username) {
                 const formData = new FormData()
                 if (image) {
                     formData.append('image', image)
@@ -172,10 +172,9 @@ const Profile = observer(() => {
                     formData.append('username', username)
                 }
                 updateData(formData).then(data => setUserLoc(data))
-
-                if (contactsLoc) {
-                    updateContacts(contactsLoc).then(data => setContacts(data))
-                }
+            }
+            if (contactsLoc) {
+                updateContacts(contactsLoc).then(data => setContacts(data))
             }
         }
     }
@@ -248,7 +247,7 @@ const Profile = observer(() => {
                     </div>
                     <div className="forPersonal2">
                         <h5>Контакты:</h5>
-                        {contacts && contactsLoc ?
+                        {contactsLoc ?
                             (isEditing
                                     ? (
                                         <Form>

@@ -166,12 +166,13 @@ const Auth = observer(() => {
                                 : null}
                         </div>
 
-                        {submit ? <Button
+                        <Button
                             variant={"outline-success"}
                             onClick={click}
+                            disabled={!submit}
                         >
                             {isLogin ? 'Войти' : 'Регистрация'}
-                        </Button> : null}
+                        </Button>
                     </Form.Text>
                 </Form>
             </Card>

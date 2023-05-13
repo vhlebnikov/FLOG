@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Col} from "react-bootstrap";
+import {Card, Col} from "react-bootstrap";
 import {AD_PAGE} from "../utils/consts";
 import {useNavigate} from "react-router-dom";
 import {getPrice} from "../http/adApi";

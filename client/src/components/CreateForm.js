@@ -1,34 +1,31 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Context} from "../index";
+import React, {useState} from 'react';
 import {Button, Col, Dropdown, Form, Row} from "react-bootstrap";
 import {observer} from "mobx-react-lite";
 import {createAd} from "../http/adApi";
-import {redirect, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {SHOP_PAGE} from "../utils/consts";
-import {wait} from "@testing-library/user-event/dist/utils";
 
 const CreateForm = observer(() => {
     const navigate = useNavigate()
-    const {ad} = useContext(Context)
     const [file, setFile] = useState(null)
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
     const [address, setAddress] = useState('')
     const [info, setInfo] = useState([])
-    const [price, setPrice] = useState({type: 0, start: "", end: ""})
+    const [price, setPrice] = useState({type: 0, start: 0, end: 0})
 
     const selectFile = e => {
         setFile(Array.from(e.target.files))
     }
 
     const addInfo = () => {
-        setInfo([...info, {name: '', description: '', number: Date.now()}])
+        setInfo([...info, {name: '', description: '', id: Date.now()}])
     }
-    const removeInfo = (number) => {
-        setInfo(info.filter(i => i.number !== number))
+    const removeInfo = (id) => {
+        setInfo(info.filter(i => i.id !== id))
     }
-    const changeInfo = (key, value, number) => {
-        setInfo(info.map(i => i.number === number ? {...i, [key]: value} : i))
+    const changeInfo = (key, value, id) => {
+        setInfo(info.map(i => i.id === id ? {...i, [key]: value} : i))
     }
 
     const changePrice = (key, value) => {
@@ -120,26 +117,26 @@ const CreateForm = observer(() => {
                 Добавить новое свойство
             </Button>
             {info.map(i =>
-                <Row className="mt-4" key={i.number}>
+                <Row className="mt-4" key={i.id}>
                     <Col md={4}>
                         <Form.Control
 
                             value={i.name}
-                            onChange={(e) => changeInfo('name', e.target.value, i.number)}
+                            onChange={(e) => changeInfo('name', e.target.value, i.id)}
                             placeholder="Введите название свойства"
                         />
                     </Col>
                     <Col md={4}>
                         <Form.Control
                             value={i.description}
-                            onChange={(e) => changeInfo('description', e.target.value, i.number)}
+                            onChange={(e) => changeInfo('description', e.target.value, i.id)}
                             placeholder="Введите описание свойства"
                         />
                     </Col>
                     <Col md={4}>
                         <Button
                             className="btn-expensive"
-                            onClick={() => removeInfo(i.number)}
+                            onClick={() => removeInfo(i.id)}
                             variant={"outline-danger"}
                         >
                             Удалить

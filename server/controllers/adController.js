@@ -1,6 +1,6 @@
 const uuid = require('uuid')
 const path = require('path')
-const {Ad, Info, Price, SubSubCategory, SubCategory, Image} = require('../models/models')
+const {Ad, Info, Price, SubSubCategory, SubCategory, Image, Comment} = require('../models/models')
 const ApiError = require('../error/ApiError')
 const jwt = require("jsonwebtoken");
 const fs = require('fs')
@@ -248,6 +248,13 @@ class AdController {
                 })
             }
 
+            const comments = await Comment.findAll({
+                where: {adId: id}
+            })
+            if (comments) {
+                comments.forEach(i => i.destroy())
+            }
+
             await ad.destroy()
 
             return res.json(ad)
@@ -259,7 +266,12 @@ class AdController {
     async update(req, res, next) {
         try {
             let {name, description, address, status, subSubCategoryId, price, info} = req.body
-            let {image} = req.files
+
+            let newImage
+            if (req.files) {
+                const {image} = req.files
+                newImage = image
+            }
 
             const {id} = req.params
 
@@ -267,8 +279,8 @@ class AdController {
                 return next(ApiError.badRequest('id должен быть числом'))
             }
 
-            const ad = await Ad.findOne({
-                    where: {id: id}
+            let ad = await Ad.findOne({
+                    where: {id: id},
                 }
             )
 
@@ -312,7 +324,7 @@ class AdController {
 
             await ad.save()
 
-            if (image) {
+            if (newImage) {
                 const oldImage = await Image.findAll({where: {adId: ad.id}})
                 if (oldImage) {
                     oldImage.forEach(i => {
@@ -321,8 +333,8 @@ class AdController {
                     })
                 }
 
-                if (isIterable(image)) {
-                    for (const i of image) {
+                if (isIterable(newImage)) {
+                    for (const i of newImage) {
                         let fileName = uuid.v4() + ".jpg"
                         await i.mv(path.resolve(__dirname, "..", "static", fileName))
                         await Image.create({
@@ -332,7 +344,7 @@ class AdController {
                     }
                 } else {
                     let fileName = uuid.v4() + ".jpg"
-                    await image.mv(path.resolve(__dirname, "..", "static", fileName))
+                    await newImage.mv(path.resolve(__dirname, "..", "static", fileName))
                     await Image.create({
                         image: fileName,
                         adId: ad.id
@@ -355,6 +367,12 @@ class AdController {
                     });
                 }
             }
+
+            ad = await Ad.findOne({
+                    where: {id: id},
+                    include: [{model: Info, as: 'info'}, {model: Image, as: 'image'}]
+                }
+            )
 
             return res.json(ad)
         } catch (e) {

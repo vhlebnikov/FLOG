@@ -68,7 +68,7 @@ Ad.hasMany(Comment)
 Comment.belongsTo(Ad)
 
 User.hasMany(Comment)
-Comment.belongsTo(User)
+Comment.belongsTo(User, {as: 'user'})
 
 Ad.hasMany(Image, {as: 'image'})
 Image.belongsTo(Ad)
