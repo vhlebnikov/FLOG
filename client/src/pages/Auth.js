@@ -11,14 +11,14 @@ const Auth = observer(() => {
     const {user} = useContext(Context)
     const location = useLocation()
     const navigate = useNavigate()
-    const isLogin = location.pathname === AUTH_PAGE
+    const [isLogin, setIsLogin] = useState(location.pathname === AUTH_PAGE)
     const [email, setEmail] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-    const [emailError, setEmailError] = useState(null)
-    const [usernameError, setUsernameError] = useState(null)
-    const [passwordError, setPasswordError] = useState(null)
+    const [emailError, setEmailError] = useState("Введите email")
+    const [usernameError, setUsernameError] = useState("Введите имя")
+    const [passwordError, setPasswordError] = useState("Введите пароль")
 
     const [submit, setSubmit] = useState(false)
 
@@ -40,7 +40,11 @@ const Auth = observer(() => {
     const emailHandler = (e) => {
         setEmail(e.target.value)
         setUnconfirmed(false)
-        if (!isValidEmail(e.target.value)) {
+        if (!notEmpty(e.target.value)) {
+            setEmailError("Введите email")
+            setSubmit(false)
+        }
+        else if (!isValidEmail(e.target.value)) {
             setEmailError("Некорректный email")
             setSubmit(false)
         } else {
@@ -69,6 +73,10 @@ const Auth = observer(() => {
     }
 
     useEffect(() => {
+        setIsLogin(location.pathname === AUTH_PAGE)
+    }, [location.pathname])
+
+    useEffect(() => {
         if (isLogin) {
             if (!emailError && !passwordError) {
                 setSubmit(true)
@@ -78,7 +86,7 @@ const Auth = observer(() => {
                 setSubmit(true)
             }
         }
-    }, [emailError, usernameError, passwordError])
+    }, [emailError, usernameError, passwordError, isLogin])
 
     const sendMail = () => {
         sendConfirmationMail(email).then(data => alert(data.message))

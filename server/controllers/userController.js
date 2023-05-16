@@ -15,7 +15,7 @@ const generateJwt = (id, email, username, role) => {
     )
 }
 
-const confirmation = async (email, userId, link) => {
+const confirmation = async (username, email, userId, link) => {
     const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: process.env.SMTP_PORT,
@@ -31,55 +31,54 @@ const confirmation = async (email, userId, link) => {
             transporter.sendMail({
                 from: process.env.GMAIL_USER,
                 to: email,
-                subject: 'Активация аккаунта на FLOG ' + process.env.CLIENT_URL,
+                subject: username + ', подтвердите аккаунт на FLOG!',
                 text: '',
                 html:
                     `
-                    <div>
-    <td align="center" valign="top" style="padding:0;Margin:0;width:530px">
-        <table cellpadding="0" cellspacing="0" width="100%"
-            role="presentation"
-            <tr style="border-collapse:collapse">
-                <td align="center" style="padding:0;Margin:0"><p>
-                    Подтвердите регистрацию на FLOG</p>
-                </td>
-            </tr>
-        </table>
-    </td>
-    <td valign="top" align="center" style="padding:0;Margin:0;width:530px">
-        <table width="100%" cellspacing="0" cellpadding="0"
-               role="presentation"
-            <tr style="border-collapse:collapse">
-                <td align="center"
-                    style="padding:0;Margin:0;padding-bottom:15px;padding-top:30px">
-                    <span class="es-button-border"
-                            style="border-style:solid;border-color:transparent;background:#0d6936;border-width:0px;display:inline-block;border-radius:5px;width:auto">
-                            <a
-                            href="${link}"
-                            class="es-button" target="_blank"
-                            style="text-decoration:none;color:#ffffff;font-size:18px;display:inline-block;background:#0d6936;border-radius:5px;width:auto;text-align:center;padding:15px 30px;border-color:#0d6936"
-                            >
-                            Подтвердить
-                        </a>
-                    </span>
-                </td>
-            </tr>
-        </table>
-    </td>
-    <td align="center" valign="top" style="padding:0;Margin:0;width:530px">
-        <table cellpadding="0" cellspacing="0" width="100%"
-               role="presentation"
-            <tr style="border-collapse:collapse">
-                <td align="center" style="padding:0;Margin:0"><p
-                        style="line-height:23px;color:#696969;font-size:15px">
-                    Если вы не регистрировались, проигнорируйте это
-                    письмо</p>
-                </td>
-            </tr>
-        </table>
-    </td>
-</div>              
-            `
+<div 
+    style="height: 200px;width: 450px; 
+    text-align: center;background-image: 
+    url(https://i.ibb.co/9gCVYW3/mail.png)"
+>
+    <p 
+        style="font-family: Georgia, 'Times New Roman', Times, serif;
+            padding-top: 10px;"
+    >
+        Подтвердите, пожалуйста, регистрацию на FLOG
+    </p>
+    <a href="${link}">
+        <button 
+            style="background-color: #0D6936;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            color: #fff;
+            font-weight: 400;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            margin-top: 10px;"
+        >
+            Подтвердить
+        </button>
+    </a>
+    <p
+        style="font-family: Georgia, 'Times New Roman', Times, serif;
+        margin-top: 30px;"
+    >
+        FLOG - Friendly Local Offers and Goods</p>
+    <p 
+        style="font-family: 'Courier New', Courier, monospace; 
+        color: #000000; 
+        font-size: small;
+        margin-top: 35px;"
+    >
+        Если вы не регистрировались, проигнорируйте это письмо
+    </p>
+</div>
+                    `
             })
         })
 }
@@ -117,7 +116,7 @@ class UserController {
             userId: user.id
         });
 
-        await confirmation(user.email, user.id, `${process.env.API_URL}/api/user/activate/${activationLink}`)
+        await confirmation(user.username, user.email, user.id, `${process.env.API_URL}/api/user/activate/${activationLink}`)
 
         // const token = generateJwt(user.id, user.email, user.username, user.role)
         return res.json({message: "Пользователь успешно зарегистрирован"})
@@ -145,7 +144,7 @@ class UserController {
         user.activationLink = activationLink
         user.save()
 
-        await confirmation(user.email, user.id, `${process.env.API_URL}/api/user/activate/${activationLink}`)
+        await confirmation(user.username, user.email, user.id, `${process.env.API_URL}/api/user/activate/${activationLink}`)
         return res.json({message: "Письмо отправлено"})
     }
 
