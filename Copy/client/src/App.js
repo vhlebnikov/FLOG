@@ -8,6 +8,7 @@ import AppRouter from "./components/AppRouter";
 import NavBar from "./components/NavBar";
 import {Spinner} from "react-bootstrap";
 import {check} from "./http/userApi";
+import Footer from "./dasha/Footer";
 
 const App = observer(() => {
     const {user} = useContext(Context)
@@ -28,6 +29,7 @@ const App = observer(() => {
       <BrowserRouter>
           <NavBar/>
           <AppRouter/>
+          <Footer/>
       </BrowserRouter>
   );
 });

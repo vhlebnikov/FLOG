@@ -4,20 +4,7 @@
 }
 
 .shopNavBar {
-    background: #00A3к47;
-}
-
-.card {
-    box-sizing: content-box;
-    /*width: 100%;*/
-    background-color: #d7d7d7;
-    border: none;
-
-}
-
-
-body{
-    background-color: #E7E5E5;
+    background: #00A347;
 }
 
 .shadow-box {
@@ -25,9 +12,8 @@ body{
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.mainNavBar {
-    background: #0D6936;
-    border-radius: 0;
+.shadow-box-nav {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .btn-expensive {
@@ -38,7 +24,7 @@ body{
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
     transition: all 0.3s ease-in-out;
     cursor: pointer;
 }
@@ -46,35 +32,69 @@ body{
 .btn-expensive:hover {
     background-color: #0D6936;
     color: #fff;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
 }
 
 .btn-expensive:active {
     background-color: #008037;
     color: #fff;
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
     transform: translateY(1px);
 }
 
-.just-button {
-    background-color: #ffffff;
+.bord {
+     width: 350px;
+     border: 1px solid transparent;
+     margin-top: 10px;
+ }
+
+.circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 20px;
 }
 
-card-img-overlay {
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+.letters {
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
 }
 
-.card-img {
-    display:block;
-    width:100%;
-    max-width:100%;
-    height:auto;
+/*
+    Отсюда начинаются стили для личного кабинета
+ */
+
+.perButton {
+    background-color: #0D6936;
+    color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.perImage {
+    width: auto;
+    height: 100%;
+
+}
+
+.perImageBorder {
+    width: 350px;
+    height: 350px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 40%;
 }
 
 .perText {
-    margin-left: 7%;
-    margin-top: 2.1%;
-    margin-bottom: 2.1%;
+    margin-bottom: 4.2%;
+}
+
+.perInput {
+    margin-bottom: 5.3%;
 }
 
 .perHead {
@@ -84,24 +104,192 @@ card-img-overlay {
 }
 
 .perLi {
-    margin-top: 2.1%;
-    margin-bottom: 2.1%;
+    counter-reset: li;
+    list-style: none;
+    font: 14px "Trebuchet MS", "Lucida Sans";
+    padding: 0;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+}
+.perLi a {
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em .8em;
+    margin: .5em 0 .5em 2.5em;
+    background: #D3D4DA;
+    color: #444;
+    text-decoration: none;
+    transition: all .3s ease-out;
+}
+.perLi a:hover {background: #DCDDE1;}
+.perLi a:before {
+    content: counter(li);
+    counter-increment: li;
+    position: absolute;
+    left: -2.5em;
+    top: 50%;
+    margin-top: -1em;
+    background: #9097A2;
+    height: 2em;
+    width: 2em;
+    line-height: 2em;
+    text-align: center;
+    font-weight: bold;
+}
+.perLi a:after {
+    position: absolute;
+    content: "";
+    border: .5em solid transparent;
+    left: -1em;
+    top: 50%;
+    margin-top: -.5em;
+    transition: all .3s ease-out;
+}
+.perLi a:hover:after {
+    left: -.5em;
+    border-left-color: #9097A2;
 }
 
 .perData {
-    border-width: 4px;
-    border-radius: 30px;
-    border-color: #1b5705;
-    border-style: solid;
+    box-shadow: 6px 6px 6px 6px rgba(0, 0, 0, .2);
     padding-top: 4.5%;
     padding-bottom: 1.5%;
 }
 
 .perRow {
-    padding-bottom: 1%;
+    margin-bottom: 1%;
 }
 
 .form-control:focus {
     border-color: #154205;
     box-shadow: 0 0 0 0.2rem rgba(61, 203, 14, 0.46);
+}
+
+/* Скопиоовано из ImageUploader Даши*/
+
+body {
+    background-color: #E7E5E5; /* replace with your desired color */
+}
+
+.thumbnail {
+    max-width: 200px;
+    max-height: 300px;
+    object-fit: contain;
+}
+
+.component-5 {
+    width: 8%;
+    height: 8%;
+    object-fit: contain;
+    position: fixed;
+    left: 0;
+    top: 20%;
+}
+
+.main {
+    margin-top: 30px; /* Add a top margin to avoid content overlay */
+}
+
+.image-2 {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    position: absolute;
+    left: 120px;
+    top: 100px;
+}
+
+.image-2 div {
+    width: 200px;
+    height: 300px;
+    background-position: center;
+    background-size: cover;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.image-button {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    position: fixed; /* Set the navbar to fixed position */
+    top: 20%; /* Position the navbar at the top of the page */
+    width: 10%;
+}
+
+.image-button div {
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-size: cover;
+}
+
+.image-button2 {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    position: fixed; /* Set the navbar to fixed position */
+    top: 20%; /* Position the navbar at the top of the page */
+    right: 0;
+}
+
+.image-button2 div {
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-size: cover;
+}
+
+/* Скопировано из DropDown Даши */
+
+.dropdown-menu li {
+    position: relative;
+}
+.dropdown-menu .dropdown-submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: -7px;
+}
+.dropdown-menu .dropdown-submenu-left {
+    right: 100%;
+    left: auto;
+}
+.dropdown-menu > li:hover > .dropdown-submenu {
+    display: block;
+}
+
+/* Скопирован из St */
+* {
+    box-sizing: border-box;
+}
+
+.forPersonal {
+    margin-left: 5%;
+    margin-bottom: 3%;
+    background-position: center;
+    background-size: cover;
+    height: 30px;
+}
+
+.blockPersonal {
+    float: inside;
+}
+
+.personalInput {
+    width : 70%;
+    height: 30px;
+    outline: none;
+    padding-left: 15px;
+    border-radius: 10px;
+}
+
+
+.personalMain {
+    height: 70%;
+    width: 100%;
+    margin-top: 40px;
 }

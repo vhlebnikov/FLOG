@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Button, Card, Col, Container, Image, Row} from "react-bootstrap";
-import ImageUploader2 from "../dasha/ImageUploader.css";
 import ImageUploader from "../dasha/ImageUploader.js";
 import photo from "../dasha/photo.png"
 import {PROFILE_PAGE} from "../utils/consts";

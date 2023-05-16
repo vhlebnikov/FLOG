@@ -12,6 +12,11 @@ export const login = async (email, password) => {
     return jwt_decode(data.token)
 }
 
+export const sendConfirmationMail = async (email) => {
+    const {data} = await $host.post('api/user/confirm', {email})
+    return data;
+}
+
 export const addContacts = async (contacts) => {
     const {data} = await $authHost.post('api/user/contacts', {contacts})
     return data
@@ -63,7 +68,7 @@ export const updatePassword = async (password) => {
     return data
 }
 
-export const deleteContacts = async () => {
-    const {data} = await $authHost.delete('api/user/contacts')
+export const deleteContacts = async (id) => {
+    const {data} = await $authHost.delete('api/user/contacts/' + id)
     return data
 }
