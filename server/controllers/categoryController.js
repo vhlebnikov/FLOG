@@ -1,171 +1,57 @@
-const {Category, SubCategory, SubSubCategory, Contact, Price, Info} = require('../models/models')
-const ApiError = require("../error/ApiError");
+const {Category} = require('../models/models')
+const ApiError = require("../error/ApiError")
+
+const findChildrenAndDestroy = async (id) => {
+    const categories = await Category.findAll({
+        where: {parentId: id}
+    })
+
+    categories.forEach(c => {
+        findChildrenAndDestroy(c.id)
+        c.destroy()
+    })
+}
 
 class CategoryController {
     async addCategory(req, res, next) {
-        const {category} = req.body
-        try {
-            if (category) {
-                for (const c of category) {
-                    const newCategory = await Category.create({
-                        name: c.name
-                    });
-
-                    const newSubCategory = await SubCategory.create({
-                        name: "Не указано",
-                        categoryId: newCategory.id
-                    })
-
-                    await SubSubCategory.create({
-                        name: "Не указано",
-                        subCategoryId: newSubCategory.id
-                    })
-                }
-            }
-
-            return res.json(category)
-        } catch (e) {
-            return next(ApiError.badRequest('Такие категории уже есть'))
-        }
-    }
-
-    async addSubCategory(req, res, next) {
         const {id} = req.params
+        const {name} = req.body
 
         if (isNaN(id)) {
-            return next(ApiError.badRequest('id должен быть числом'))
+            return next(ApiError.badRequest("id должен быть числом"))
         }
 
-        const category = await Category.findOne({
-            where: {id}
+        if (!name) {
+            return next(ApiError.badRequest("Укажите название категории"))
+        }
+
+        const category = await Category.create({
+            name: name,
+            parentId: id
         })
 
-        const {subCategory} = req.body
-
-        if (!category) {
-            return next(ApiError.badRequest('Категория с таким id не найдена'))
-        } else {
-            if (subCategory) {
-                for (const c of subCategory) {
-                    const newSubCategory = await SubCategory.create({
-                        name: c.name,
-                        categoryId: category.id
-                    })
-
-                    await SubSubCategory.create({
-                        name: "Не указано",
-                        subCategoryId: newSubCategory.id
-                    })
-                }
-            }
-        }
-
-        return res.json(subCategory)
-    }
-
-    async addSubSubCategory(req, res, next) {
-        const {id} = req.params
-
-        if (isNaN(id)) {
-            return next(ApiError.badRequest('id должен быть числом'))
-        }
-
-        const subCategory = await SubCategory.findOne({
-            where: {id}
-        })
-
-        const {subSubCategory} = req.body
-        if (!subCategory) {
-            return next(ApiError.badRequest('Подкатегория с таким id не найдена'))
-        } else {
-            if (subSubCategory) {
-                for (const c of subSubCategory) {
-                    await SubSubCategory.create({
-                        name: c.name,
-                        subCategoryId: subCategory.id
-                    })
-                }
-            }
-        }
-
-        return res.json(subSubCategory)
+        return res.json(category)
     }
 
     async deleteCategory(req, res, next) {
         const {id} = req.params
 
         if (isNaN(id)) {
-            return next(ApiError.badRequest('id должен быть числом'))
+            return next(ApiError.badRequest("id должен быть числом"))
         }
 
-        const category = await Category.findOne({
+        let category = await Category.findOne({
             where: {id: id}
         })
 
-        if (category) {
-            const subCategories = await SubCategory.findAll({
-                where: {categoryId: category.id}
-            })
-
-            if (subCategories) {
-                for (const sc of subCategories) {
-                    let subSubCategory = await SubSubCategory.findAll({
-                        where: {subCategoryId: sc.id}
-                    })
-
-                    if (subSubCategory) {
-                        subSubCategory.forEach(c => c.destroy())
-                    }
-
-                    await sc.destroy()
-                }
-            }
-            await category.destroy()
+        try {
+            await findChildrenAndDestroy(id)
+            category.destroy()
+        } catch (e) {
+            return res.json(e)
         }
 
         return res.json(category)
-    }
-
-    async deleteSubCategory(req, res, next) {
-        const {id} = req.params
-
-        if (isNaN(id)) {
-            return next(ApiError.badRequest('id должен быть числом'))
-        }
-
-        const subCategory = await SubCategory.findOne({
-            where: {id: id}
-        })
-        if (subCategory) {
-            const subSubCategories = await SubSubCategory.findAll({
-                where: {subCategoryId: subCategory.id}
-            })
-
-            if (subSubCategories) {
-                subSubCategories.forEach(c => c.destroy())
-            }
-            await subCategory.destroy()
-        }
-
-        return res.json(subCategory)
-    }
-
-    async deleteSubSubCategory(req, res, next) {
-        const {id} = req.params
-
-        if (isNaN(id)) {
-            return next(ApiError.badRequest('id должен быть числом'))
-        }
-
-        const subSubCategory = await SubSubCategory.findOne({
-            where: {id: id}
-        })
-
-        if (subSubCategory) {
-            await subSubCategory.destroy()
-        }
-
-        return res.json(subSubCategory)
     }
 
     async updateCategory(req, res, next) {
@@ -173,146 +59,69 @@ class CategoryController {
         const {name} = req.body
 
         if (isNaN(id)) {
-            return next(ApiError.badRequest('id должен быть числом'))
+            return next(ApiError.badRequest("id должен быть числом"))
+        }
+
+        if (!name) {
+            return next(ApiError.badRequest("Укажите название категории"))
         }
 
         const category = await Category.findOne({
             where: {id: id}
         })
 
-        if (!name) {
-            return next(ApiError.badRequest('Не передано поле name'))
-        }
-
         if (category) {
-            try {
-                category.name = name
-                await category.save()
-            } catch (e) {
-                return next(ApiError.badRequest('Такое имя уже занято'))
-            }
+            category.name = name
+            await category.save()
         }
 
         return res.json(category)
-    }
-
-    async updateSubCategory(req, res, next) {
-        const {id} = req.params
-        const {name} = req.body
-
-        if (isNaN(id)) {
-            return next(ApiError.badRequest('id должен быть числом'))
-        }
-
-        const subCategory = await SubCategory.findOne({
-            where: {id: id}
-        })
-
-        if (!name) {
-            return next(ApiError.badRequest('Не передано поле name'))
-        }
-
-        if (subCategory) {
-            subCategory.name = name
-            await subCategory.save()
-        }
-
-        return res.json(subCategory)
-    }
-
-    async updateSubSubCategory(req, res, next) {
-        const {id} = req.params
-        const {name} = req.body
-
-        if (isNaN(id)) {
-            return next(ApiError.badRequest('id должен быть числом'))
-        }
-
-        const subSubCategory = await SubSubCategory.findOne({
-            where: {id: id}
-        })
-
-        if (!name) {
-            return next(ApiError.badRequest('Не передано поле name'))
-        }
-
-        if (subSubCategory) {
-            subSubCategory.name = name
-            await subSubCategory.save()
-        }
-
-        return res.json(subSubCategory)
     }
 
     async getCategoryRoute(req, res, next) {
         const {id} = req.params
 
         if (isNaN(id)) {
-            return next(ApiError.badRequest('id должен быть числом'))
+            return next(ApiError.badRequest("id должен быть числом"))
         }
 
-        const subSubCategory = await SubSubCategory.findOne({
+        const route = []
+
+        let category = await Category.findOne({
             where: {id: id}
         })
 
-        if (!subSubCategory) {
-            return next(ApiError.badRequest('Нет подподкатегории с таким id'))
-        }
-
-        const subCategory = await SubCategory.findOne({
-            where: {id: subSubCategory.subCategoryId}
-        })
-
-        if (!subCategory) {
-            return next(ApiError.badRequest('Нет подкатегории для подподкатегории с таким id'))
-        }
-
-        const category = await Category.findOne({
-            where : {id: subCategory.categoryId}
-        })
-
         if (!category) {
-            return next(ApiError.badRequest('Нет категории для подкатегории с таким id'))
+            return next(ApiError.badRequest("Такой категории не существует"))
         }
 
-        const route = {category, subCategory, subSubCategory}
+        route.push(category)
+
+        while (category.parentId !== 0) {
+            category = await Category.findOne({
+                where: {id: category.parentId}
+            })
+
+            route.push(category)
+        }
+
+        route.reverse()
 
         return res.json(route)
     }
 
-    async getCategory(req, res) {
-        const category = await Category.findAll()
-
-        return res.json(category)
-
-    }
-
-    async getSubCategory(req, res, next) {
+    async getCategory(req, res, next) {
         const {id} = req.params
 
         if (isNaN(id)) {
-            return next(ApiError.badRequest('id должен быть числом'))
+            return next(ApiError.badRequest("id должен быть числом"))
         }
 
-        const subCategory = await SubCategory.findAll({
-            where: {categoryId: id}
+        const categories = await Category.findAll({
+            where: {parentId: id}
         })
 
-        return res.json(subCategory)
-    }
-
-    async getSubSubCategory(req, res, next) {
-        const {id} = req.params
-
-        if (isNaN(id)) {
-            return next(ApiError.badRequest('id должен быть числом'))
-        }
-
-        const subSubCategory = await SubSubCategory.findAll({
-            where: {subCategoryId: id}
-        })
-
-        return res.json(subSubCategory)
+        return res.json(categories)
     }
 }
 

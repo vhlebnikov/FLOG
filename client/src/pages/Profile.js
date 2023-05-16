@@ -201,12 +201,14 @@ const Profile = observer(() => {
             <Row md={3} className="perData">
                 <Col xs={6}>
                     <Form>
-                        {/*<ImageUploader/>*/}
                         {userLoc && userLoc.image ?
-                            <Image
-                                thumbnail
-                                src={process.env.REACT_APP_API_URL + userLoc.image}
-                            />
+                            <div className="perImageBorder">
+                                <Image
+                                    thumbnail
+                                    className="perImage"
+                                    src={process.env.REACT_APP_API_URL + userLoc.image}
+                                />
+                            </div>
                             : <div>У пользователя нет картинки :(</div>
                         }
 
@@ -228,7 +230,6 @@ const Profile = observer(() => {
 
                 <Col xs={6} className="blockPersonal">
                     <div className="forPersonal2">
-                        <h5>Имя:</h5>
                         {userLoc && userLoc.username ?
                             (isEditing
                                 ? (<Form.Control
@@ -236,15 +237,15 @@ const Profile = observer(() => {
                                     value={username}
                                     onChange={(event) => setUsername(event.target.value)}
                                 />)
-                                : (<p className="perText">{userLoc.username}</p>))
+                                : (<h3 className="perText">{userLoc.username}</h3>))
                             : null
                         }
                     </div>
 
                     <div className="forPersonal2">
-                        <h5>Email:</h5>
-                        {userLoc && userLoc.email ? <p className="perText">{userLoc.email}</p> : null}
+                        {userLoc && userLoc.email ? <h4 className="perText">Email: {userLoc.email}</h4> : null}
                     </div>
+
                     <div className="forPersonal2">
                         <h5>Контакты:</h5>
                         {contactsLoc ?
@@ -269,7 +270,7 @@ const Profile = observer(() => {
                                                     </Col>
                                                     <Col xl={3}>
                                                         <Button
-                                                            className="expensive-button"
+                                                            className="perButton"
                                                             variant="success"
                                                             type="submit"
                                                             onClick={() => removeContactLoc(i.id)}
@@ -285,7 +286,7 @@ const Profile = observer(() => {
 
                                             <Button
                                                 style = {{float:'right'}}
-                                                className="expensive-button"
+                                                className="perButton"
                                                 variant="success"
                                                 onClick={addContactLoc}
                                             >
@@ -308,16 +309,16 @@ const Profile = observer(() => {
                     </div>
 
                     {user.user.id === id ?
-                        <label className="personalButton">
+                        <label>
                             {isEditing ? (
                                 <Button
-                                    className="expensive-button"
+                                    className="perButton"
                                     variant="success"
                                     onClick={handleSave}
                                 >Сохранить</Button>)
                                 : (
                                 <Button
-                                    className="expensive-button"
+                                    className="perButton"
                                     variant="success"
                                     onClick={handleEditing}
                                 >Редактировать</Button>
@@ -329,7 +330,7 @@ const Profile = observer(() => {
                 {user.user.id === id ? <Col xs={6} className="blockPersonal">
                     <Button
                         style = {{float:'right'}}
-                        className="expensive-button"
+                        className="perButton"
                         variant="success"
                         onClick={() => setModalShow(true)}
                     >Сменить пароль</Button>

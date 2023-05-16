@@ -1,47 +1,17 @@
 import {$authHost, $host} from "./index";
 
-export const addCategory = async (category) => {
-    const {data} = await $authHost.post('api/category/cat', {category})
-    return data
-}
-
-export const addSubCategory = async (id, subCategory) => {
-    const {data} = await $authHost.post('api/category/sub/' + id, {subCategory})
-    return data
-}
-
-export const addSubSubCategory = async (id, subSubCategory) => {
-    const {data} = await $authHost.post('api/category/subsub/' + id, {subSubCategory})
+export const addCategory = async (id, name) => {
+    const {data} = await $authHost.post('api/category/' + id, {name})
     return data
 }
 
 export const deleteCategory = async (id) => {
-    const {data} = await $authHost.delete('api/category/cat/' + id)
-    return data
-}
-
-export const deleteSubCategory = async (id) => {
-    const {data} = await $authHost.delete('api/category/sub/' + id)
-    return data
-}
-
-export const deleteSubSubCategory = async (id) => {
-    const {data} = await $authHost.delete('api/category/subsub/' + id)
+    const {data} = await $authHost.delete('api/category/' + id)
     return data
 }
 
 export const updateCategory = async (id, name) => {
-    const {data} = await $authHost.put('api/category/cat/' + id, {name})
-    return data
-}
-
-export const updateSubCategory = async (id, name) => {
-    const {data} = await $authHost.put('api/category/sub/' + id, {name})
-    return data
-}
-
-export const updateSubSubCategory = async (id, name) => {
-    const {data} = await $authHost.put('api/category/subsub/' + id, {name})
+    const {data} = await $authHost.put('api/category/' + id, {name})
     return data
 }
 
@@ -50,17 +20,7 @@ export const getCategoryRoute = async (id) => {
     return data
 }
 
-export const getCategories = async () => {
-    const {data} = await $host.get('api/category/cat')
-    return data
-}
-
-export const getSubCategories = async (id) => {
-    const {data} = await $host.get('api/category/sub/' + id)
-    return data
-}
-
-export const getSubSubCategories = async (id) => {
-    const {data} = await $host.get('api/category/subsub/' + id)
+export const getCategories = async (id) => {
+    const {data} = await $host.get('api/category/' + id)
     return data
 }

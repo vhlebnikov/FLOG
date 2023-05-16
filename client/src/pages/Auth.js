@@ -24,7 +24,7 @@ const Auth = observer(() => {
 
     const [unconfirmed, setUnconfirmed] = useState(false)
 
-    const emailRegExp = VerEx().startOfLine().anythingBut(' ').then('@g.nsu.ru').endOfLine()
+    const emailRegExp = VerEx().startOfLine().anythingBut(' ').then('@').anythingBut(' ').then('nsu.ru').endOfLine()
     const notEmptyRegExp = VerEx().startOfLine().something().endOfLine()
     const isValidEmail = (email) => {
         const ans = emailRegExp.test(email)

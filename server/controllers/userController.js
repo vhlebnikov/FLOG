@@ -83,22 +83,47 @@ const confirmation = async (username, email, userId, link) => {
         })
 }
 
+const checkImage = (image) => {
+    const types = {
+        png: "89504e47",
+        gif: "47494638",
+        jpg1: "ffd8ffe1",
+        jpg2: "ffd8ffdb",
+        jpg3: "ffd8ffe0",
+        jpg4: "ffd8ffee"
+    }
+
+    const hex = image.data.toString('hex', 0, 4)
+
+    return hex === types.png || hex === types.gif ||
+           hex === types.jpg1 || hex === types.jpg2 ||
+           hex === types.jpg3 || hex === types.jpg4
+}
+
+const getExtension = (filename) => {
+    return "." + filename.name.split('.').pop()
+}
+
 class UserController {
     async registration(req, res, next) {
         const {email, password, username, role} = req.body
         if (!email) {
-            return next(ApiError.badRequest('Некорректный email'))
+            return next(ApiError.badRequest('Пожалуйста введите email'))
         }
         if (!password) {
-            return next(ApiError.badRequest('Некорректный пароль'))
+            return next(ApiError.badRequest('Пожалуйста введите пароль'))
         }
         if (!username) {
             return next(ApiError.badRequest('Пожалуйста введите свой никнейм'))
         }
 
+        if (!email.includes("@")) {
+            return next(ApiError.badRequest('Некорректный email'))
+        }
+
         let domain = email.split('@')[1]
-        if (domain !== "g.nsu.ru") {
-            return next(ApiError.badRequest('Почта не пренадлежит домену НГУ'))
+        if (!domain.endsWith("nsu.ru")) {
+            return next(ApiError.badRequest('Почта не принадлежит домену НГУ'))
         }
 
         const candidate = await User.findOne({where: {email}})
@@ -108,7 +133,10 @@ class UserController {
 
         const hashPassword = await bcrypt.hash(password, 5)
         const activationLink = uuid.v4()
-        const user = await User.create({email, username, role, password: hashPassword, activationLink})
+
+        const image = "FrogZero.svg"
+
+        const user = await User.create({email, username, role, password: hashPassword, activationLink, image})
 
         await Contact.create({
             name: "Почта",
@@ -118,7 +146,6 @@ class UserController {
 
         await confirmation(user.username, user.email, user.id, `${process.env.API_URL}/api/user/activate/${activationLink}`)
 
-        // const token = generateJwt(user.id, user.email, user.username, user.role)
         return res.json({message: "Пользователь успешно зарегистрирован"})
     }
 
@@ -267,11 +294,17 @@ class UserController {
 
         if (newImage) {
 
-            if (user.image) {
-                fs.unlinkSync(path.resolve(__dirname, "..", "static", user.image))
+            if (!checkImage(newImage)) {
+                return next(ApiError.badRequest("Неверное расширение файла, должно быть jpg/jpeg, png, gif"))
             }
 
-            let fileName = uuid.v4() + ".jpg"
+            if (user.image) {
+                if (user.image !== "FrogZero.svg") {
+                    fs.unlinkSync(path.resolve(__dirname, "..", "static", user.image))
+                }
+            }
+
+            let fileName = uuid.v4() + getExtension(newImage)
             await newImage.mv(path.resolve(__dirname, "..", "static", fileName))
             user.image = fileName
             await user.save()

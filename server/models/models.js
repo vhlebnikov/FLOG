@@ -33,17 +33,8 @@ const Info = sequelize.define('info', {
 
 const Category = sequelize.define('category', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true},
-})
-
-const SubCategory = sequelize.define('subCategory', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING},
-})
-
-const SubSubCategory = sequelize.define('subSubCategory', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING},
+    parentId: {type: DataTypes.INTEGER, allowNull: true}
 })
 
 const Ad = sequelize.define('ad', {
@@ -85,14 +76,8 @@ Info.belongsTo(Ad)
 Price.hasOne(Ad)
 Ad.belongsTo(Price)
 
-Category.hasMany(SubCategory)
-SubCategory.belongsTo(Category)
-
-SubCategory.hasMany(SubSubCategory)
-SubSubCategory.belongsTo(SubCategory)
-
-SubSubCategory.hasMany(Ad)
-Ad.belongsTo(SubSubCategory)
+Category.hasMany(Ad)
+Ad.belongsTo(Category)
 
 module.exports = {
     User,
@@ -100,8 +85,6 @@ module.exports = {
     Price,
     Info,
     Category,
-    SubCategory,
-    SubSubCategory,
     Ad,
     Image,
     Comment

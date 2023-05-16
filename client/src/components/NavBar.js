@@ -18,7 +18,7 @@ const NavBar = observer(() => {
     }
 
         return (
-        <Navbar variant="dark" className="mainNavBar shadow-box">
+        <Navbar variant="dark" className="mainNavBar shadow-box-nav">
             <Container>
                 <Navbar.Brand href={SHOP_PAGE}>FLOG</Navbar.Brand>
                 {user.isAuth ?

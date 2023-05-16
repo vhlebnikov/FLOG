@@ -19,4 +19,3 @@
 /client/yarn-error.log*
 
 /server/node_modules
-/server/static
