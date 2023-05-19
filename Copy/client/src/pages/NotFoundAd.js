@@ -1,6 +1,6 @@
 import React, {useContext, useEffect} from 'react';
 
-import frog from "../dasha/Frog.svg";
+import frog from "../assets/Frog.svg";
 
 
 const NotFoundAd = () => {

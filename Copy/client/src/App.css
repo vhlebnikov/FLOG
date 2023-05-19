@@ -1,3 +1,7 @@
+.checkInput::placeholder {
+    color: #ff0000;
+}
+
 .mainNavBar {
     background: #0D6936;
     border-radius: 0;
@@ -48,6 +52,11 @@
      margin-top: 10px;
  }
 
+img {
+    max-width: 100%;
+    object-fit: contain;
+}
+
 .circle {
     display: flex;
     justify-content: center;
@@ -78,15 +87,17 @@
 .perImage {
     width: auto;
     height: 100%;
-
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 .perImageBorder {
-    width: 350px;
-    height: 350px;
+    border: 4px solid white;
+    border-radius: 50%;
+    width: 70%;
+    height: 70%;
     margin: 0 auto;
     overflow: hidden;
-    border-radius: 40%;
 }
 
 .perText {
@@ -168,12 +179,6 @@
 
 body {
     background-color: #E7E5E5; /* replace with your desired color */
-}
-
-.thumbnail {
-    max-width: 200px;
-    max-height: 300px;
-    object-fit: contain;
 }
 
 .component-5 {

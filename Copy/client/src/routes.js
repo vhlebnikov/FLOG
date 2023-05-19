@@ -3,14 +3,12 @@ import {
     CREATE_AD_PAGE,
     PROFILE_PAGE,
     AD_PAGE,
-    EDIT_PROFILE_PAGE,
     AUTH_PAGE, REGISTRATION_PAGE, NOT_FOUND_AD_PAGE
 } from "./utils/consts";
 import Shop from "./pages/Shop";
 import CreateAd from "./pages/CreateAd"
 import Ad from "./pages/Ad"
 import Auth from "./pages/Auth"
-import EditProfile from "./pages/EditProfile"
 import Profile from "./pages/Profile"
 import Activation from "./pages/Activation"
 import NotFoundAd from "./pages/NotFoundAd";
@@ -23,10 +21,6 @@ export const authRoutes = [
     {
         path: PROFILE_PAGE + '/:id',
         Component: Profile
-    },
-    {
-        path: EDIT_PROFILE_PAGE,
-        Component: EditProfile
     }
 ]
 

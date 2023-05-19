@@ -8,7 +8,6 @@ import AdItem from "../components/AdItem";
 import {observer} from "mobx-react-lite";
 import {getAdsForUser} from "../http/adApi";
 import VerEx from "verbal-expressions";
-import FrogZero from "../pages/FrogZero.svg"
 
 function ChangePasswordModal(props) {
     const [passwordLoc, setPasswordLoc] = useState("")
@@ -97,19 +96,9 @@ function ChangePasswordModal(props) {
 
             <Modal.Footer>
                 {passwordMatch ?
-                    <Button
-                        onClick={changePassword}
-                        className="btn-expensive"
-                        variant="success">
-                        Сменить пароль
-                    </Button>
+                    <Button onClick={changePassword} className="btn-expensive" variant="success">Сменить пароль</Button>
                 :
-                    <Button
-                        onClick={passwordCheck}
-                        className="btn-expensive"
-                        variant="success">
-                        Проверить
-                    </Button>
+                    <Button onClick={passwordCheck} className="btn-expensive" variant="success">Проверить</Button>
                 }
             </Modal.Footer>
         </Modal>
@@ -119,7 +108,7 @@ function ChangePasswordModal(props) {
 const Profile = observer(() => {
     const [userLoc, setUserLoc] = useState(undefined)
     const [username, setUsername] = useState(undefined)
-    const [image, setImage] = useState(FrogZero)
+    const [image, setImage] = useState(undefined)
 
     const [isEditing, setEditing] = useState(false)
 
@@ -178,8 +167,6 @@ const Profile = observer(() => {
                 const formData = new FormData()
                 if (image) {
                     formData.append('image', image)
-                } else {
-                    formData.append('image', FrogZero)
                 }
                 if (username && username !== userLoc.username) {
                     formData.append('username', username)
@@ -214,21 +201,14 @@ const Profile = observer(() => {
             <Row md={3} className="perData">
                 <Col xs={6}>
                     <Form>
-                        {userLoc && userLoc.image ?
-                            <Image
-                                thumbnail
-                                className="perImage"
-                                src={process.env.REACT_APP_API_URL + userLoc.image}
-                            />
-                            : <div className="perImageBorder">
+                        <div className="perImageBorder">
+                            {userLoc && userLoc.image ?
                                 <Image
-                                    thumbnail
                                     className="perImage"
-                                    src={FrogZero}
-                                />
-                            </div>
-                        }
-
+                                    src={process.env.REACT_APP_API_URL + userLoc.image}
+                                /> : null
+                            }
+                        </div>
                         {isEditing ?
                             <Form.Control
                                 className="mt-3"
@@ -262,6 +242,7 @@ const Profile = observer(() => {
                     <div className="forPersonal2">
                         {userLoc && userLoc.email ? <h4 className="perText">Email: {userLoc.email}</h4> : null}
                     </div>
+
                     <div className="forPersonal2">
                         <h5>Контакты:</h5>
                         {contactsLoc ?
@@ -286,10 +267,10 @@ const Profile = observer(() => {
                                                     </Col>
                                                     <Col xl={3}>
                                                         <Button
+                                                            className="perButton"
                                                             variant="success"
                                                             type="submit"
                                                             onClick={() => removeContactLoc(i.id)}
-                                                            className="perButton"
                                                         >
                                                             Удалить
                                                         </Button>
@@ -297,17 +278,15 @@ const Profile = observer(() => {
                                                 </Row>
 
                                             ))}
-
-                                            {contactsError ? <Form.Label style={{color: 'red'}}>{contactsError}</Form.Label> : null}
-
                                             <Button
                                                 style = {{float:'right'}}
+                                                className="perButton"
                                                 variant="success"
                                                 onClick={addContactLoc}
-                                                className="perButton"
                                             >
                                                 Добавить
                                             </Button>
+
                                         </Form>
                                     )
                                     : (<div>
@@ -341,13 +320,14 @@ const Profile = observer(() => {
                                 )}
                         </label>
                     : null}
+                    {contactsError ? <Form.Label style={{color: 'red'}}>{contactsError}</Form.Label> : null}
                 </Col>
 
                 {user.user.id === id ? <Col xs={6} className="blockPersonal">
                     <Button
                         style = {{float:'right'}}
-                        variant="success"
                         className="perButton"
+                        variant="success"
                         onClick={() => setModalShow(true)}
                     >Сменить пароль</Button>
                 </Col> : null}

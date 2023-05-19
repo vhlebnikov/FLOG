@@ -18,9 +18,8 @@ const AdItem = ({ad}) => {
         <Col md={3} className={"mt-3"}>
             <Card className="shadow-box" style={{backgroundImage: "linear-gradient(to bottom, #d7d7d7 60.5%, #0D6936 50%)"}} border={"light"}>
                 <Carousel slide={false} interval={null}>
-                    {ad.image.map(image =>
+                    {ad.image && ad.image.map(image =>
                             <Carousel.Item key={image.id}>
-                                {/*<Card.Img key={image.image-buttonDelete}  className='bord' variant="top" src={process.env.REACT_APP_API_URL + image.image} />*/}
                                 <img
                                     className='bord'
                                     width={400}
@@ -28,7 +27,6 @@ const AdItem = ({ad}) => {
                                     src={process.env.REACT_APP_API_URL + image.image}
                                  alt={"Загрузка картинок"}/>
                             </Carousel.Item>
-                        // <Card.Img key={image.id} variant="top" src={process.env.REACT_APP_API_URL + image.image} />
                     )}
                 </Carousel>
                 <Card.Body onClick={() => navigate(AD_PAGE + '/' + ad.id)} style={{minHeight: '200px', overflow: 'hidden'}}>

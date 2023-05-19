@@ -3,13 +3,10 @@ import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import {DropdownButton} from "react-bootstrap";
-import {Nav, Placeholder} from "rsuite";
 import Dropdown from "rsuite/Dropdown";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
-
-
+import searchImage from "../assets/search.svg"
 
 const ShopNavBar = observer(() => {
     const {ad} = useContext(Context)
@@ -40,7 +37,7 @@ const ShopNavBar = observer(() => {
                             onChange={e => ad.setFilter(e.target.value)}
                         />
                         <Button variant="light" style={{background:'#ffffff'}}>
-                            <img src="/assets/img/search.svg" alt="Bootstrap" width="16" height="16" style={{color: '#0D6936', paddingBottom:1}}/>
+                            <img src = {searchImage} width="16" height="16" style={{color: '#0D6936', paddingBottom:1}}/>
                         </Button>
                     </Form>
                     <Dropdown variant="light" title={selectedItem} className="ms-3" style={{color: "#0D6936"}} onSelect={handleSelect}>

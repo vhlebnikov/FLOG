@@ -41,7 +41,7 @@ const CreateForm = observer(() => {
         formData.append('description', description)
         formData.append('address', address)
         formData.append('status', 1)
-        formData.append('subSubCategoryId', 13)
+        formData.append('categoryId', 1)
         formData.append('price', JSON.stringify(price))
         formData.append('info', JSON.stringify(info))
         await Promise.resolve(createAd(formData))

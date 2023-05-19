@@ -1,11 +1,23 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Card, Col, Container, Form, Row, Dropdown, CardGroup, ButtonGroup} from "react-bootstrap";
+import {
+    Button,
+    Card,
+    Col,
+    Container,
+    Form,
+    Row,
+    Dropdown,
+    CardGroup,
+    ButtonGroup,
+    Breadcrumb,
+    BreadcrumbItem
+} from "react-bootstrap";
 import {NOT_FOUND_AD_PAGE, PROFILE_PAGE, SHOP_PAGE} from "../utils/consts";
 import {Link, useNavigate} from "react-router-dom";
 import {Context} from "../index";
 import {useParams} from 'react-router-dom';
-import component6 from "../dasha/Component6.png";
-import component12 from "../dasha/Component12.png";
+import component6 from "../assets/Component6.png";
+import component12 from "../assets/Component12.png";
 import {deleteAd, getAllAds, getOneAd, getPrice, updateAd} from "../http/adApi";
 import {getUser} from "../http/userApi";
 import {addComment, deleteComment, getAllComments} from "../http/commentApi";
@@ -38,11 +50,11 @@ const Ad = observer(() => {
 
     // Вот этих мужиков отдельно получаем и выводим
     const [price, setPrice] = useState(null)
-    const [categoryRoute, setCategoryRoute] = useState(null)
+    const [categoryRoute, setCategoryRoute] = useState([])
 
     // а их меняем и отправляем в запросы
     const [priceLoc, setPriceLoc] = useState(null)
-    const [categoryRouteLoc, setCategoryRouteLoc] = useState(null)
+    const [categoryRouteLoc, setCategoryRouteLoc] = useState([])
     // ============================================================
 
     const [showComments, setShowComments] = useState(false)
@@ -103,15 +115,15 @@ const Ad = observer(() => {
         if (adState.priceId) {
             getPrice(adState.priceId).then(data => setPrice(data))
         }
-        if (adState.subSubCategoryId) {
-            getCategoryRoute(adState.subSubCategoryId).then(data => setCategoryRoute(data))
+        if (adState.categoryId) {
+            getCategoryRoute(adState.categoryId).then(data => setCategoryRoute(data))
         }
         if (adState.userId) {
             getUser(adState.userId).then(data => setUserLoc(data))
         }
     },
         [adState.name, adState.description, adState.address, adState.status,
-            adState.info, adState.image, adState.priceId, adState.subSubCategoryId, adState.userId])
+            adState.info, adState.image, adState.priceId, adState.categoryId, adState.userId])
 
     useEffect(() => {
         if (price) {
@@ -271,15 +283,31 @@ const Ad = observer(() => {
 
     return (
         <Container>
+            {/*Надо сделать категории!*/}
+
+            {/*<Row>*/}
+            {/*    {categoryRoute ? (*/}
+            {/*            <Form>*/}
+            {/*                <div style={{ marginLeft: '10px', marginTop: '10px' }}>*/}
+            {/*                    {categoryRoute.category.name} / {categoryRoute.subCategory.name} / {categoryRoute.subSubCategory.name}*/}
+            {/*                </div>*/}
+            {/*            </Form>*/}
+            {/*        )*/}
+            {/*        : <p>Загружаем категории...</p>}*/}
+            {/*</Row>*/}
+
+            {/*Просто вывел весь путь для категории*/}
+
             <Row>
                 {categoryRoute ? (
-                        <Form>
-                            <div style={{ marginLeft: '10px', marginTop: '10px' }}>
-                                {categoryRoute.category.name} / {categoryRoute.subCategory.name} / {categoryRoute.subSubCategory.name}
-                            </div>
-                        </Form>
-                    )
-                    : <p>Загружаем категории...</p>}
+                    <Breadcrumb>
+                        {categoryRoute.map(i => (
+                            <BreadcrumbItem key={i.id}>
+                                {i.name}
+                            </BreadcrumbItem>
+                        ))}
+                    </Breadcrumb>
+                ) : null}
             </Row>
 
             <Row>
@@ -441,7 +469,7 @@ const Ad = observer(() => {
                     />
 
                     <Dropdown className="mt-3">
-                        <Dropdown.Toggle className="expensive-button" variant="success" >{"Выберите тип цены"}</Dropdown.Toggle>
+                        <Dropdown.Toggle className="btn-expensive" variant="success" >{"Выберите тип цены"}</Dropdown.Toggle>
                         <Dropdown.Menu>
                             <Dropdown.Item onClick={() => priceHandler('type', 0)}>{"Без цены"}</Dropdown.Item>
                             <Dropdown.Item onClick={() => priceHandler('type', 1)}>{"Определенная цена"}</Dropdown.Item>
