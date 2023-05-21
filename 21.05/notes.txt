@@ -10,3 +10,27 @@ import frogSmile from "../dasha/FrogSmile.svg";
                         <span>FLOG</span>
                     </div>
                 </Navbar.Brand>
+                
+
+
+в App.css
+/*
+возвращение легенды
+ */
+
+.image-button2 {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    position: fixed; /* Set the navbar to fixed position */
+    top: 20%; /* Position the navbar at the top of the page */
+    right: 0;
+}
+
+.image-button2 div {
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-size: cover;
+}
