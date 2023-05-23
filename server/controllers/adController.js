@@ -75,6 +75,18 @@ class AdController {
                 return next(ApiError.badRequest("Должен быть присвоен статус объявления"))
             }
 
+            if (isIterable(image)) {
+                for (const i of image) {
+                    if (!checkImage(i)) {
+                        return next(ApiError.badRequest("Неверное расширение файла, должно быть jpg/jpeg, png, gif"))
+                    }
+                }
+            } else {
+                if (!checkImage(image)) {
+                    return next(ApiError.badRequest("Неверное расширение файла, должно быть jpg/jpeg, png, gif"))
+                }
+            }
+
             price = JSON.parse(price)
             const priceRes = await Price.create({
                 type: price.type,
@@ -91,12 +103,6 @@ class AdController {
 
             if (isIterable(image)) {
                 for (const i of image) {
-                    if (!checkImage(i)) {
-                        return next(ApiError.badRequest("Неверное расширение файла, должно быть jpg/jpeg, png, gif"))
-                    }
-                }
-
-                for (const i of image) {
                     let fileName = uuid.v4() + getExtension(i)
                     await i.mv(path.resolve(__dirname, "..", "static", fileName))
                     await Image.create({
@@ -105,10 +111,6 @@ class AdController {
                     });
                 }
             } else {
-                if (!checkImage(image)) {
-                    return next(ApiError.badRequest("Неверное расширение файла, должно быть jpg/jpeg, png, gif"))
-                }
-
                 let fileName = uuid.v4() + getExtension(image)
                 await image.mv(path.resolve(__dirname, "..", "static", fileName))
                 await Image.create({
@@ -279,6 +281,19 @@ class AdController {
                 const {image} = req.files
                 newImage = image
             }
+            if (newImage) {
+                if (isIterable(newImage)) {
+                    for (const i of newImage) {
+                        if (!checkImage(i)) {
+                            return next(ApiError.badRequest("Неверное расширение файла, должно быть jpg/jpeg, png, gif"))
+                        }
+                    }
+                } else {
+                    if (!checkImage(newImage)) {
+                        return next(ApiError.badRequest("Неверное расширение файла, должно быть jpg/jpeg, png, gif"))
+                    }
+                }
+            }
 
             const {id} = req.params
 
@@ -332,18 +347,6 @@ class AdController {
             await ad.save()
 
             if (newImage) {
-                if (isIterable(newImage)) {
-                    for (const i of newImage) {
-                        if (!checkImage(i)) {
-                            return next(ApiError.badRequest("Неверное расширение файла, должно быть jpg/jpeg, png, gif"))
-                        }
-                    }
-                } else {
-                    if (!checkImage(newImage)) {
-                        return next(ApiError.badRequest("Неверное расширение файла, должно быть jpg/jpeg, png, gif"))
-                    }
-                }
-
                 const oldImage = await Image.findAll({where: {adId: ad.id}})
                 if (oldImage) {
                     oldImage.forEach(i => {

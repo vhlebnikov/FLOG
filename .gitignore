@@ -19,3 +19,9 @@
 /client/yarn-error.log*
 
 /server/node_modules
+
+!/server/static
+
+server/static/*
+!server/static/mail.png
+!server/static/FrogZero.svg

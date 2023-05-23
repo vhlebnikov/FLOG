@@ -180,7 +180,7 @@ class UserController {
             const activationLink = req.params.link
             const user = await User.findOne({where: {activationLink}})
             if (!user) {
-                return next(ApiError.badRequest('Некорректная ссылка активации'))
+                return res.redirect(process.env.CLIENT_URL + '/activation/' + "bad_request")
             }
             user.confirmed = true
             await user.save()

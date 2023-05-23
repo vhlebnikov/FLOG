@@ -7,6 +7,9 @@ import Dropdown from "rsuite/Dropdown";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
 import searchImage from "../assets/search.svg"
+import CategoryCascader from "./CategoryCascader";
+
+import "rsuite/dist/rsuite.min.css"; // РАЗБЕРИТЕСЬ С CSS!!!!
 
 const ShopNavBar = observer(() => {
     const {ad} = useContext(Context)
@@ -18,12 +21,7 @@ const ShopNavBar = observer(() => {
     return (
         <Navbar expand="lg" className="mt-3 shadow-box shopNavBar ">
             <Container className="mt-2">
-                <Button
-                    variant="light"
-                    className="me-5"
-                >
-                    Все категории
-                </Button>
+                <CategoryCascader/>
                 <Navbar.Collapse id="navbarScroll">
                     <Form className="d-flex">
                         <Form.Control
@@ -37,7 +35,7 @@ const ShopNavBar = observer(() => {
                             onChange={e => ad.setFilter(e.target.value)}
                         />
                         <Button variant="light" style={{background:'#ffffff'}}>
-                            <img src = {searchImage} width="16" height="16" style={{color: '#0D6936', paddingBottom:1}}/>
+                            <img src={searchImage} width="16" height="16" style={{color: '#0D6936', paddingBottom:1}}/>
                         </Button>
                     </Form>
                     <Dropdown variant="light" title={selectedItem} className="ms-3" style={{color: "#0D6936"}} onSelect={handleSelect}>
