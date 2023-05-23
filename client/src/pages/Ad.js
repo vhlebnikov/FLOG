@@ -6,11 +6,10 @@ import {
     Container,
     Form,
     Row,
-    Dropdown,
     CardGroup,
     ButtonGroup,
     Breadcrumb,
-    BreadcrumbItem, Modal, InputGroup, Toast, ToastContainer
+    BreadcrumbItem, InputGroup, Toast, ToastContainer
 } from "react-bootstrap";
 import {NOT_FOUND_AD_PAGE, PROFILE_PAGE, SHOP_PAGE} from "../utils/consts";
 import {Link, useNavigate} from "react-router-dom";
@@ -107,10 +106,6 @@ const Ad = observer(() => {
 
         Promise.resolve(getAllComments(id)).then(data => setComments(data))
     }
-
-    useEffect(() => {
-        getAllComments(id).then(data => setComments(data))
-    }, [comments])
 
     useEffect(() => {
         fetchData()
