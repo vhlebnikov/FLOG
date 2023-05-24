@@ -260,7 +260,6 @@ const Profile = observer(() => {
                         {userLoc && userLoc.image ?
                             <div className="perImageBorder">
                                 <Image
-                                    fluid
                                     className="perImage"
                                     src={process.env.REACT_APP_API_URL + userLoc.image}
                                 />
