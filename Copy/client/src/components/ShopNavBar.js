@@ -7,6 +7,7 @@ import Dropdown from "rsuite/Dropdown";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
 import searchImage from "../assets/search.svg"
+import "rsuite/dist/rsuite.min.css"
 
 const ShopNavBar = observer(() => {
     const {ad} = useContext(Context)

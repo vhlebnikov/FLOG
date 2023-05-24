@@ -16,7 +16,7 @@ const AdItem = ({ad}) => {
 
     return (
         <Col md={3} className={"mt-3"}>
-            <Card className="shadow-box" style={{backgroundImage: "linear-gradient(to bottom, #d7d7d7 60.5%, #0D6936 50%)"}} border={"light"}>
+            <Card className="shadow-box" style={{backgroundImage: "linear-gradient(to bottom, #d7d7d7 60.5%, #0D6936 50%)", overflow: "hidden"}} border={"light"}>
                 <Carousel slide={false} interval={null}>
                     {ad.image && ad.image.map(image =>
                             <Carousel.Item key={image.id}>

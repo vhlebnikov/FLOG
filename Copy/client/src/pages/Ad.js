@@ -27,6 +27,7 @@ import {getCategoryRoute} from "../http/categoryApi";
 import Circle from "../dasha/Circle";
 import CommentModal from "../dasha/CommentModal";
 import VerEx from "verbal-expressions";
+import "rsuite/dist/rsuite.min.css"
 
 const Ad = observer(() => {
     const navigate = useNavigate()
@@ -380,7 +381,7 @@ const Ad = observer(() => {
                         <Card className="shadow-box" border={"light"}>
                             {userLoc.image ?
                                 <Card.Img
-                                    style={{ width: '50px', height: '50px', borderRadius: '50%' }}
+                                    style={{ width: '60px', height: '60px', display: 'block',}}
                                     variant="top"
                                     src={process.env.REACT_APP_API_URL + userLoc.image}
                                     alt="Profile Image"
