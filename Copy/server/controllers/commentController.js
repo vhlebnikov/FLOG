@@ -11,6 +11,10 @@ class CommentController {
             return next(ApiError.badRequest('id должен быть числом'))
         }
 
+        if (!text) {
+            return next(ApiError.badRequest("Введите комментарий"))
+        }
+
         const ad = await Ad.findOne({where: {id}})
         if (!ad) {
             return next(ApiError.badRequest('Нет объявления с таким id'))
@@ -19,9 +23,14 @@ class CommentController {
         const token = req.headers.authorization.split(' ')[1]
         const user = jwt.verify(token, process.env.SECRET_KEY)
 
-        const comment = await Comment.create({text, userId: user.id, adId: id})
+        await Comment.create({text, userId: user.id, adId: id})
 
-        return res.json(comment)
+        const comments = await Comment.findAll({
+            where: {adId: id},
+            include: [{model: User, as: 'user'}]
+        })
+
+        return res.json(comments)
     }
 
     async getAllComments(req, res, next) {
@@ -31,7 +40,10 @@ class CommentController {
             return next(ApiError.badRequest('id должен быть числом'))
         }
 
-        const comments = await Comment.findAndCountAll({where: {adId: id}})
+        const comments = await Comment.findAll({
+            where: {adId: id},
+            include: [{model: User, as: 'user'}]
+        })
 
         return res.json(comments)
     }
@@ -55,9 +67,16 @@ class CommentController {
             return next(ApiError.badRequest('Вы не можете удалить комментарий другого пользователя'))
         }
 
+        const adId = comment.adId
+
         comment.destroy()
 
-        return res.json(comment)
+        const comments = await Comment.findAll({
+            where: {adId: adId},
+            include: [{model: User, as: 'user'}]
+        })
+
+        return res.json(comments)
     }
 }
 

@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Col, Container, Row, Image, Modal} from 'react-bootstrap';
+import {Button, Col, Container, Row, Image, Modal, InputGroup, Toast, ToastContainer, ModalBody} from 'react-bootstrap';
 import {useParams} from "react-router-dom";
 import {checkPassword, getContacts, getUser, updateContacts, updateData, updatePassword} from "../http/userApi";
 import Form from "react-bootstrap/Form";
@@ -8,12 +8,14 @@ import AdItem from "../components/AdItem";
 import {observer} from "mobx-react-lite";
 import {getAdsForUser} from "../http/adApi";
 import VerEx from "verbal-expressions";
+import frog from "../assets/FrogSmile.svg";
 
 function ChangePasswordModal(props) {
     const [passwordLoc, setPasswordLoc] = useState("")
     const [passwordError, setPasswordError] = useState(null)
 
     const [passwordMatch, setPasswordMatch] = useState(null)
+    const [alertMessage, setAlertMessage] = useState(null)
 
     const notEmptyRegExp = VerEx().startOfLine().something().endOfLine()
     const isEmpty = (word) => {
@@ -21,6 +23,12 @@ function ChangePasswordModal(props) {
         notEmptyRegExp.lastIndex = 0
         return ans
     }
+
+    useEffect(() => {
+        if (passwordMatch === false) {
+            setPasswordError("Неверный пароль")
+        }
+    }, [passwordMatch])
 
     const handlePassword = (e) => {
         setPasswordLoc(e.target.value)
@@ -35,15 +43,26 @@ function ChangePasswordModal(props) {
     }
 
     const passwordCheck = () => {
+        if (isEmpty(passwordLoc)) {
+            setPasswordError("Введите пароль пожалуйста")
+            return
+        }
         checkPassword(passwordLoc).then(data => setPasswordMatch(data))
         setPasswordLoc("")
     }
 
     const changePassword = () => {
-        updatePassword(passwordLoc).then(data => alert(`${data.username} вы успешно сменили пароль`))
+        if (isEmpty(passwordLoc)) {
+            setPasswordError("Введите пароль пожалуйста")
+            return
+        }
+        updatePassword(passwordLoc).then(data => setAlertMessage(`${data.username} вы успешно сменили пароль`))
         setPasswordLoc("")
         setPasswordMatch(null)
-        props.onHide()
+        setTimeout(() => {
+            setAlertMessage(null)
+            props.onHide()
+        }, 1000)
     }
 
     return (
@@ -55,52 +74,72 @@ function ChangePasswordModal(props) {
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Смена пароля
+                    {alertMessage ? alertMessage : "Смена пароля"}
                 </Modal.Title>
             </Modal.Header>
 
-            <Modal.Body>
-                {passwordMatch ?
-                    <Form>
-                        <Form.Group className="mb-3">
+            {!alertMessage ? <Modal.Body>
+                    {passwordMatch ?
+                        <Form>
                             <Form.Label>Введите новый пароль</Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder="Пароль"
-                                value={passwordLoc}
-                                onChange={e => handlePassword(e)}
-                            />
-
-                            {passwordError ? <Form.Label style={{color: 'red'}}>{passwordError}</Form.Label> : null}
-
-                        </Form.Group>
-                    </Form>
-                :
-                    <Form>
-                        <Form.Group className="mb-3">
+                            <InputGroup className="mb-3" hasValidation>
+                                <Form.Control
+                                    required
+                                    isInvalid={!!passwordError}
+                                    type="password"
+                                    placeholder="Пароль"
+                                    value={passwordLoc}
+                                    onChange={e => handlePassword(e)}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {passwordError}
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Form>
+                        :
+                        <Form>
                             <Form.Label>Введите старый пароль</Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder="Пароль"
-                                value={passwordLoc}
-                                onChange={e => handlePassword(e)}
-                            />
-
-                            {passwordError ? <Form.Label style={{color: 'red'}}>{passwordError}</Form.Label> : null}
-
-                            {passwordMatch === false ? <Form.Label style={{color: 'red'}}>Неверный пароль</Form.Label> : null}
-                        </Form.Group>
-                    </Form>
-                }
-            </Modal.Body>
-
-            <Modal.Footer>
-                {passwordMatch ?
-                    <Button onClick={changePassword} className="btn-expensive" variant="success">Сменить пароль</Button>
+                            <InputGroup className="mb-3" hasValidation>
+                                <Form.Control
+                                    required
+                                    isInvalid={!!passwordError}
+                                    type="password"
+                                    placeholder="Пароль"
+                                    value={passwordLoc}
+                                    onChange={e => handlePassword(e)}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {passwordError}
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Form>
+                    }
+                </Modal.Body>
                 :
-                    <Button onClick={passwordCheck} className="btn-expensive" variant="success">Проверить</Button>
+                <ModalBody>
+                    <Container fluid>
+                        <Row>
+                            <Col></Col>
+                            <Col>
+                                <img
+                                    src={frog}
+                                    alt="Error"
+                                    style={{width: '200px', height: '200px'}}
+                                />
+                            </Col>
+                            <Col></Col>
+                        </Row>
+                    </Container>
+                </ModalBody>
+            }
+
+            {!alertMessage ? <Modal.Footer>
+                {passwordMatch ?
+                    <Button onClick={changePassword} variant="success" className="btn-expensive">Сменить пароль</Button>
+                    :
+                    <Button onClick={passwordCheck} variant="success" className="btn-expensive">Проверить</Button>
                 }
-            </Modal.Footer>
+            </Modal.Footer> : null}
         </Modal>
     );
 }
@@ -108,7 +147,10 @@ function ChangePasswordModal(props) {
 const Profile = observer(() => {
     const [userLoc, setUserLoc] = useState(undefined)
     const [username, setUsername] = useState(undefined)
+    const [usernameError, setUsernameError] = useState(null)
+
     const [image, setImage] = useState(undefined)
+    const [imageError, setImageError] = useState(null)
 
     const [isEditing, setEditing] = useState(false)
 
@@ -153,6 +195,15 @@ const Profile = observer(() => {
         }
     }, [contacts])
 
+    const usernameHandler = (e) => {
+        setUsername(e.target.value)
+        if (isEmpty(e.target.value)) {
+            setUsernameError("Пожалуйста введите имя пользователя")
+        } else {
+            setUsernameError(null)
+        }
+    }
+
     const handleEditing = () => {
         setEditing(true)
     }
@@ -160,22 +211,27 @@ const Profile = observer(() => {
     const handleSave = () => {
         if (contactsLoc.filter(i => isEmpty(i.name) || isEmpty(i.contact)).length) {
             setContactsError("Контакты не могут быть пустыми")
-        } else {
-            setContactsError(null)
-            setEditing(false)
-            if (image || username) {
-                const formData = new FormData()
-                if (image) {
-                    formData.append('image', image)
-                }
-                if (username && username !== userLoc.username) {
-                    formData.append('username', username)
-                }
-                updateData(formData).then(data => setUserLoc(data))
+            return
+        }
+        if (isEmpty(username)) {
+            setUsernameError("Пожалуйста введите имя пользователя")
+            return
+        }
+        setContactsError(null)
+        setEditing(false)
+        if (image || username) {
+            const formData = new FormData()
+            if (image) {
+                formData.append('image', image)
             }
-            if (contactsLoc) {
-                updateContacts(contactsLoc).then(data => setContacts(data))
+            if (username && username !== userLoc.username) {
+                formData.append('username', username)
             }
+            updateData(formData).then(data => setUserLoc(data)).catch(e => setImageError(e.response.data.message))
+            setImage(null)
+        }
+        if (contactsLoc) {
+            updateContacts(contactsLoc).then(data => setContacts(data))
         }
     }
 
@@ -199,16 +255,18 @@ const Profile = observer(() => {
         <Container className="personalMain">
             <h2 className="perHead">Персональные данные</h2>
             <Row md={3} className="perData">
-                <Col xs={6}>
+                <Col lg={5} md={7} sm={10} xl={4} xs={10}>
                     <Form>
-                        <div className="perImageBorder">
-                            {userLoc && userLoc.image ?
+                        {userLoc && userLoc.image ?
+                            <div className="perImageBorder">
                                 <Image
                                     className="perImage"
                                     src={process.env.REACT_APP_API_URL + userLoc.image}
-                                /> : null
-                            }
-                        </div>
+                                />
+                            </div>
+                            : <div>У пользователя нет картинки :(</div>
+                        }
+
                         {isEditing ?
                             <Form.Control
                                 className="mt-3"
@@ -216,7 +274,7 @@ const Profile = observer(() => {
                                 type="file"
                                 onChange={selectFile}
                             /> :
-                            <div className = "invisible">
+                            <div className="invisible">
                                 <Form.Control
                                     className="mt-3"
                                     size={"sm"}
@@ -229,19 +287,40 @@ const Profile = observer(() => {
                     <div className="forPersonal2">
                         {userLoc && userLoc.username ?
                             (isEditing
-                                ? (<Form.Control
-                                    type="text"
-                                    value={username}
-                                    onChange={(event) => setUsername(event.target.value)}
-                                />)
+                                ? (
+                                    <InputGroup hasValidation>
+                                        <Form.Control
+                                            required
+                                            isInvalid={!!usernameError}
+                                            type="text"
+                                            value={username}
+                                            onChange={(event) => usernameHandler(event)}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            {usernameError}
+                                        </Form.Control.Feedback>
+                                    </InputGroup>
+                                )
                                 : (<h3 className="perText">{userLoc.username}</h3>))
                             : null
                         }
                     </div>
 
-                    <div className="forPersonal2">
-                        {userLoc && userLoc.email ? <h4 className="perText">Email: {userLoc.email}</h4> : null}
-                    </div>
+                    <Row>
+                        <div className="forPersonal2">
+                            {userLoc && userLoc.email ? <h4 className="perText">Email: {userLoc.email}</h4> : null}
+                        </div>
+
+                        {isEditing && user.user.id === id ?
+                            <Col className="blockPersonal">
+                                <Button
+                                    style={{float: 'right'}}
+                                    className="perButton"
+                                    variant="success"
+                                    onClick={() => setModalShow(true)}
+                                >Сменить пароль</Button>
+                            </Col> : null}
+                    </Row>
 
                     <div className="forPersonal2">
                         <h5>Контакты:</h5>
@@ -252,18 +331,26 @@ const Profile = observer(() => {
                                             {contactsLoc.map(i => (
                                                 <Row key={i.id} className="perRow">
                                                     <Col xl={3}>
-                                                        <Form.Control
-                                                            value={i.name}
-                                                            onChange={(e) => changeContactLoc('name', e.target.value, i.id)}
-                                                            required
-                                                        />
+                                                        <InputGroup hasValidation>
+                                                            <Form.Control
+                                                                value={i.name}
+                                                                onChange={(e) => changeContactLoc('name', e.target.value, i.id)}
+                                                                required
+                                                                isInvalid={isEmpty(i.name) && !!contactsError}
+                                                                placeholder={"Название"}
+                                                            />
+                                                        </InputGroup>
                                                     </Col>
                                                     <Col xl={6}>
-                                                        <Form.Control
-                                                            value={i.contact}
-                                                            onChange={(e) => changeContactLoc('contact', e.target.value, i.id)}
-                                                            required
-                                                        />
+                                                        <InputGroup hasValidation>
+                                                            <Form.Control
+                                                                value={i.contact}
+                                                                onChange={(e) => changeContactLoc('contact', e.target.value, i.id)}
+                                                                required
+                                                                isInvalid={isEmpty(i.contact) && !!contactsError}
+                                                                placeholder={"Контакт"}
+                                                            />
+                                                        </InputGroup>
                                                     </Col>
                                                     <Col xl={3}>
                                                         <Button
@@ -278,15 +365,18 @@ const Profile = observer(() => {
                                                 </Row>
 
                                             ))}
+
+                                            {contactsError ?
+                                                <Form.Label style={{color: 'red'}}>{contactsError}</Form.Label> : null}
+
                                             <Button
-                                                style = {{float:'right'}}
+                                                style={{float: 'right'}}
                                                 className="perButton"
                                                 variant="success"
                                                 onClick={addContactLoc}
                                             >
                                                 Добавить
                                             </Button>
-
                                         </Form>
                                     )
                                     : (<div>
@@ -306,31 +396,21 @@ const Profile = observer(() => {
                     {user.user.id === id ?
                         <label>
                             {isEditing ? (
-                                <Button
-                                    className="perButton"
-                                    variant="success"
-                                    onClick={handleSave}
-                                >Сохранить</Button>)
+                                    <Button
+                                        className="perButton"
+                                        variant="success"
+                                        onClick={handleSave}
+                                    >Сохранить</Button>)
                                 : (
-                                <Button
-                                    className="perButton"
-                                    variant="success"
-                                    onClick={handleEditing}
-                                >Редактировать</Button>
+                                    <Button
+                                        className="perButton"
+                                        variant="success"
+                                        onClick={handleEditing}
+                                    >Редактировать</Button>
                                 )}
                         </label>
-                    : null}
-                    {contactsError ? <Form.Label style={{color: 'red'}}>{contactsError}</Form.Label> : null}
+                        : null}
                 </Col>
-
-                {user.user.id === id ? <Col xs={6} className="blockPersonal">
-                    <Button
-                        style = {{float:'right'}}
-                        className="perButton"
-                        variant="success"
-                        onClick={() => setModalShow(true)}
-                    >Сменить пароль</Button>
-                </Col> : null}
             </Row>
 
             <ChangePasswordModal
@@ -342,10 +422,36 @@ const Profile = observer(() => {
                 <h2 className="perHead">Ваши объявления</h2>
                 {Array.isArray(adsLoc) && adsLoc.map(i => (
                     i.userId === id ? (
-                        <AdItem key = {i.id} ad = {i}/>
+                        <AdItem key={i.id} ad={i}/>
                     ) : null
                 ))}
             </Row>
+
+            <ToastContainer
+                className="p-3"
+                position={'bottom-end'}
+            >
+                <Toast
+                    onClose={() => setImageError(null)}
+                    show={!!imageError}
+                    delay={3000}
+                    autohide
+                >
+                    <Toast.Header>
+                        <img
+                            width={30}
+                            height={30}
+                            src={frog}
+                            className="rounded me-2"
+                            alt=""
+                        />
+                        <strong className="me-auto">FLOG</strong>
+                    </Toast.Header>
+                    <Toast.Body>
+                        {imageError}
+                    </Toast.Body>
+                </Toast>
+            </ToastContainer>
         </Container>
     );
 })

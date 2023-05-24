@@ -1,7 +1,3 @@
-.checkInput::placeholder {
-    color: #ff0000;
-}
-
 .mainNavBar {
     background: #0D6936;
     border-radius: 0;
@@ -56,6 +52,20 @@
 img {
     max-width: 100%;
     object-fit: contain;
+}
+
+.blur {
+    top: 0;
+    left: 0;
+    right:0;
+    bottom: 0;
+    max-height: 100%;
+    max-width: 100%;
+    filter: blur(20px);
+    overflow: hidden;
+    position: absolute;
+    background-size: cover;
+    z-index: -1;
 }
 
 .circle {
@@ -182,6 +192,12 @@ body {
     background-color: #E7E5E5; /* replace with your desired color */
 }
 
+.thumbnail {
+    max-width: 200px;
+    max-height: 300px;
+    object-fit: contain;
+}
+
 .component-5 {
     width: 8%;
     height: 8%;
@@ -298,4 +314,22 @@ body {
     height: 70%;
     width: 100%;
     margin-top: 40px;
+}
+
+/* возвращение легенды */
+.image-button2 {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    position: fixed; /* Set the navbar to fixed position */
+    top: 20%; /* Position the navbar at the top of the page */
+    right: 0;
+}
+
+.image-button2 div {
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-size: cover;
 }

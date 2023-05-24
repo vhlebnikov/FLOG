@@ -6,11 +6,10 @@ import {
     Container,
     Form,
     Row,
-    Dropdown,
     CardGroup,
     ButtonGroup,
     Breadcrumb,
-    BreadcrumbItem
+    BreadcrumbItem, InputGroup, Toast, ToastContainer, Image
 } from "react-bootstrap";
 import {NOT_FOUND_AD_PAGE, PROFILE_PAGE, SHOP_PAGE} from "../utils/consts";
 import {Link, useNavigate} from "react-router-dom";
@@ -27,7 +26,9 @@ import {getCategoryRoute} from "../http/categoryApi";
 import Circle from "../dasha/Circle";
 import CommentModal from "../dasha/CommentModal";
 import VerEx from "verbal-expressions";
-import "rsuite/dist/rsuite.min.css"
+import ImageModal from "../dasha/ImageModal";
+import AdEditModal from "../dasha/AdEditModal";
+import frog from "../assets/FrogSmile.svg";
 
 const Ad = observer(() => {
     const navigate = useNavigate()
@@ -39,6 +40,17 @@ const Ad = observer(() => {
 
     // объявление внутри страницы его будем выводить
     const [adState, setAdState] = useState({info: []})
+
+    // ошибки
+    const [nameError, setNameError] = useState(null)
+    const [descriptionError, setDescriptionError] = useState(null)
+    const [addressError, setAddressError] = useState(null)
+    const [infoError, setInfoError] = useState(null)
+    const [imageError, setImageError] = useState(null)
+    const [priceStartError, setPriceStartError] = useState(null)
+    const [priceEndError, setPriceEndError] = useState(null)
+
+    const [submit, setSubmit] = useState(false)
 
     // ========= локально меняем их и посылаем их в запросах =====
     const [name, setName] = useState(null)
@@ -61,11 +73,17 @@ const Ad = observer(() => {
     const [showComments, setShowComments] = useState(false)
     const [comments, setComments] = useState([])
     const [newComment, setNewComment] = useState("")
-    const [newCommentError, setNewCommentError] = useState(" ")
+    const [newCommentError, setNewCommentError] = useState(null)
 
     const [isEditing, setEditing] = useState(false)
 
-    const [showModal, setShowModal] = useState(false)
+    const [showCommentModal, setShowCommentModal] = useState(false)
+
+    const [showImageModal, setShowImageModal] = useState(false)
+    const [selectedImage, setSelectedImage] = useState();
+    const [selectedImageId, setSelectedImageId] = useState();
+
+    const [showAdEditModal, setShowAdEditModal] = useState(false)
 
     const params = useParams()
     const id = parseInt(params.id)
@@ -77,8 +95,8 @@ const Ad = observer(() => {
         return ans
     }
 
-    const fetchData = async () => {
-        await Promise.resolve(getOneAd(id)).then(data => {
+    const fetchData = () => {
+        Promise.resolve(getOneAd(id)).then(data => {
             if (data) {
                 setAdState(data)
             } else {
@@ -86,7 +104,7 @@ const Ad = observer(() => {
             }
         })
 
-        await Promise.resolve(getAllComments(id)).then(data => setComments(data))
+        Promise.resolve(getAllComments(id)).then(data => setComments(data))
     }
 
     useEffect(() => {
@@ -148,14 +166,29 @@ const Ad = observer(() => {
 
     const nameHandler = (e) => {
         setName(e.target.value)
+        if (isEmpty(e.target.value)) {
+            setNameError("Введите название")
+        } else {
+            setNameError(null)
+        }
     }
 
     const descriptionHandler = (e) => {
         setDescription(e.target.value)
+        if (isEmpty(e.target.value)) {
+            setDescriptionError("Введите описание")
+        } else {
+            setDescriptionError(null)
+        }
     }
 
     const addressHandler = (e) => {
         setAddress(e.target.value)
+        if (isEmpty(e.target.value)) {
+            setAddressError("Введите адрес")
+        } else {
+            setAddressError(null)
+        }
     }
 
     const statusHandler = () => {
@@ -164,38 +197,102 @@ const Ad = observer(() => {
 
     const imageHandler = (e) => {
         setImage(Array.from(e.target.files))
+        setImageError(null)
     }
 
     const addInfo = () => {
         setInfo([...info, {name: '', description: '', id: Date.now()}])
     }
     const removeInfo = (id) => {
+        setInfoError(null)
         setInfo(info.filter(i => i.id !== id))
     }
     const changeInfo = (key, value, id) => {
+        setInfoError(null)
         setInfo(info.map(i => i.id === id ? {...i, [key]: value} : i))
     }
 
-    const priceHandler = (key, value) => {
-        setPrice({...price, [key]: value})
-    }
-
-    const handleEditing = () => {
-        if (isEditing) {
-            setEditing(false)
-            adUpdate()
+    const priceLocHandler = (key, e) => {
+        if (key === 'type') {
+            setPriceLoc({...price, [key]: e})
         } else {
-            setEditing(true)
+            if (isNaN(e.target.value) || e.target.value < 0) {
+                if (key === 'start') {
+                    setPriceStartError("Цена - положительное число")
+                }
+                if (key === 'end') {
+                    setPriceEndError("Цена - положительное число")
+                }
+                return
+            } else if (isEmpty(e.target.value)) {
+                if (key === 'start') {
+                    setPriceStartError("Введите цену")
+                }
+                if (key === 'end') {
+                    setPriceEndError("Введите цену")
+                }
+            } else {
+                if (key === 'start') {
+                    setPriceStartError(null)
+                }
+                if (key === 'end') {
+                    setPriceEndError(null)
+                }
+            }
+            setPriceLoc({...price, [key]: e.target.value})
         }
     }
 
     const handleDelete = async () => {
         await Promise.resolve(deleteAd(adState.id)).then(() => {
-            getAllAds(null, null, null, 30, 1).then(data => ad.setAds(data.rows))
+            getAllAds(null, 30, 1).then(data => ad.setAds(data.rows))
         }).then(() => navigate(SHOP_PAGE))
     }
 
+    const checkFields = async () => {
+        let flag = true
+
+        if (info.filter(i => isEmpty(i.name) || isEmpty(i.description)).length) {
+            await setInfoError("Характеристики не могут быть пустыми")
+            flag = false
+        }
+
+        if (isEmpty(name)) {
+            await setNameError("Введите название")
+            flag = false
+        }
+
+        if (isEmpty(description)) {
+            await setDescriptionError("Введите описание")
+            flag = false
+        }
+
+        if (isEmpty(address)) {
+            await setAddressError("Введите адрес")
+            flag = false
+        }
+
+        if ((priceLoc.type === 1 || priceLoc.type === 2) && isEmpty(priceLoc.start)) {
+            await setPriceStartError("Введите цену")
+            flag = false
+        }
+
+        if (priceLoc.type === 2) {
+            if (isEmpty(priceLoc.end)) {
+                await setPriceEndError("Введите цену")
+                flag = false
+            } else if (!isEmpty(priceLoc.start) && priceLoc.end < priceLoc.start) {
+                await setPriceEndError("Конечная цена не может быть ниже начальной")
+                flag = false
+            }
+        }
+
+        return flag
+    }
+
     const adUpdate = () => {
+        setInfoError(null)
+
         if (name || description || address || status || priceLoc || info || image) {
             const formData = new FormData()
 
@@ -211,7 +308,7 @@ const Ad = observer(() => {
             if (status && status !== adState.status) {
                 formData.append('status', status)
             }
-            if (price) {
+            if (priceLoc) {
                 formData.append('price', JSON.stringify(priceLoc))
             }
             if (image) {
@@ -223,6 +320,7 @@ const Ad = observer(() => {
                 formData.append('info', JSON.stringify(info))
             }
             updateAd(id, formData).then(data => setAdState(data))
+                .catch(e => setImageError(e.response.data.message))
         }
     }
 
@@ -235,18 +333,24 @@ const Ad = observer(() => {
         }
     }
 
-    const handleCommentAdd = () => {
+    const handleCommentAdd = (e) => {
+        e.preventDefault()
         if (!user.isAuth) {
-            setShowModal(true)
+            setShowCommentModal(true)
+            return
+        }
+        if (isEmpty(newComment)) {
+            setNewCommentError("Пожалуйста введите комментарий")
             return
         }
         addComment(id, newComment).then(data => setComments(data)).catch(e => alert(e.response.data.message))
         setNewComment("")
     }
 
-    const handleCommentDelete = async (commentId) => {
-        await Promise.resolve(deleteComment(commentId)
-            .then(data => setComments(data)).catch(() => alert("Произошла ошибка, пожалуйста перезагрузить страницы")))
+    const handleCommentDelete = (commentId) => {
+        deleteComment(commentId)
+            .then(data => setComments(data))
+            .catch(() => alert("Произошла ошибка при удалении комментария, пожалуйста перезагрузите страницу"))
     }
 
     const handleShowComments = () => {
@@ -282,32 +386,28 @@ const Ad = observer(() => {
         }
     };
 
+    const handleImageClick = (image, id) => {
+        setShowImageModal(true);
+        setSelectedImage(image);
+        setSelectedImageId(id)
+    }
+
     return (
         <Container>
-            {/*Надо сделать категории!*/}
-
-            {/*<Row>*/}
-            {/*    {categoryRoute ? (*/}
-            {/*            <Form>*/}
-            {/*                <div style={{ marginLeft: '10px', marginTop: '10px' }}>*/}
-            {/*                    {categoryRoute.category.name} / {categoryRoute.subCategory.name} / {categoryRoute.subSubCategory.name}*/}
-            {/*                </div>*/}
-            {/*            </Form>*/}
-            {/*        )*/}
-            {/*        : <p>Загружаем категории...</p>}*/}
-            {/*</Row>*/}
-
-            {/*Просто вывел весь путь для категории*/}
-
+            {/*Category Route*/}
             <Row>
                 {categoryRoute ? (
-                    <Breadcrumb>
-                        {categoryRoute.map(i => (
-                            <BreadcrumbItem key={i.id}>
-                                {i.name}
-                            </BreadcrumbItem>
-                        ))}
-                    </Breadcrumb>
+                    <Form>
+                        <div style={{ marginLeft: '10px', marginTop: '10px' }}>
+                            <Breadcrumb>
+                                {categoryRoute.map(i => (
+                                    <BreadcrumbItem key={i.id}>
+                                        {i.name}
+                                    </BreadcrumbItem>
+                                ))}
+                            </Breadcrumb>
+                        </div>
+                    </Form>
                 ) : null}
             </Row>
 
@@ -326,21 +426,30 @@ const Ad = observer(() => {
                 <Col md={4}>
                     {adState.image ?
                         <Carousel slide={false} interval={null}>
-                            {adState.image.map(i => (
-                                <Carousel.Item key={i.id}>
-                                    <img
-                                        className='bord'
-                                        width={400}
-                                        height={300}
+                            {adState.image.map((i, index) => (
+                                <Carousel.Item key={i.id} style={{width: "400px", height: "400px", overflow:"hidden"}}>
+                                    <div className="blur" style = {{backgroundImage: `url(${process.env.REACT_APP_API_URL + i.image})`}}></div>
+                                    <Image
+                                        fluid
+                                        style={{width: "400px", height: "400px"}}
                                         src={process.env.REACT_APP_API_URL + i.image}
                                         alt={"Фото загружается"}
+                                        onClick={() => handleImageClick(i.image, index + 1)}
                                     />
                                 </Carousel.Item>
                             ))}
                         </Carousel>
                         :
-                        <div>Загрузка картинок</div>
+                        <div className="spinner-border" role="status">
+                            <span className="sr-only"/>
+                        </div>
                     }
+                    <ImageModal
+                        show={showImageModal}
+                        handleClose={() => setShowImageModal(false)}
+                        title={selectedImageId}
+                        src={selectedImage}
+                    />
                 </Col>
 
                 {/*Описание*/}
@@ -354,46 +463,33 @@ const Ad = observer(() => {
                 </Col>
 
                 <Col md={3}>
-                    {/*Кнопочки*/}
-                    {checkUser() ?
-                        <ButtonGroup vertical className="image-button2">
-                            <Button
-                                title={isEditing ? "Выйти из сохранения" : "Редактировать объявление"}
-                                className="image-button2"
-                                onClick={handleEditing}
-                            >
-                                <div style={{ backgroundImage: `url(${component6})` }}></div>
-                            </Button>
-                            <Button
-                                title="Удалить объявление"
-                                className="image-button2" // image-buttonDelete - тут было это, я убрал, иначе не было видно кнопки
-                                onClick={handleDelete}
-                            >
-                                <div style={{ backgroundImage: `url(${component12})` }}></div>
-                            </Button>
-                        </ButtonGroup>
-                        :
-                        <div></div>
-                    }
-
                     {/*Профиль*/}
                     {userLoc ?
                         <Card className="shadow-box" border={"light"}>
-                            {userLoc.image ?
-                                <Card.Img
-                                    style={{ width: '60px', height: '60px', display: 'block',}}
-                                    variant="top"
-                                    src={process.env.REACT_APP_API_URL + userLoc.image}
-                                    alt="Profile Image"
-                                />
-                                :
-                                null
-                            }
-                            <Card.Body>
-                                <CardGroup onClick={() => navigate(PROFILE_PAGE + '/' + userLoc.id)}>
-                                    <h2>{userLoc.username}</h2>
-                                </CardGroup>
+                            <div>
+                                {userLoc.image ?
+                                    <Card.Img
+                                        style={{ width: '60px', height: '60px',  display: 'block', margin: 'auto' }}
+                                        variant="top"
+                                        src={process.env.REACT_APP_API_URL + userLoc.image}
+                                        alt="Profile Image"
+                                    />
+                                    :
+                                    null
+                                }
 
+                                <CardGroup onClick={() => navigate(PROFILE_PAGE + '/' + userLoc.id)}>
+                                    <h2 style={{
+                                            fontFamily: 'Century Gothic',
+                                            fontWeight: 500,
+                                            fontSize: 35,
+                                            marginLeft: 15
+                                    }}>
+                                        {userLoc.username}
+                                    </h2>
+                                </CardGroup>
+                            </div>
+                            <Card.Body>
                                 <Card.Text>{userLoc.email}</Card.Text>
 
                                 <Card.Text>Адрес: {adState.address}</Card.Text>
@@ -413,7 +509,9 @@ const Ad = observer(() => {
                                                 )}
                                             </div>
                                         ) : (
-                                            <div>Загружаем цену...</div>
+                                            <div className="spinner-border" role="status">
+                                                <span className="sr-only"/>
+                                            </div>
                                         )}
                                 </CardGroup>
 
@@ -424,124 +522,55 @@ const Ad = observer(() => {
                         </Card>
                         : null}
                 </Col>
+
+                <Col md={1}>
+                    {/*Кнопочки*/}
+                    {checkUser() ?
+                        <div>
+                            <ButtonGroup vertical className="image-button2">
+                                <Button
+                                    title="Редактировать объявление"
+                                    className="image-button2"
+                                    onClick={() => setShowAdEditModal(true)}
+                                >
+                                    <div style={{ backgroundImage: `url(${component6})` }}></div>
+                                </Button>
+                                <Button
+                                    title="Удалить объявление"
+                                    className="image-button2"
+                                    onClick={handleDelete}
+                                >
+                                    <div style={{ backgroundImage: `url(${component12})` }}></div>
+                                </Button>
+                            </ButtonGroup>
+                            <div>
+                                <AdEditModal
+                                    show={showAdEditModal}
+                                    handleClose={() => setShowAdEditModal(false)}
+                                    others={[name, nameHandler, description, descriptionHandler, address, addressHandler,
+                                        status, getStatusText, statusHandler, imageHandler, priceLoc, priceLocHandler,
+                                        addInfo, info, changeInfo, removeInfo, adUpdate, nameError, descriptionError,
+                                        addressError, infoError, imageError, priceStartError, priceEndError, isEmpty, checkFields]}
+                                />
+                            </div>
+                        </div>
+                        :
+                        null
+                    }
+                </Col>
             </Row>
 
             {/*Характеристики*/}
             <Row className="d-flex flex-column m-3">
 
                 <h1 style={{fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 40}}>Характеристики</h1>
-                {info && info.map((i, index) =>
+                {adState.info && adState.info.map((i, index) =>
                     <Row key={i.id} style={{background: index % 2 === 0 ? 'lightgray' : 'transparent', padding: 10}}>
                         {i.name}: {i.description}
                     </Row>
                 )}
 
             </Row>
-
-            {/*Внизу изменение объявления*/}
-
-            {isEditing ?
-                <Form>
-                    <Form.Label>Имя</Form.Label>
-                    <Form.Control value={name} onChange={nameHandler}/>
-
-                    <Form.Label>Описание</Form.Label>
-                    <Form.Control value={description} onChange={descriptionHandler}/>
-
-                    <Form.Label>Адрес</Form.Label>
-                    <Form.Control value={address} onChange={addressHandler}/>
-
-                    <Row>
-                        <Form.Label>{`Статус: ${getStatusText(status)}`}</Form.Label>
-                        <Button variant={"outline-dark"} style={{ marginTop:  '10px' }}
-                                onClick={statusHandler}
-                        >
-                            Изменить статус
-                        </Button>
-                    </Row>
-
-                    <Form.Label>Картинки</Form.Label>
-                    <Form.Control
-                        className="mt-3"
-                        type="file"
-                        multiple
-                        required
-                        onChange={imageHandler}
-                    />
-
-                    <Dropdown className="mt-3">
-                        <Dropdown.Toggle className="btn-expensive" variant="success" >{"Выберите тип цены"}</Dropdown.Toggle>
-                        <Dropdown.Menu>
-                            <Dropdown.Item onClick={() => priceHandler('type', 0)}>{"Без цены"}</Dropdown.Item>
-                            <Dropdown.Item onClick={() => priceHandler('type', 1)}>{"Определенная цена"}</Dropdown.Item>
-                            <Dropdown.Item onClick={() => priceHandler('type', 2)}>{"Интервал"}</Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
-                    {price.type === 0 ?
-                        null
-                        :
-                        <Row>
-                            <Col md={4}>
-                                <Form.Control
-                                    value={price.start}
-                                    type="number"
-                                    onChange={(e) => priceHandler('start', Number(e.target.value))}
-                                    className="mt-2"
-                                    placeholder="цена"
-                                />
-                            </Col>
-                            {price.type === 2 ?
-                                <Col md={4}>
-                                    <Form.Control
-                                        value={price.end}
-                                        type="number"
-                                        onChange={(e) => priceHandler('end', Number(e.target.value))}
-                                        className="mt-2"
-                                        placeholder="цена"
-                                    />
-                                </Col>
-                                :
-                                null
-                            }
-                        </Row>
-                    }
-
-                    <Button
-                        className="mt-3 btn-expensive"
-                        variant="outline-success"
-                        onClick={addInfo}
-                    >
-                        Добавить новое свойство
-                    </Button>
-                    {info.map(i =>
-                        <Row className="mt-4" key={i.id}>
-                            <Col md={4}>
-                                <Form.Control
-                                    value={i.name}
-                                    onChange={(e) => changeInfo('name', e.target.value, i.id)}
-                                    placeholder="Введите название свойства"
-                                />
-                            </Col>
-                            <Col md={4}>
-                                <Form.Control
-                                    value={i.description}
-                                    onChange={(e) => changeInfo('description', e.target.value, i.id)}
-                                    placeholder="Введите описание свойства"
-                                />
-                            </Col>
-                            <Col md={4}>
-                                <Button
-                                    className="btn-expensive"
-                                    onClick={() => removeInfo(i.id)}
-                                    variant={"outline-danger"}
-                                >
-                                    Удалить
-                                </Button>
-                            </Col>
-                        </Row>
-                    )}
-                </Form>
-            : null}
 
             {/*Комменты*/}
             <Row className="d-flex flex-column m-3">
@@ -553,7 +582,6 @@ const Ad = observer(() => {
                     <div>
                         {comments ? (
                             <div>
-
                                 <ul>
                                     {comments.map((comment) => (
                                         <li key={comment.id} style={{ marginTop:  '10px' }}>
@@ -561,7 +589,6 @@ const Ad = observer(() => {
                                                 <Circle color="#008037" letters={comment.user.username.charAt(0)} />
                                                 <strong>
                                                     <h4 style={{ marginLeft: '10px', marginRight: '10px' }}>
-
                                                         <Link to={PROFILE_PAGE + '/' + comment.userId} style={{ color: '#575757' }}>
                                                             {comment.user.username}
                                                         </Link>
@@ -574,37 +601,41 @@ const Ad = observer(() => {
                                                     <Button variant={"outline-dark"} style={{marginLeft: 'auto'}} onClick={() => handleCommentDelete(comment.id)}>Удалить комментарий</Button>
                                                     : null
                                                 }
-
                                             </div>
-
                                         </li>
                                     ))}
                                 </ul>
                             </div>
                         ) : (
-                            <p>Загрузка комментариев...</p>
+                            <div className="spinner-border" role="status">
+                                <span className="sr-only"/>
+                            </div>
                         )}
-                        <Form>
-                            <Form.Group>
+                        <Form onSubmit={e => handleCommentAdd(e)}>
+                            <InputGroup hasValidation>
                                 <Form.Control
+                                    required
+                                    isInvalid={!!newCommentError}
                                     value={newComment}
                                     onChange={handleComment}
                                     className="mt-3"
                                     placeholder="Оставьте свой комментарий здесь"
                                 />
-                                {newCommentError ? <Form.Label style={{color: 'red'}}>{newCommentError}</Form.Label> : null}
-                            </Form.Group>
-                            <Button
-                                className="mt-3"
-                                variant="outline-success btn-expensive"
-                                disabled={!!newCommentError}
-                                onClick={handleCommentAdd}
-                            >
-                                Добавить
-                            </Button>
+                                <Form.Control.Feedback type="invalid">
+                                    {newCommentError}
+                                </Form.Control.Feedback>
+                                <Button
+                                    className="mt-3"
+                                    variant="outline-success btn-expensive"
+                                    disabled={!!newCommentError}
+                                    onClick={e => handleCommentAdd(e)}
+                                >
+                                    Добавить
+                                </Button>
+                            </InputGroup>
                             <CommentModal
-                                show={showModal}
-                                handleClose={() => setShowModal(false)}
+                                show={showCommentModal}
+                                handleClose={() => setShowCommentModal(false)}
                                 title="Войдите, чтобы оставить комментарий"
                                 body="Вы должны быть авторизованы, чтобы оставлять комментарии"
                             />
@@ -612,6 +643,35 @@ const Ad = observer(() => {
                     </div>
                 ) : null}
             </Row>
+
+            <ToastContainer
+                className="p-3"
+                position={'bottom-end'}
+            >
+                <Toast
+                    onClose={() => {
+                        setImageError(null)
+                        setImage([])
+                    }}
+                    show={!!imageError}
+                    delay={3000}
+                    autohide
+                >
+                    <Toast.Header>
+                        <img
+                            width={30}
+                            height={30}
+                            src={frog}
+                            className="rounded me-2"
+                            alt=""
+                        />
+                        <strong className="me-auto">FLOG</strong>
+                    </Toast.Header>
+                    <Toast.Body>
+                        {imageError}
+                    </Toast.Body>
+                </Toast>
+            </ToastContainer>
         </Container>
     );
 });
