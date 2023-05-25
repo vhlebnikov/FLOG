@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {
     Button,
     Card,
+    Image,
     Col,
     Container,
     Form,
@@ -17,7 +18,7 @@ import {Context} from "../index";
 import {useParams} from 'react-router-dom';
 import component6 from "../assets/Component6.png";
 import component12 from "../assets/Component12.png";
-import {deleteAd, getAllAds, getOneAd, getPrice, updateAd} from "../http/adApi";
+import {deleteAd, getAllAds, getOneAd, updateAd} from "../http/adApi";
 import {getUser} from "../http/userApi";
 import {addComment, deleteComment, getAllComments} from "../http/commentApi";
 import Carousel from 'react-bootstrap/Carousel';
@@ -62,7 +63,6 @@ const Ad = observer(() => {
     const [image, setImage] = useState([])
 
     // Вот этих мужиков отдельно получаем и выводим
-    const [price, setPrice] = useState(null)
     const [categoryRoute, setCategoryRoute] = useState([])
 
     // а их меняем и отправляем в запросы
@@ -74,8 +74,6 @@ const Ad = observer(() => {
     const [comments, setComments] = useState([])
     const [newComment, setNewComment] = useState("")
     const [newCommentError, setNewCommentError] = useState(null)
-
-    const [isEditing, setEditing] = useState(false)
 
     const [showCommentModal, setShowCommentModal] = useState(false)
 
@@ -131,8 +129,8 @@ const Ad = observer(() => {
             setImage(adState.image)
         }
 
-        if (adState.priceId) {
-            getPrice(adState.priceId).then(data => setPrice(data))
+        if (adState.price) {
+            setPriceLoc(adState.price)
         }
         if (adState.categoryId) {
             getCategoryRoute(adState.categoryId).then(data => setCategoryRoute(data))
@@ -142,16 +140,13 @@ const Ad = observer(() => {
         }
     },
         [adState.name, adState.description, adState.address, adState.status,
-            adState.info, adState.image, adState.priceId, adState.categoryId, adState.userId])
+            adState.info, adState.image, adState.price, adState.categoryId, adState.userId])
 
     useEffect(() => {
-        if (price) {
-            setPriceLoc(price)
-        }
         if (categoryRoute) {
             setCategoryRouteLoc(categoryRoute)
         }
-    }, [price, categoryRoute])
+    }, [categoryRoute])
 
     const checkUser = () => {
         if (!userLoc) {
@@ -214,7 +209,7 @@ const Ad = observer(() => {
 
     const priceLocHandler = (key, e) => {
         if (key === 'type') {
-            setPriceLoc({...price, [key]: e})
+            setPriceLoc({...priceLoc, [key]: e})
         } else {
             if (isNaN(e.target.value) || e.target.value < 0) {
                 if (key === 'start') {
@@ -239,13 +234,13 @@ const Ad = observer(() => {
                     setPriceEndError(null)
                 }
             }
-            setPriceLoc({...price, [key]: e.target.value})
+            setPriceLoc({...priceLoc, [key]: e.target.value})
         }
     }
 
     const handleDelete = async () => {
         await Promise.resolve(deleteAd(adState.id)).then(() => {
-            getAllAds(null, 30, 1).then(data => ad.setAds(data.rows))
+            getAllAds(null, null, null, null, 30, 1).then(data => ad.setAds(data.rows))
         }).then(() => navigate(SHOP_PAGE))
     }
 
@@ -348,8 +343,7 @@ const Ad = observer(() => {
     }
 
     const handleCommentDelete = (commentId) => {
-        deleteComment(commentId)
-            .then(data => setComments(data))
+        deleteComment(commentId).then(data => setComments(data))
             .catch(() => alert("Произошла ошибка при удалении комментария, пожалуйста перезагрузите страницу"))
     }
 
@@ -373,6 +367,7 @@ const Ad = observer(() => {
                 return status;
         }
     };
+
     const getStatusText = (status) => {
         switch (status) {
             case 1:
@@ -412,26 +407,44 @@ const Ad = observer(() => {
             </Row>
 
             <Row>
-                {/*Название*/}
-                <div className="forPersonal">
-                    <div style={{display: 'flex', alignItems: 'center', marginTop: "20px"}}>
-                            <h1 style={{ fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 40}}> {adState.name}</h1>
-                    </div>
+                {/*Дата*/}
+                <div>
+                    <h1 style={{ fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 15}}>
+                        {(new Date(adState.createdAt)).toLocaleDateString('ru-RU') + " "}
+                        {(new Date(adState.createdAt)).toLocaleTimeString('ru-RU', {hour: 'numeric', minute: 'numeric'})}
+                    </h1>
                 </div>
 
             </Row>
 
             <Row>
+                {/*Название*/}
+                <div className="forPersonal">
+                    <div style={{display: 'flex', alignItems: 'center', marginTop: "20px"}}>
+                        <h1 style={{ color: '#133612', fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 40}}> {adState.name}</h1>
+                    </div>
+                </div>
+
+            </Row>
+
+            <Row style={{marginTop: "1%", boxShadow:" 6px 6px 6px 6px rgba(0, 0, 0, .2)", paddingTop:"3%", paddingBottom:"3%"}}>
                 {/*Картииинки!*/}
                 <Col md={4}>
                     {adState.image ?
                         <Carousel slide={false} interval={null}>
                             {adState.image.map((i, index) => (
-                                <Carousel.Item key={i.id}>
-                                    <img
-                                        className='bord'
-                                        width={400}
-                                        height={300}
+                                <Carousel.Item
+                                    key={i.id}
+                                    style={{width: "400px", height: "400px", overflow:"hidden", borderRadius: "10%"}}
+                                >
+                                    <div
+                                        className="blur"
+                                        style = {{backgroundImage: `url(${process.env.REACT_APP_API_URL + i.image})`}}
+                                    >
+                                    </div>
+                                    <Image
+                                        fluid
+                                        style={{width: "400px", height: "400px"}}
                                         src={process.env.REACT_APP_API_URL + i.image}
                                         alt={"Фото загружается"}
                                         onClick={() => handleImageClick(i.image, index + 1)}
@@ -457,7 +470,7 @@ const Ad = observer(() => {
                     <Row className="d-flex flex-column align-items-center">
                         <div className="forPersonal" style={{ wordBreak: 'break-word' }}>
                             <h4 style={{ fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}>Описание: </h4>
-                            <h4 style={{ fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}><div> {adState.description}</div></h4>
+                            <h3 style={{ fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}><div> {adState.description}</div></h3>
                         </div>
                     </Row>
                 </Col>
@@ -468,12 +481,14 @@ const Ad = observer(() => {
                         <Card className="shadow-box" border={"light"}>
                             <div>
                                 {userLoc.image ?
-                                    <Card.Img
-                                        style={{ width: '60px', height: '60px',  display: 'block', margin: 'auto' }}
-                                        variant="top"
-                                        src={process.env.REACT_APP_API_URL + userLoc.image}
-                                        alt="Profile Image"
-                                    />
+                                    <div style={{width:"60px", height:"60px",borderRadius:"50%", margin:"0 auto", overflow:"hidden"}}>
+                                        <Card.Img
+                                            className = "perImage"
+                                            variant="top"
+                                            src={process.env.REACT_APP_API_URL + userLoc.image}
+                                            alt="Profile Image"
+                                        />
+                                    </div>
                                     :
                                     null
                                 }
@@ -495,17 +510,17 @@ const Ad = observer(() => {
                                 <Card.Text>Адрес: {adState.address}</Card.Text>
 
                                 <CardGroup>
-                                    {price ?
+                                    {adState.price ?
                                         (
                                             <div>
-                                                {price.type === 0 && (
+                                                {adState.price.type === 0 && (
                                                     <p>Без цены</p>
                                                 )}
-                                                {price.type === 1 && (
-                                                    <p>Цена: {price.start}</p>
+                                                {adState.price.type === 1 && (
+                                                    <p>Цена: {adState.price.start}</p>
                                                 )}
-                                                {price.type === 2 && (
-                                                    <p>Цена: {price.start} - {price.end}</p>
+                                                {adState.price.type === 2 && (
+                                                    <p>Цена: {adState.price.start} - {adState.price.end}</p>
                                                 )}
                                             </div>
                                         ) : (
@@ -566,7 +581,7 @@ const Ad = observer(() => {
                 <h1 style={{fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 40}}>Характеристики</h1>
                 {adState.info && adState.info.map((i, index) =>
                     <Row key={i.id} style={{background: index % 2 === 0 ? 'lightgray' : 'transparent', padding: 10}}>
-                        {i.name}: {i.description}
+                        <h5 style={{ fontWeight: 'lighter' }}>{i.name} : {i.description} </h5>
                     </Row>
                 )}
 
@@ -594,6 +609,9 @@ const Ad = observer(() => {
                                                         </Link>
                                                     </h4>
                                                 </strong>
+
+                                                <h6 style={{ color: '#b7b5b5', fontWeight: 'lighter' }}>· {(new Date(comment.createdAt)).toLocaleDateString('ru-RU')}</h6>
+                                                <h6 style={{ color: '#b7b5b5', marginLeft: 5, fontWeight: 'lighter'  }}>{(new Date(comment.createdAt)).toLocaleTimeString('ru-RU')}</h6>
                                             </div>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <h6 style={{ marginLeft: '10px'}}>{comment.text}</h6>

@@ -25,7 +25,7 @@ function Footer() {
 
                         <MDBCol md='3' lg='2' xl='2' className='mx-auto mb-4'>
 
-                            <h6 className='text-uppercase fw-bold mb-4' style={{marginTop: 10}}>Полезные ссылки</h6>
+                            <h6 className='text-uppercase fw-bold mb-4' style={{marginTop: 10}}>Информация</h6>
                             <hr style={{ backgroundColor: '#0D6936', height: '2px', border: 'none', marginTop: '0.5rem', marginBottom: '1rem' }} />
                             <p>
                                 <a href='https://docs.google.com/document/d/1YdM55V8laosMPVuYCj7m6pbdTpJHGXLABty5yw8OeV8/edit?usp=sharing' className='text-reset' target='_blank' rel='noopener noreferrer'>

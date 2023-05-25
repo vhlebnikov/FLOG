@@ -74,7 +74,7 @@ Ad.hasMany(Info, {as: 'info'})
 Info.belongsTo(Ad)
 
 Price.hasOne(Ad)
-Ad.belongsTo(Price)
+Ad.belongsTo(Price, {as: 'price'})
 
 Category.hasMany(Ad)
 Ad.belongsTo(Category)

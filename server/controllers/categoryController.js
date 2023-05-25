@@ -6,10 +6,10 @@ const findChildrenAndDestroy = async (id) => {
         where: {parentId: id}
     })
 
-    categories.forEach(c => {
-        findChildrenAndDestroy(c.id)
-        c.destroy()
-    })
+    for (const c of categories) {
+        await findChildrenAndDestroy(c.id)
+        await c.destroy()
+    }
 }
 
 class CategoryController {
@@ -46,7 +46,7 @@ class CategoryController {
 
         try {
             await findChildrenAndDestroy(id)
-            category.destroy()
+            await category.destroy()
         } catch (e) {
             return res.json(e)
         }

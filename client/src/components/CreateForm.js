@@ -221,6 +221,9 @@ const CreateForm = observer(() => {
                                 className="mt-2"
                                 placeholder="Цена"
                             />
+                            <Form.Control.Feedback type={"invalid"}>
+                                {priceStartError}
+                            </Form.Control.Feedback>
                         </InputGroup>
                     </Col>
                     {price.type === 2 ?
@@ -235,6 +238,9 @@ const CreateForm = observer(() => {
                                     className="mt-2"
                                     placeholder="Конечная цена"
                                 />
+                                <Form.Control.Feedback type={"invalid"}>
+                                    {priceEndError}
+                                </Form.Control.Feedback>
                             </InputGroup>
                         </Col>
                         :

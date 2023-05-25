@@ -9,7 +9,7 @@ const Shop = () => {
     const {ad} = useContext(Context)
 
     useEffect(() => {
-        getAllAds(null, 30, 1).then(data => ad.setAds(data.rows))
+        getAllAds(null, null, null, null, 30, 1).then(data => ad.setAds(data.rows))
     })
     return (
         <Container>
