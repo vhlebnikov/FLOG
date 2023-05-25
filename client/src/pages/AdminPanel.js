@@ -5,6 +5,7 @@ import CategoryCascader from "../components/CategoryCascader";
 import {getCategoryRoute} from "../http/categoryApi";
 import {Input, InputGroup, Placeholder} from "rsuite";
 import Button from "react-bootstrap/Button";
+import AdminCategoryCascader from "../components/AdminCategoryCascader";
 
 const AdminPanel = () => {
     const [newCategory, setNewCategory] = useState(null)
@@ -31,7 +32,7 @@ const AdminPanel = () => {
                     <Col lg>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <h6 style={{marginRight:5}}>Создать подкатегорию для</h6>
-                            <CategoryCascader others={[newCategory, setNewCategory]}/>
+                            <AdminCategoryCascader others={[newCategory, setNewCategory]}/>
                         </div>
                     </Col>
                     {newCategory === null ?

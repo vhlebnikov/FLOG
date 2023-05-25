@@ -14,6 +14,13 @@ import Activation from "./pages/Activation"
 import NotFoundAd from "./pages/NotFoundAd";
 import AdminPanel from "./pages/AdminPanel";
 
+export const adminRoutes = [
+    {
+        path: ADMIN_PANEL,
+        Component: AdminPanel
+    }
+]
+
 export const authRoutes = [
     {
         path: CREATE_AD_PAGE,
@@ -22,10 +29,6 @@ export const authRoutes = [
     {
         path: PROFILE_PAGE + '/:id',
         Component: Profile
-    },
-    {
-        path: ADMIN_PANEL,
-        Component: AdminPanel
     }
 ]
 

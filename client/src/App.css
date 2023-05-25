@@ -83,15 +83,17 @@ img {
 .perImage {
     width: auto;
     height: 100%;
-
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 .perImageBorder {
-    width: 350px;
-    height: 350px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    width: 70%;
+    height: 70%;
     margin: 0 auto;
     overflow: hidden;
-    border-radius: 40%;
 }
 
 .perText {
@@ -299,6 +301,20 @@ body {
     margin-top: 40px;
 }
 
-a{
-    text-decoration: none;
+/* возвращение легенды */
+.image-button2 {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    position: fixed; /* Set the navbar to fixed position */
+    top: 20%; /* Position the navbar at the top of the page */
+    right: 0;
+}
+
+.image-button2 div {
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-size: cover;
 }

@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Cascader} from "rsuite";
 import {getCategories} from "../http/categoryApi";
+import AddOutlineIcon from '@rsuite/icons/AddOutline';
 
-const CategoryCascader = (props) => {
+const AdminCategoryCascader = (props) => {
     const [rootCategories, setRootCategories] = useState([])
     const [value, setValue] = useState(null);
     const [selectedCategory, setSelectedCategory] = props.others
@@ -20,8 +21,10 @@ const CategoryCascader = (props) => {
     }
 
     const fetchNodes = async (id) => {
+        console.log(id.label)
+
         return getCategories(id.value).then(data => Promise.allSettled(data.map(i => createNode(i))))
-            .then(data => data.map(i => i.value))
+            .then(data => data.map(i => i.value)).then(data => [...data, {label: '+', value:Date.now(), children: null}])
     }
 
     useEffect(() => {
@@ -37,12 +40,26 @@ const CategoryCascader = (props) => {
                 parentSelectable={true}
                 value={value}
                 onChange={v => {
-                    setValue(v)
-                    setSelectedCategory(v)
+                    if (v.label === '+'){
+                        setValue(0)
+                    } else {
+                        setValue(v)
+                        setSelectedCategory(v)
+                    }
+
                 }}
-                placeholder={"Категория"}
-                data={rootCategories}
-                getChildren={fetchNodes}
+                placeholder={"Категории"}
+                data={[...rootCategories, {label: '+', value:Date.now(), children: null}]}
+                getChildren = {fetchNodes}
+
+
+                renderMenuItem={(label, item) => {
+                    return (
+                        <>
+                            {item.label === "+" ? <AddOutlineIcon /> : item.label}
+                        </>
+                    );
+                }}
                 renderMenu={(children, menu, parentNode) => {
                     if (parentNode && parentNode.loading) {
                         return <p style={{ padding: 10, color: '#999', textAlign: 'center' }}>Loading...</p>;
@@ -54,4 +71,4 @@ const CategoryCascader = (props) => {
     );
 };
 
-export default CategoryCascader;
+export default AdminCategoryCascader;

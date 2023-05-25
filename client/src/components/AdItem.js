@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Card, Col} from "react-bootstrap";
+import {Card, Col, Image} from "react-bootstrap";
 import {AD_PAGE} from "../utils/consts";
 import {useNavigate} from "react-router-dom";
 import {getPrice} from "../http/adApi";
@@ -20,16 +20,17 @@ const AdItem = ({ad}) => {
                 <Carousel slide={false} interval={null}>
                     {ad.image && ad.image.map(image =>
                             <Carousel.Item key={image.id}>
-                                <img
-                                    className='bord'
+                                <Image
+                                    className="bord"
                                     width={400}
                                     height={300}
                                     src={process.env.REACT_APP_API_URL + image.image}
-                                 alt={"Загрузка картинок"}/>
+                                    alt={"Загрузка картинок"}
+                                />
                             </Carousel.Item>
                     )}
                 </Carousel>
-                <Card.Body onClick={() => navigate(AD_PAGE + '/' + ad.id)} style={{minHeight: '150px', overflow: 'hidden'}}>
+                <Card.Body onClick={() => navigate(AD_PAGE + '/' + ad.id)} style={{minHeight: '200px', overflow: 'hidden'}}>
                     <Card.Title style={{color: "#E7E5E5", fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 20}}>{ad.name.length > 40 ? ad.name.substring(0, 40) + "..." : ad.name}</Card.Title>
                     <Card.Text style={{color: "#E7E5E5"}}>
                         Цена: {price.start ? price.start : "Нет"}

@@ -1,11 +1,11 @@
 import React from 'react';
 import CreateForm from "../components/CreateForm";
-import {Container} from "react-bootstrap";
+import {Container, Row} from "react-bootstrap";
 
 const CreateAd = () => {
     return (
-        <Container className="m-4">
-            <CreateForm/>
+        <Container className="mt-2">
+                <CreateForm/>
         </Container>
     );
 };

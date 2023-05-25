@@ -1,4 +1,4 @@
-import { Modal, Button } from 'react-bootstrap';
+import {Modal, Button } from 'react-bootstrap';
 import {AUTH_PAGE} from "../utils/consts";
 import {useNavigate} from "react-router-dom";
 
