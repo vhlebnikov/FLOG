@@ -3,7 +3,7 @@ import {
     CREATE_AD_PAGE,
     PROFILE_PAGE,
     AD_PAGE,
-    AUTH_PAGE, REGISTRATION_PAGE, NOT_FOUND_AD_PAGE
+    AUTH_PAGE, REGISTRATION_PAGE, NOT_FOUND_AD_PAGE, ADMIN_PANEL
 } from "./utils/consts";
 import Shop from "./pages/Shop";
 import CreateAd from "./pages/CreateAd"
@@ -12,6 +12,7 @@ import Auth from "./pages/Auth"
 import Profile from "./pages/Profile"
 import Activation from "./pages/Activation"
 import NotFoundAd from "./pages/NotFoundAd";
+import AdminPanel from "./pages/AdminPanel";
 
 export const authRoutes = [
     {
@@ -48,5 +49,12 @@ export const publicRoutes = [
     {
         path: NOT_FOUND_AD_PAGE,
         Component: NotFoundAd
+    }
+]
+
+export const adminRoutes = [
+    {
+        path: ADMIN_PANEL,
+        Component: AdminPanel
     }
 ]
