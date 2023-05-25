@@ -394,40 +394,23 @@ const Ad = observer(() => {
 
     return (
         <Container>
-            {/*Category Route*/}
-            <Row>
-                {categoryRoute ? (
-                    <Form>
-                        <div style={{ marginLeft: '10px', marginTop: '10px' }}>
-                            <Breadcrumb>
-                                {categoryRoute.map(i => (
-                                    <BreadcrumbItem key={i.id}>
-                                        {i.name}
-                                    </BreadcrumbItem>
-                                ))}
-                            </Breadcrumb>
-                        </div>
-                    </Form>
-                ) : null}
-            </Row>
-
             <Row>
                 {/*Название*/}
                 <div className="forPersonal">
                     <div style={{display: 'flex', alignItems: 'center', marginTop: "20px"}}>
-                            <h1 style={{ fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 40}}> {adState.name}</h1>
+                            <h1 style={{ fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 40,}}> {adState.name}</h1>
                     </div>
                 </div>
 
             </Row>
 
-            <Row>
+            <Row style={{marginTop: "1%",  boxShadow:" 6px 6px 6px 6px rgba(0, 0, 0, .2)", paddingTop:"3%", paddingBottom:"3%"}}>
                 {/*Картииинки!*/}
                 <Col md={4}>
                     {adState.image ?
                         <Carousel slide={false} interval={null}>
                             {adState.image.map((i, index) => (
-                                <Carousel.Item key={i.id} style={{width: "400px", height: "400px", overflow:"hidden"}}>
+                                <Carousel.Item key={i.id} style={{width: "400px", height: "400px", overflow:"hidden", borderRadius: "10%"}}>
                                     <div className="blur" style = {{backgroundImage: `url(${process.env.REACT_APP_API_URL + i.image})`}}></div>
                                     <Image
                                         fluid
@@ -457,7 +440,25 @@ const Ad = observer(() => {
                     <Row className="d-flex flex-column align-items-center">
                         <div className="forPersonal" style={{ wordBreak: 'break-word' }}>
                             <h4 style={{ fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}>Описание: </h4>
-                            <h4 style={{ fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}><div> {adState.description}</div></h4>
+                            <h3 style={{ fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}><div> {adState.description}</div></h3>
+                        </div>
+                    </Row>
+                    <Row className="d-flex flex-column align-items-center">
+                        <div  className="forPersonal" style={{ wordBreak: 'break-word' }}>
+                            <h4 style={{ fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}>Категории: </h4>
+                            {categoryRoute ? (
+                                <Form>
+                                    <div style={{ marginTop: '10px' }}>
+                                        <Breadcrumb>
+                                            {categoryRoute.map(i => (
+                                                <BreadcrumbItem key={i.id} active>
+                                                    {i.name}
+                                                </BreadcrumbItem>
+                                            ))}
+                                        </Breadcrumb>
+                                    </div>
+                                </Form>
+                            ) : null}
                         </div>
                     </Row>
                 </Col>
@@ -468,12 +469,14 @@ const Ad = observer(() => {
                         <Card className="shadow-box" border={"light"}>
                             <div>
                                 {userLoc.image ?
-                                    <Card.Img
-                                        style={{ width: '60px', height: '60px',  display: 'block', margin: 'auto' }}
-                                        variant="top"
-                                        src={process.env.REACT_APP_API_URL + userLoc.image}
-                                        alt="Profile Image"
-                                    />
+                                    <div style={{width:"60px", height:"60px",borderRadius:"50%", margin:"0 auto", overflow:"hidden"}}>
+                                        <Card.Img
+                                            className = "perImage"
+                                            variant="top"
+                                            src={process.env.REACT_APP_API_URL + userLoc.image}
+                                            alt="Profile Image"
+                                        />
+                                    </div>
                                     :
                                     null
                                 }
