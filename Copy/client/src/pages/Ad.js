@@ -394,10 +394,26 @@ const Ad = observer(() => {
 
     return (
         <Container>
+            {/*Категории*/}
+            <Row>
+                {categoryRoute ? (
+                    <Form>
+                        <div style={{marginTop: '1%' }}>
+                            <Breadcrumb>
+                                {categoryRoute.map(i => (
+                                    <BreadcrumbItem key={i.id} active>
+                                        {i.name}
+                                    </BreadcrumbItem>
+                                ))}
+                            </Breadcrumb>
+                        </div>
+                    </Form>
+                ) : null}
+            </Row>
             <Row>
                 {/*Название*/}
-                <div className="forPersonal">
-                    <div style={{display: 'flex', alignItems: 'center', marginTop: "20px"}}>
+                <div style={{/*marginBottom:"3%",*/ backgroundPosition:"center", backgroundSize:"cover"}}>
+                    <div style={{display: 'flex', alignItems: 'center'}}>
                             <h1 style={{ fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 40,}}> {adState.name}</h1>
                     </div>
                 </div>
@@ -441,24 +457,6 @@ const Ad = observer(() => {
                         <div className="forPersonal" style={{ wordBreak: 'break-word' }}>
                             <h4 style={{ fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}>Описание: </h4>
                             <h3 style={{ fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}><div> {adState.description}</div></h3>
-                        </div>
-                    </Row>
-                    <Row className="d-flex flex-column align-items-center">
-                        <div  className="forPersonal" style={{ wordBreak: 'break-word' }}>
-                            <h4 style={{ fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}>Категории: </h4>
-                            {categoryRoute ? (
-                                <Form>
-                                    <div style={{ marginTop: '10px' }}>
-                                        <Breadcrumb>
-                                            {categoryRoute.map(i => (
-                                                <BreadcrumbItem key={i.id} active>
-                                                    {i.name}
-                                                </BreadcrumbItem>
-                                            ))}
-                                        </Breadcrumb>
-                                    </div>
-                                </Form>
-                            ) : null}
                         </div>
                     </Row>
                 </Col>
