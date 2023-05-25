@@ -3,15 +3,16 @@ import {
     CREATE_AD_PAGE,
     PROFILE_PAGE,
     AD_PAGE,
-    EDIT_PROFILE_PAGE,
-    AUTH_PAGE, REGISTRATION_PAGE
+    AUTH_PAGE, REGISTRATION_PAGE, NOT_FOUND_AD_PAGE, ADMIN_PANEL
 } from "./utils/consts";
 import Shop from "./pages/Shop";
 import CreateAd from "./pages/CreateAd"
 import Ad from "./pages/Ad"
 import Auth from "./pages/Auth"
-import EditProfile from "./pages/EditProfile"
 import Profile from "./pages/Profile"
+import Activation from "./pages/Activation"
+import NotFoundAd from "./pages/NotFoundAd";
+import AdminPanel from "./pages/AdminPanel";
 
 export const authRoutes = [
     {
@@ -19,17 +20,20 @@ export const authRoutes = [
         Component: CreateAd
     },
     {
-        path: PROFILE_PAGE,
+        path: PROFILE_PAGE + '/:id',
         Component: Profile
     },
     {
-        path: EDIT_PROFILE_PAGE,
-        Component: EditProfile
+        path: ADMIN_PANEL,
+        Component: AdminPanel
     }
-
 ]
 
 export const publicRoutes = [
+    {
+        path: '/activation/:id',
+        Component: Activation
+    },
     {
         path: SHOP_PAGE,
         Component: Shop
@@ -46,4 +50,8 @@ export const publicRoutes = [
         path: REGISTRATION_PAGE,
         Component: Auth
     },
+    {
+        path: NOT_FOUND_AD_PAGE,
+        Component: NotFoundAd
+    }
 ]

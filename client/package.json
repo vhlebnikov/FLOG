@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@rsuite/icons": "^1.0.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -11,15 +12,16 @@
     "bootstrap-icons": "^1.10.3",
     "date-fns": "^2.29.3",
     "jwt-decode": "^3.1.2",
+    "mdb-react-ui-kit": "^6.0.0",
     "mobx": "^6.8.0",
     "mobx-react-lite": "^3.4.3",
     "react": "^18.2.0",
-    "react-bootstrap": "^2.7.2",
+    "react-bootstrap": "^2.7.4",
     "react-dom": "^18.2.0",
-    "react-dropzone": "^14.2.3",
     "react-router-dom": "^6.9.0",
     "react-scripts": "5.0.1",
-    "rsuite": "^5.31.0",
+    "rsuite": "^5.33.1",
+    "verbal-expressions": "^1.0.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

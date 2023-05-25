@@ -1,5 +1,5 @@
 const sequelize = require('../db')
-const {DataTypes, STRING} = require('sequelize')
+const {DataTypes} = require('sequelize')
 
 const User = sequelize.define('user', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
@@ -7,8 +7,9 @@ const User = sequelize.define('user', {
     username: {type: DataTypes.STRING},
     password: {type: DataTypes.STRING},
     confirmed: {type: DataTypes.BOOLEAN, defaultValue: false},
-    activationLink: {type: STRING},
+    activationLink: {type: DataTypes.STRING},
     role: {type: DataTypes.STRING, defaultValue: "USER"},
+    image: {type: DataTypes.STRING(1000)}
 })
 
 const Contact = sequelize.define('contact', {
@@ -32,26 +33,36 @@ const Info = sequelize.define('info', {
 
 const Category = sequelize.define('category', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true},
-})
-
-const SubCategory = sequelize.define('subCategory', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true},
-})
-
-const SubSubCategory = sequelize.define('subSubCategory', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true},
+    name: {type: DataTypes.STRING},
+    parentId: {type: DataTypes.INTEGER, allowNull: true}
 })
 
 const Ad = sequelize.define('ad', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    image: {type: DataTypes.STRING(1000), allowNull: false},
     name: {type: DataTypes.STRING, allowNull: false},
     description: {type: DataTypes.STRING},
     address: {type: DataTypes.STRING},
+    status: {type: DataTypes.INTEGER, allowNull: false}
 })
+
+const Image = sequelize.define('image', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    image: {type: DataTypes.STRING(1000), allowNull: false}
+})
+
+const Comment = sequelize.define('comment', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    text: {type: DataTypes.TEXT}
+})
+
+Ad.hasMany(Comment)
+Comment.belongsTo(Ad)
+
+User.hasMany(Comment)
+Comment.belongsTo(User, {as: 'user'})
+
+Ad.hasMany(Image, {as: 'image'})
+Image.belongsTo(Ad)
 
 User.hasMany(Ad)
 Ad.belongsTo(User)
@@ -65,14 +76,8 @@ Info.belongsTo(Ad)
 Price.hasOne(Ad)
 Ad.belongsTo(Price)
 
-Category.hasMany(SubCategory)
-SubCategory.belongsTo(Category)
-
-SubCategory.hasMany(SubSubCategory)
-SubSubCategory.belongsTo(SubCategory)
-
-SubSubCategory.hasMany(Ad)
-Ad.belongsTo(SubSubCategory)
+Category.hasMany(Ad)
+Ad.belongsTo(Category)
 
 module.exports = {
     User,
@@ -80,7 +85,7 @@ module.exports = {
     Price,
     Info,
     Category,
-    SubCategory,
-    SubSubCategory,
     Ad,
+    Image,
+    Comment
 }

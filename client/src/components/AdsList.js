@@ -4,7 +4,6 @@ import {Context} from "../index";
 import {Row} from "react-bootstrap";
 import AdItem from "./AdItem";
 
-
 const AdsList = observer(() => {
     const {ad} = useContext(Context)
 
@@ -17,7 +16,6 @@ const AdsList = observer(() => {
         }, [sort, ads]);
     }
 
-
     const useFilterAds = (ads, sort, filter) => {
         const sortedPosts = useSortAds(sort, ads);
         return useMemo(() => {
@@ -27,15 +25,12 @@ const AdsList = observer(() => {
 
     return (
         <Row fluid={+true}>
-            {useFilterAds([...ad.ads], ad.sort, ad.filter)
-                .map(ad =>
-                    <AdItem key = {ad.id} ad = {ad}/>
+            {Array.isArray(ad.ads) &&
+                useFilterAds([...ad.ads], ad.sort, ad.filter).map(ad =>
+                <AdItem key = {ad.id} ad = {ad}/>
             )}
         </Row>
     );
 });
 
 export default AdsList;
-
-// .sort((ad1, ad2) => ad1[ad.sort] > ad2[ad.sort] ? 1 : -1)
-// .filter(ad => ad.name.toLowerCase().includes(ad.filter))

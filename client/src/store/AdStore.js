@@ -1,12 +1,20 @@
 import {makeAutoObservable} from "mobx";
 
 export default class AdStore {
-
     constructor() {
         this._ads = []
         this._sort = ''
         this._filter = ''
+        this._category = null
         makeAutoObservable(this)
+    }
+
+    get category() {
+        return this._category;
+    }
+
+    setCategory(value) {
+        this._category = value;
     }
 
     get filter() {
