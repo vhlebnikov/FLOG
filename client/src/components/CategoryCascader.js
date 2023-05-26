@@ -1,10 +1,40 @@
 import React, {useEffect, useState} from 'react';
 import {Cascader} from "rsuite";
 import {getCategories} from "../http/categoryApi";
+import Form from "react-bootstrap/Form";
+import {login} from "../http/userApi";
+import {ca} from "date-fns/locale";
 
-const CategoryCascader = () => {
+function ExtraContainer({children, height = 400}) {
+    const container = React.useRef();
+    const content = React.useRef();
+    const containerStyle = {
+        overflow: 'clip',
+        position: 'relative'
+    };
+
+    const contentStyle = {
+        height: '100%',
+        width: '300%',
+        // justifyContent: 'center',
+        // alignItems: 'start',
+        // display: 'flex',
+        // flexWrap: 'wrap'
+    };
+
+    return (
+        <div style={{ ...containerStyle, height }} ref={container}>
+            <div style={contentStyle} ref={content}>
+                {children(() => container.current)}
+            </div>
+        </div>
+    );
+}
+
+const CategoryCascader = (props) => {
     const [rootCategories, setRootCategories] = useState([])
-    const [value, setValue] = useState(null);
+    const [selectedCategory, setSelectedCategory, categoryRoute] = props.others
+    const [value, setValue] = useState(selectedCategory);
 
     const createNode = async (category) => {
         const children = await getCategories(category.id)
@@ -29,13 +59,47 @@ const CategoryCascader = () => {
     }, [])
 
     return (
-        <div>
+        <>
+        {categoryRoute ?
+        (
+            <ExtraContainer>
+                {getContainer => (
+                    <Cascader
+                        preventOverflow
+                        container={getContainer}
+                        style={{width:424}}
+                        searchable={false}
+                        parentSelectable={true}
+                        value={value}
+                        onChange={v => {
+                            setValue(v)
+                            setSelectedCategory(v)
+                        }}
+                        placeholder={"Категория"}
+                        data={rootCategories}
+                        getChildren={fetchNodes}
+                        renderMenu={(children, menu, parentNode) => {
+                            if (parentNode && parentNode.loading) {
+                                return <p style={{ padding: 10, color: '#999', textAlign: 'center' }}>Loading...</p>;
+                            }
+                            return menu;
+                        }}
+                    />
+                )}
+            </ExtraContainer>
+        )
+        :
+        (
             <Cascader
+                style={{width:224}}
                 searchable={false}
                 parentSelectable={true}
                 value={value}
-                onChange={setValue}
-                placeholder={"Категории"}
+                onChange={v => {
+                    setValue(v)
+                    setSelectedCategory(v)
+                }}
+                placeholder={"Категория"}
                 data={rootCategories}
                 getChildren={fetchNodes}
                 renderMenu={(children, menu, parentNode) => {
@@ -45,7 +109,9 @@ const CategoryCascader = () => {
                     return menu;
                 }}
             />
-        </div>
+        )
+        }
+        </>
     );
 };
 

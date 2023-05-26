@@ -30,6 +30,7 @@ const CreateForm = observer(() => {
     const [priceEndError, setPriceEndError] = useState(null)
 
     const [selectedCategory, setSelectedCategory] = useState(null)
+    const [categoryError, setCategoryError] = useState(null)
 
     const [submit, setSubmit] = useState(false)
 
@@ -118,8 +119,19 @@ const CreateForm = observer(() => {
         }
     }
 
+    useEffect(() => {
+        if (selectedCategory) {
+            setCategoryError(null)
+        }
+    }, [selectedCategory])
+
     const checkFields = async () => {
         let flag = true
+
+        if (!selectedCategory) {
+            await setCategoryError("Выберите категорию")
+            flag = false
+        }
 
         if (info.filter(i => isEmpty(i.name) || isEmpty(i.description)).length) {
             await setInfoError("Характеристики не могут быть пустыми")
@@ -189,189 +201,200 @@ const CreateForm = observer(() => {
     }
 
     return (
-        <Container>
-            <CategoryCascader others={[selectedCategory, setSelectedCategory]}/>
-            <Form>
-                <InputGroup hasValidation>
-                    <Form.Control
-                        value={name}
-                        onChange={e => nameHandler(e)}
-                        className="mt-3"
-                        placeholder="Название объявления"
-                        required
-                        isInvalid={!!nameError}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                        {nameError}
-                    </Form.Control.Feedback>
-                </InputGroup>
-                <Dropdown className="mt-3">
-                    <Dropdown.Toggle className="btn-expensive" variant="success">{"Выберите тип цены"}</Dropdown.Toggle>
-                    <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => changePrice('type', 0)}>{"Без цены"}</Dropdown.Item>
-                        <Dropdown.Item onClick={() => changePrice('type', 1)}>{"Определенная цена"}</Dropdown.Item>
-                        <Dropdown.Item onClick={() => changePrice('type', 2)}>{"Интервал"}</Dropdown.Item>
-                    </Dropdown.Menu>
-                </Dropdown>
-                {price.type === 0 ?
-                    null
-                    :
-                    <Row>
+        <Form>
+            <InputGroup>
+                <Form.Group>
+                    <Form.Label>Выберите категорию объявления</Form.Label>
+                    <CategoryCascader others={[selectedCategory, setSelectedCategory]}/>
+                    {categoryError ? <Form.Label
+                        style={{
+                            fontSize: 13,
+                            WebkitTextFillColor: "#dc3545"
+                        }}
+                    >
+                        {categoryError}
+                    </Form.Label> : null}
+                </Form.Group>
+            </InputGroup>
+            <InputGroup hasValidation>
+                <Form.Control
+                    value={name}
+                    onChange={e => nameHandler(e)}
+                    className="mt-3"
+                    placeholder="Название объявления"
+                    required
+                    isInvalid={!!nameError}
+                />
+                <Form.Control.Feedback type="invalid">
+                    {nameError}
+                </Form.Control.Feedback>
+            </InputGroup>
+            <Dropdown className="mt-3">
+                <Dropdown.Toggle className="btn-expensive" variant="success">{"Выберите тип цены"}</Dropdown.Toggle>
+                <Dropdown.Menu>
+                    <Dropdown.Item onClick={() => changePrice('type', 0)}>{"Без цены"}</Dropdown.Item>
+                    <Dropdown.Item onClick={() => changePrice('type', 1)}>{"Определенная цена"}</Dropdown.Item>
+                    <Dropdown.Item onClick={() => changePrice('type', 2)}>{"Интервал"}</Dropdown.Item>
+                </Dropdown.Menu>
+            </Dropdown>
+            {price.type === 0 ?
+                null
+                :
+                <Row>
+                    <Col md={4}>
+                        <InputGroup hasValidation>
+                            <InputGroup.Text className="mt-2">₽</InputGroup.Text>
+                            <Form.Control
+                                required
+                                isInvalid={!!priceStartError}
+                                value={price.start}
+                                onChange={(e) => changePrice('start', e)}
+                                className="mt-2"
+                                placeholder="Цена"
+                            />
+                            <Form.Control.Feedback type={"invalid"}>
+                                {priceStartError}
+                            </Form.Control.Feedback>
+                        </InputGroup>
+                    </Col>
+                    {price.type === 2 ?
                         <Col md={4}>
                             <InputGroup hasValidation>
                                 <InputGroup.Text className="mt-2">₽</InputGroup.Text>
                                 <Form.Control
                                     required
-                                    isInvalid={!!priceStartError}
-                                    value={price.start}
-                                    onChange={(e) => changePrice('start', e)}
+                                    isInvalid={!!priceEndError}
+                                    value={price.end}
+                                    onChange={(e) => changePrice('end', e)}
                                     className="mt-2"
-                                    placeholder="Цена"
+                                    placeholder="Конечная цена"
                                 />
                                 <Form.Control.Feedback type={"invalid"}>
-                                    {priceStartError}
+                                    {priceEndError}
                                 </Form.Control.Feedback>
                             </InputGroup>
                         </Col>
-                        {price.type === 2 ?
-                            <Col md={4}>
-                                <InputGroup hasValidation>
-                                    <InputGroup.Text className="mt-2">₽</InputGroup.Text>
-                                    <Form.Control
-                                        required
-                                        isInvalid={!!priceEndError}
-                                        value={price.end}
-                                        onChange={(e) => changePrice('end', e)}
-                                        className="mt-2"
-                                        placeholder="Конечная цена"
-                                    />
-                                    <Form.Control.Feedback type={"invalid"}>
-                                        {priceEndError}
-                                    </Form.Control.Feedback>
-                                </InputGroup>
-                            </Col>
-                            :
-                            null
-                        }
-                    </Row>
+                        :
+                        null
+                    }
+                </Row>
 
-                }
-                <InputGroup hasValidation>
-                    <Form.Control
-                        required
-                        isInvalid={!!addressError}
-                        value={address}
-                        onChange={e => addressHandler(e)}
-                        className="mt-3"
-                        placeholder="Адрес"
-                    />
-                    <Form.Control.Feedback type="invalid">
-                        {addressError}
-                    </Form.Control.Feedback>
-                </InputGroup>
-
-                <InputGroup hasValidation>
-                    <Form.Control
-                        required
-                        isInvalid={!!descriptionError}
-                        value={description}
-                        onChange={e => descriptionHandler(e)}
-                        className="mt-3"
-                        as="textarea" rows={3}
-                        placeholder="Описание"
-                    />
-                    <Form.Control.Feedback type="invalid">
-                        {descriptionError}
-                    </Form.Control.Feedback>
-                </InputGroup>
-
+            }
+            <InputGroup hasValidation>
                 <Form.Control
-                    className="mt-3"
-                    type="file"
-                    multiple
                     required
-                    onChange={selectFile}
-                />
-
-                <Button
-                    className="mt-3 btn-expensive"
-                    variant="outline-success"
-                    onClick={addInfo}
-                >
-                    Добавить новое свойство
-                </Button>
-                {info.map(i =>
-                    <Row className="mt-4" key={i.id}>
-                        <Col md={4}>
-                            <InputGroup hasValidation>
-                                <Form.Control
-                                    required
-                                    isInvalid={isEmpty(i.name) && !!!!infoError}
-                                    value={i.name}
-                                    onChange={(e) => changeInfo('name', e.target.value, i.id)}
-                                    placeholder="Введите название свойства"
-                                />
-                            </InputGroup>
-                        </Col>
-                        <Col md={4}>
-                            <InputGroup hasValidation>
-                                <Form.Control
-                                    required
-                                    isInvalid={isEmpty(i.description) && !!infoError}
-                                    value={i.description}
-                                    onChange={(e) => changeInfo('description', e.target.value, i.id)}
-                                    placeholder="Введите описание свойства"
-                                />
-                            </InputGroup>
-                        </Col>
-                        <Col md={4}>
-                            <Button
-                                className="btn-expensive"
-                                onClick={() => removeInfo(i.id)}
-                                variant={"outline-danger"}
-                            >
-                                Удалить
-                            </Button>
-                        </Col>
-                    </Row>
-                )}
-                <hr/>
-                <Button
+                    isInvalid={!!addressError}
+                    value={address}
+                    onChange={e => addressHandler(e)}
                     className="mt-3"
-                    variant="outline-success btn-expensive"
-                    onClick={addAd}
-                >Добавить</Button>
+                    placeholder="Адрес"
+                />
+                <Form.Control.Feedback type="invalid">
+                    {addressError}
+                </Form.Control.Feedback>
+            </InputGroup>
 
-                <ToastContainer
-                    className="p-3"
-                    position={'bottom-end'}
-                >
-                    <Toast
-                        onClose={() => {
-                            setSubmit(false)
-                            setFileError(null)
-                        }}
-                        show={!!fileError}
-                        delay={3000}
-                        autohide
-                    >
-                        <Toast.Header>
-                            <img
-                                width={30}
-                                height={30}
-                                src={frog}
-                                className="rounded me-2"
-                                alt=""
+            <InputGroup hasValidation>
+                <Form.Control
+                    required
+                    isInvalid={!!descriptionError}
+                    value={description}
+                    onChange={e => descriptionHandler(e)}
+                    className="mt-3"
+                    as="textarea" rows={3}
+                    placeholder="Описание"
+                />
+                <Form.Control.Feedback type="invalid">
+                    {descriptionError}
+                </Form.Control.Feedback>
+            </InputGroup>
+
+            <Form.Control
+                className="mt-3"
+                type="file"
+                multiple
+                required
+                onChange={selectFile}
+            />
+
+            <Button
+                className="mt-3 btn-expensive"
+                variant="outline-success"
+                onClick={addInfo}
+            >
+                Добавить новое свойство
+            </Button>
+            {info.map(i =>
+                <Row className="mt-4" key={i.id}>
+                    <Col md={4}>
+                        <InputGroup hasValidation>
+                            <Form.Control
+                                required
+                                isInvalid={isEmpty(i.name) && !!!!infoError}
+                                value={i.name}
+                                onChange={(e) => changeInfo('name', e.target.value, i.id)}
+                                placeholder="Введите название свойства"
                             />
-                            <strong className="me-auto">FLOG</strong>
-                        </Toast.Header>
-                        <Toast.Body>
-                            {fileError}
-                        </Toast.Body>
-                    </Toast>
-                </ToastContainer>
-            </Form>
-        </Container>
+                        </InputGroup>
+                    </Col>
+                    <Col md={4}>
+                        <InputGroup hasValidation>
+                            <Form.Control
+                                required
+                                isInvalid={isEmpty(i.description) && !!infoError}
+                                value={i.description}
+                                onChange={(e) => changeInfo('description', e.target.value, i.id)}
+                                placeholder="Введите описание свойства"
+                            />
+                        </InputGroup>
+                    </Col>
+                    <Col md={4}>
+                        <Button
+                            className="btn-expensive"
+                            onClick={() => removeInfo(i.id)}
+                            variant={"outline-danger"}
+                        >
+                            Удалить
+                        </Button>
+                    </Col>
+                </Row>
+            )}
+            <hr/>
+            <Button
+                className="mt-3"
+                variant="outline-success btn-expensive"
+                onClick={addAd}
+            >Добавить</Button>
+
+            <ToastContainer
+                className="p-3"
+                position={'bottom-end'}
+            >
+                <Toast
+                    onClose={() => {
+                        setSubmit(false)
+                        setFileError(null)
+                    }}
+                    show={!!fileError}
+                    delay={3000}
+                    autohide
+                >
+                    <Toast.Header>
+                        <img
+                            width={30}
+                            height={30}
+                            src={frog}
+                            className="rounded me-2"
+                            alt=""
+                        />
+                        <strong className="me-auto">FLOG</strong>
+                    </Toast.Header>
+                    <Toast.Body>
+                        {fileError}
+                    </Toast.Body>
+                </Toast>
+            </ToastContainer>
+        </Form>
     );
 });
 

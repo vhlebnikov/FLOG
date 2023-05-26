@@ -35,6 +35,7 @@ const Ad = observer(() => {
     const navigate = useNavigate()
     const {user} = useContext(Context) // user через которого мы сидим (это мы, мы - пользователь, мы используем сайт)3
     const {ad} = useContext(Context) // общее состояние
+    const {filter} = useContext(Context)
 
     // владелец объявления
     const [userLoc, setUserLoc] = useState(null)
@@ -50,6 +51,7 @@ const Ad = observer(() => {
     const [imageError, setImageError] = useState(null)
     const [priceStartError, setPriceStartError] = useState(null)
     const [priceEndError, setPriceEndError] = useState(null)
+    const [categoryError, setCategoryError] = useState(null)
 
     const [submit, setSubmit] = useState(false)
 
@@ -67,7 +69,7 @@ const Ad = observer(() => {
 
     // а их меняем и отправляем в запросы
     const [priceLoc, setPriceLoc] = useState(null)
-    const [categoryRouteLoc, setCategoryRouteLoc] = useState([])
+    const [selectedCategory, setSelectedCategory] = useState(null)
     // ============================================================
 
     const [showComments, setShowComments] = useState(false)
@@ -133,6 +135,7 @@ const Ad = observer(() => {
             setPriceLoc(adState.price)
         }
         if (adState.categoryId) {
+            setSelectedCategory(adState.categoryId)
             getCategoryRoute(adState.categoryId).then(data => setCategoryRoute(data))
         }
         if (adState.userId) {
@@ -141,12 +144,6 @@ const Ad = observer(() => {
     },
         [adState.name, adState.description, adState.address, adState.status,
             adState.info, adState.image, adState.price, adState.categoryId, adState.userId])
-
-    useEffect(() => {
-        if (categoryRoute) {
-            setCategoryRouteLoc(categoryRoute)
-        }
-    }, [categoryRoute])
 
     const checkUser = () => {
         if (!userLoc) {
@@ -240,12 +237,17 @@ const Ad = observer(() => {
 
     const handleDelete = async () => {
         await Promise.resolve(deleteAd(adState.id)).then(() => {
-            getAllAds(null, null, null, null, 30, 1).then(data => ad.setAds(data.rows))
+            getAllAds(filter.category, null, null, null, 30, 1).then(data => ad.setAds(data.rows))
         }).then(() => navigate(SHOP_PAGE))
     }
 
     const checkFields = async () => {
         let flag = true
+
+        if (!selectedCategory) {
+            await setCategoryError("Выберите категорию")
+            flag = false
+        }
 
         if (info.filter(i => isEmpty(i.name) || isEmpty(i.description)).length) {
             await setInfoError("Характеристики не могут быть пустыми")
@@ -302,6 +304,9 @@ const Ad = observer(() => {
             }
             if (status && status !== adState.status) {
                 formData.append('status', status)
+            }
+            if (selectedCategory) {
+                formData.append('categoryId', selectedCategory)
             }
             if (priceLoc) {
                 formData.append('price', JSON.stringify(priceLoc))
@@ -387,6 +392,12 @@ const Ad = observer(() => {
         setSelectedImageId(id)
     }
 
+    useEffect(() => {
+        if (selectedCategory) {
+            setCategoryError(null)
+        }
+    }, [selectedCategory])
+
     return (
         <Container>
             {/*Category Route*/}
@@ -408,12 +419,18 @@ const Ad = observer(() => {
 
             <Row>
                 {/*Дата*/}
-                <div>
-                    <h1 style={{ fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 15}}>
-                        {(new Date(adState.createdAt)).toLocaleDateString('ru-RU') + " "}
-                        {(new Date(adState.createdAt)).toLocaleTimeString('ru-RU', {hour: 'numeric', minute: 'numeric'})}
-                    </h1>
-                </div>
+                {adState.createdAt ?
+                    <div>
+                        <h1 style={{ fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 15}}>
+                            {(new Date(adState.createdAt)).toLocaleDateString('ru-RU') + " "}
+                            {(new Date(adState.createdAt)).toLocaleTimeString('ru-RU', {hour: 'numeric', minute: 'numeric'})}
+                        </h1>
+                    </div>
+                :
+                    <div className="spinner-border" role="status">
+                        <span className="sr-only"/>
+                    </div>
+                }
 
             </Row>
 
@@ -565,7 +582,8 @@ const Ad = observer(() => {
                                     others={[name, nameHandler, description, descriptionHandler, address, addressHandler,
                                         status, getStatusText, statusHandler, imageHandler, priceLoc, priceLocHandler,
                                         addInfo, info, changeInfo, removeInfo, adUpdate, nameError, descriptionError,
-                                        addressError, infoError, imageError, priceStartError, priceEndError, isEmpty, checkFields]}
+                                        addressError, infoError, imageError, priceStartError, priceEndError, isEmpty, checkFields,
+                                        categoryError, setCategoryError, selectedCategory, setSelectedCategory, categoryRoute]}
                                 />
                             </div>
                         </div>
@@ -610,8 +628,16 @@ const Ad = observer(() => {
                                                     </h4>
                                                 </strong>
 
-                                                <h6 style={{ color: '#b7b5b5', fontWeight: 'lighter' }}>· {(new Date(comment.createdAt)).toLocaleDateString('ru-RU')}</h6>
-                                                <h6 style={{ color: '#b7b5b5', marginLeft: 5, fontWeight: 'lighter'  }}>{(new Date(comment.createdAt)).toLocaleTimeString('ru-RU')}</h6>
+                                                {comment.createdAt ?
+                                                    <>
+                                                        <h6 style={{ color: '#b7b5b5', fontWeight: 'lighter' }}>· {(new Date(comment.createdAt)).toLocaleDateString('ru-RU')}</h6>
+                                                        <h6 style={{ color: '#b7b5b5', marginLeft: 5, fontWeight: 'lighter'  }}>{(new Date(comment.createdAt)).toLocaleTimeString('ru-RU')}</h6>
+                                                    </>
+                                                    :
+                                                    <div className="spinner-border " role="status">
+                                                        <span className="sr-only"/>
+                                                    </div>
+                                                }
                                             </div>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <h6 style={{ marginLeft: '10px'}}>{comment.text}</h6>

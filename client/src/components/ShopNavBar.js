@@ -10,7 +10,6 @@ import {Col, Nav, Row} from "react-bootstrap";
 
 const ShopNavBar = observer(() => {
     const {filter} = useContext(Context)
-    const [selectedItem, setSelectedItem] = useState('Сортировка');
     const [selectedCategory, setSelectedCategory] = useState(null);
 
     useEffect(() => {

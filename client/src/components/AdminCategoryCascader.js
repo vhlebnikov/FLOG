@@ -21,16 +21,16 @@ const AdminCategoryCascader = (props) => {
     }
 
     const fetchNodes = async (id) => {
-        console.log(id.label)
-
         return getCategories(id.value).then(data => Promise.allSettled(data.map(i => createNode(i))))
-            .then(data => data.map(i => i.value)).then(data => [...data, {label: '+', value:Date.now(), children: null}])
+            .then(data => data.map(i => i.value))
     }
 
     useEffect(() => {
         getCategories(0).then(data => Promise.allSettled(data.map(i => createNode(i))))
-            .then(data => setRootCategories(data.map(i => i.value)))
+            .then(data => setRootCategories([...data.map(i => i.value), {label: 'Корня', value:0, children: null}]))
     }, [])
+
+    console.log(value)
 
     return (
         <div>
@@ -40,17 +40,12 @@ const AdminCategoryCascader = (props) => {
                 parentSelectable={true}
                 value={value}
                 onChange={v => {
-                    if (v.label === '+'){
-                        setValue(0)
-                    } else {
-                        setValue(v)
-                        setSelectedCategory(v)
-                    }
-
+                    setValue(v)
+                    setSelectedCategory(v)
                 }}
                 placeholder={"Категории"}
-                data={[...rootCategories, {label: '+', value:Date.now(), children: null}]}
-                getChildren = {fetchNodes}
+                data={rootCategories}
+                getChildren={fetchNodes}
 
 
                 renderMenuItem={(label, item) => {

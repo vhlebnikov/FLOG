@@ -39,7 +39,7 @@ const NavBar = observer(() => {
                             menuVariant="success"
                             title="Меню"
                             className="mx-auto"
-                            id="collasible-nav-dropdown"
+                            id="collapsible-nav-dropdown"
 
                         >
                             <NavDropdown.Item onClick={() => navigate(PROFILE_PAGE + '/' + user.user.id)}>
