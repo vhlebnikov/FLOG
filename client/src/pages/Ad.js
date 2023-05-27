@@ -444,8 +444,8 @@ const Ad = observer(() => {
 
             <Row>
                 {/*Название*/}
-                <div className="forPersonal">
-                    <div style={{display: 'flex', alignItems: 'center', marginTop: "20px"}}>
+                <div >
+                    <div style={{display: 'flex', alignItems: 'center', marginTop: "10px"}}>
                         <h1 style={{
                             color: '#133612',
                             fontFamily: 'Century Gothic',
@@ -560,10 +560,10 @@ const Ad = observer(() => {
                                                     <p>Без цены</p>
                                                 )}
                                                 {adState.price.type === 1 && (
-                                                    <p>Цена: {adState.price.start}</p>
+                                                    <p>Цена: {adState.price.start} ₽</p>
                                                 )}
                                                 {adState.price.type === 2 && (
-                                                    <p>Цена: {adState.price.start} - {adState.price.end}</p>
+                                                    <p>Цена: {adState.price.start} - {adState.price.end} ₽</p>
                                                 )}
                                             </div>
                                         ) : (
