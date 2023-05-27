@@ -112,36 +112,36 @@ const Ad = observer(() => {
     }, []);
 
     useEffect(() => {
-        if (adState.name) {
-            setName(adState.name)
-        }
-        if (adState.description) {
-            setDescription(adState.description)
-        }
-        if (adState.address) {
-            setAddress(adState.address)
-        }
-        if (adState.status) {
-            setStatus(adState.status)
-        }
-        if (adState.info) {
-            setInfo(adState.info)
-        }
-        if (adState.image) {
-            setImage(adState.image)
-        }
+            if (adState.name) {
+                setName(adState.name)
+            }
+            if (adState.description) {
+                setDescription(adState.description)
+            }
+            if (adState.address) {
+                setAddress(adState.address)
+            }
+            if (adState.status) {
+                setStatus(adState.status)
+            }
+            if (adState.info) {
+                setInfo(adState.info)
+            }
+            if (adState.image) {
+                setImage(adState.image)
+            }
 
-        if (adState.price) {
-            setPriceLoc(adState.price)
-        }
-        if (adState.categoryId) {
-            setSelectedCategory(adState.categoryId)
-            getCategoryRoute(adState.categoryId).then(data => setCategoryRoute(data))
-        }
-        if (adState.userId) {
-            getUser(adState.userId).then(data => setUserLoc(data))
-        }
-    },
+            if (adState.price) {
+                setPriceLoc(adState.price)
+            }
+            if (adState.categoryId) {
+                setSelectedCategory(adState.categoryId)
+                getCategoryRoute(adState.categoryId).then(data => setCategoryRoute(data))
+            }
+            if (adState.userId) {
+                getUser(adState.userId).then(data => setUserLoc(data))
+            }
+        },
         [adState.name, adState.description, adState.address, adState.status,
             adState.info, adState.image, adState.price, adState.categoryId, adState.userId])
 
@@ -398,16 +398,21 @@ const Ad = observer(() => {
         }
     }, [selectedCategory])
 
+    const setCategoryAndSearch = (id) => {
+        filter.setCategory(id)
+        navigate(SHOP_PAGE)
+    }
+
     return (
         <Container>
             {/*Category Route*/}
             <Row>
                 {categoryRoute ? (
                     <Form>
-                        <div style={{ marginLeft: '10px', marginTop: '10px' }}>
+                        <div style={{marginLeft: '10px', marginTop: '10px'}}>
                             <Breadcrumb>
                                 {categoryRoute.map(i => (
-                                    <BreadcrumbItem key={i.id}>
+                                    <BreadcrumbItem key={i.id} onClick={() => setCategoryAndSearch(i.id)}>
                                         {i.name}
                                     </BreadcrumbItem>
                                 ))}
@@ -421,12 +426,15 @@ const Ad = observer(() => {
                 {/*Дата*/}
                 {adState.createdAt ?
                     <div>
-                        <h1 style={{ fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 15}}>
+                        <h1 style={{fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 15}}>
                             {(new Date(adState.createdAt)).toLocaleDateString('ru-RU') + " "}
-                            {(new Date(adState.createdAt)).toLocaleTimeString('ru-RU', {hour: 'numeric', minute: 'numeric'})}
+                            {(new Date(adState.createdAt)).toLocaleTimeString('ru-RU', {
+                                hour: 'numeric',
+                                minute: 'numeric'
+                            })}
                         </h1>
                     </div>
-                :
+                    :
                     <div className="spinner-border" role="status">
                         <span className="sr-only"/>
                     </div>
@@ -438,13 +446,23 @@ const Ad = observer(() => {
                 {/*Название*/}
                 <div className="forPersonal">
                     <div style={{display: 'flex', alignItems: 'center', marginTop: "20px"}}>
-                        <h1 style={{ color: '#133612', fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 40}}> {adState.name}</h1>
+                        <h1 style={{
+                            color: '#133612',
+                            fontFamily: 'Century Gothic',
+                            fontWeight: 500,
+                            fontSize: 40
+                        }}> {adState.name}</h1>
                     </div>
                 </div>
 
             </Row>
 
-            <Row style={{marginTop: "1%", boxShadow:" 6px 6px 6px 6px rgba(0, 0, 0, .2)", paddingTop:"3%", paddingBottom:"3%"}}>
+            <Row style={{
+                marginTop: "1%",
+                boxShadow: " 6px 6px 6px 6px rgba(0, 0, 0, .2)",
+                paddingTop: "3%",
+                paddingBottom: "3%"
+            }}>
                 {/*Картииинки!*/}
                 <Col md={4}>
                     {adState.image ?
@@ -452,11 +470,11 @@ const Ad = observer(() => {
                             {adState.image.map((i, index) => (
                                 <Carousel.Item
                                     key={i.id}
-                                    style={{width: "400px", height: "400px", overflow:"hidden", borderRadius: "10%"}}
+                                    style={{width: "400px", height: "400px", overflow: "hidden", borderRadius: "10%"}}
                                 >
                                     <div
                                         className="blur"
-                                        style = {{backgroundImage: `url(${process.env.REACT_APP_API_URL + i.image})`}}
+                                        style={{backgroundImage: `url(${process.env.REACT_APP_API_URL + i.image})`}}
                                     >
                                     </div>
                                     <Image
@@ -485,9 +503,11 @@ const Ad = observer(() => {
                 {/*Описание*/}
                 <Col md={5}>
                     <Row className="d-flex flex-column align-items-center">
-                        <div className="forPersonal" style={{ wordBreak: 'break-word' }}>
-                            <h4 style={{ fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}>Описание: </h4>
-                            <h3 style={{ fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}><div> {adState.description}</div></h3>
+                        <div className="forPersonal" style={{wordBreak: 'break-word'}}>
+                            <h4 style={{fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}>Описание: </h4>
+                            <h3 style={{fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}>
+                                <div> {adState.description}</div>
+                            </h3>
                         </div>
                     </Row>
                 </Col>
@@ -498,9 +518,15 @@ const Ad = observer(() => {
                         <Card className="shadow-box" border={"light"}>
                             <div>
                                 {userLoc.image ?
-                                    <div style={{width:"60px", height:"60px",borderRadius:"50%", margin:"0 auto", overflow:"hidden"}}>
+                                    <div style={{
+                                        width: "60px",
+                                        height: "60px",
+                                        borderRadius: "50%",
+                                        margin: "0 auto",
+                                        overflow: "hidden"
+                                    }}>
                                         <Card.Img
-                                            className = "perImage"
+                                            className="perImage"
                                             variant="top"
                                             src={process.env.REACT_APP_API_URL + userLoc.image}
                                             alt="Profile Image"
@@ -512,10 +538,10 @@ const Ad = observer(() => {
 
                                 <CardGroup onClick={() => navigate(PROFILE_PAGE + '/' + userLoc.id)}>
                                     <h2 style={{
-                                            fontFamily: 'Century Gothic',
-                                            fontWeight: 500,
-                                            fontSize: 35,
-                                            marginLeft: 15
+                                        fontFamily: 'Century Gothic',
+                                        fontWeight: 500,
+                                        fontSize: 35,
+                                        marginLeft: 15
                                     }}>
                                         {userLoc.username}
                                     </h2>
@@ -565,14 +591,14 @@ const Ad = observer(() => {
                                     className="image-button2"
                                     onClick={() => setShowAdEditModal(true)}
                                 >
-                                    <div style={{ backgroundImage: `url(${component6})` }}></div>
+                                    <div style={{backgroundImage: `url(${component6})`}}></div>
                                 </Button>
                                 <Button
                                     title="Удалить объявление"
                                     className="image-button2"
                                     onClick={handleDelete}
                                 >
-                                    <div style={{ backgroundImage: `url(${component12})` }}></div>
+                                    <div style={{backgroundImage: `url(${component12})`}}></div>
                                 </Button>
                             </ButtonGroup>
                             <div>
@@ -599,7 +625,7 @@ const Ad = observer(() => {
                 <h1 style={{fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 40}}>Характеристики</h1>
                 {adState.info && adState.info.map((i, index) =>
                     <Row key={i.id} style={{background: index % 2 === 0 ? 'lightgray' : 'transparent', padding: 10}}>
-                        <h5 style={{ fontWeight: 'lighter' }}>{i.name} : {i.description} </h5>
+                        <h5 style={{fontWeight: 'lighter'}}>{i.name} : {i.description} </h5>
                     </Row>
                 )}
 
@@ -608,8 +634,9 @@ const Ad = observer(() => {
             {/*Комменты*/}
             <Row className="d-flex flex-column m-3">
 
-                <h1 style={{ fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 40}}>Комментарии</h1>
-                <Button variant={"outline-dark"} onClick={handleShowComments}>{showComments ? "Скрыть комментарии" : "Показать комментарии"}</Button>
+                <h1 style={{fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 40}}>Комментарии</h1>
+                <Button variant={"outline-dark"}
+                        onClick={handleShowComments}>{showComments ? "Скрыть комментарии" : "Показать комментарии"}</Button>
 
                 {showComments ? (
                     <div>
@@ -617,12 +644,13 @@ const Ad = observer(() => {
                             <div>
                                 <ul>
                                     {comments.map((comment) => (
-                                        <li key={comment.id} style={{ marginTop:  '10px' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Circle color="#008037" letters={comment.user.username.charAt(0)} />
+                                        <li key={comment.id} style={{marginTop: '10px'}}>
+                                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                                <Circle color="#008037" letters={comment.user.username.charAt(0)}/>
                                                 <strong>
-                                                    <h4 style={{ marginLeft: '10px', marginRight: '10px' }}>
-                                                        <Link to={PROFILE_PAGE + '/' + comment.userId} style={{ color: '#575757' }}>
+                                                    <h4 style={{marginLeft: '10px', marginRight: '10px'}}>
+                                                        <Link to={PROFILE_PAGE + '/' + comment.userId}
+                                                              style={{color: '#575757'}}>
                                                             {comment.user.username}
                                                         </Link>
                                                     </h4>
@@ -630,8 +658,15 @@ const Ad = observer(() => {
 
                                                 {comment.createdAt ?
                                                     <>
-                                                        <h6 style={{ color: '#b7b5b5', fontWeight: 'lighter' }}>· {(new Date(comment.createdAt)).toLocaleDateString('ru-RU')}</h6>
-                                                        <h6 style={{ color: '#b7b5b5', marginLeft: 5, fontWeight: 'lighter'  }}>{(new Date(comment.createdAt)).toLocaleTimeString('ru-RU')}</h6>
+                                                        <h6 style={{
+                                                            color: '#b7b5b5',
+                                                            fontWeight: 'lighter'
+                                                        }}>· {(new Date(comment.createdAt)).toLocaleDateString('ru-RU')}</h6>
+                                                        <h6 style={{
+                                                            color: '#b7b5b5',
+                                                            marginLeft: 5,
+                                                            fontWeight: 'lighter'
+                                                        }}>{(new Date(comment.createdAt)).toLocaleTimeString('ru-RU')}</h6>
                                                     </>
                                                     :
                                                     <div className="spinner-border " role="status">
@@ -639,10 +674,12 @@ const Ad = observer(() => {
                                                     </div>
                                                 }
                                             </div>
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <h6 style={{ marginLeft: '10px'}}>{comment.text}</h6>
+                                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                                <h6 style={{marginLeft: '10px'}}>{comment.text}</h6>
                                                 {checkCommentAccess(comment) ?
-                                                    <Button variant={"outline-dark"} style={{marginLeft: 'auto'}} onClick={() => handleCommentDelete(comment.id)}>Удалить комментарий</Button>
+                                                    <Button variant={"outline-dark"} style={{marginLeft: 'auto'}}
+                                                            onClick={() => handleCommentDelete(comment.id)}>Удалить
+                                                        комментарий</Button>
                                                     : null
                                                 }
                                             </div>

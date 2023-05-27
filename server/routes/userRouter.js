@@ -14,6 +14,7 @@ router.post('/password', authMiddleware, userController.checkPassword)
 router.get('/activate/:link', userController.activate)
 router.get('/current', authMiddleware, userController.getCurrentUserId)
 router.get('/auth', authMiddleware, userController.check)
+router.get('/users', checkRole('ADMIN'), userController.getAllUsers)
 router.get('/contacts/:id', authMiddleware, userController.getContacts)
 router.get('/:id', userController.getUser)
 

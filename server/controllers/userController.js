@@ -442,6 +442,14 @@ class UserController {
 
         return res.json(user)
     }
+
+    async getAllUsers(req, res, next) {
+        const users = await User.findAndCountAll({
+
+        })
+
+        return res.json(users)
+    }
 }
 
 module.exports = new UserController()

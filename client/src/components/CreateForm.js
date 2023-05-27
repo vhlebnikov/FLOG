@@ -202,20 +202,20 @@ const CreateForm = observer(() => {
 
     return (
         <Form>
+            <Form.Label>Выберите категорию объявления</Form.Label>
             <InputGroup>
                 <Form.Group>
-                    <Form.Label>Выберите категорию объявления</Form.Label>
                     <CategoryCascader others={[selectedCategory, setSelectedCategory]}/>
-                    {categoryError ? <Form.Label
-                        style={{
-                            fontSize: 13,
-                            WebkitTextFillColor: "#dc3545"
-                        }}
-                    >
-                        {categoryError}
-                    </Form.Label> : null}
                 </Form.Group>
             </InputGroup>
+            {categoryError ? <Form.Label
+                style={{
+                    fontSize: 13,
+                    WebkitTextFillColor: "#dc3545"
+                }}
+            >
+                {categoryError}
+            </Form.Label> : null}
             <InputGroup hasValidation>
                 <Form.Control
                     value={name}

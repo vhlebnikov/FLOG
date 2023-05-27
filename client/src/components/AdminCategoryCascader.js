@@ -27,10 +27,8 @@ const AdminCategoryCascader = (props) => {
 
     useEffect(() => {
         getCategories(0).then(data => Promise.allSettled(data.map(i => createNode(i))))
-            .then(data => setRootCategories([...data.map(i => i.value), {label: 'Корня', value:0, children: null}]))
+            .then(data => setRootCategories([...data.map(i => i.value), {label: 'Root', value:0, children: null}]))
     }, [])
-
-    console.log(value)
 
     return (
         <div>

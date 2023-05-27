@@ -11,6 +11,7 @@ import {check} from "./http/userApi";
 import Footer from "./dasha/Footer";
 import {useDetectAdBlock} from "adblock-detect-react";
 import AdBlockDetected from "./components/AdBlockDetected";
+import BanPage from "./components/BanPage";
 
 const App = observer(() => {
     const {user} = useContext(Context)
@@ -52,11 +53,15 @@ const App = observer(() => {
           {adBlock ?
               <AdBlockDetected/>
           :
-              <div>
-                  <NavBar/>
-                  <AppRouter/>
-                  <Footer/>
-              </div>
+              (user.isAuth && user.user.role === 'BANNED' ?
+                <BanPage/>
+              :
+                      <div>
+                          <NavBar/>
+                          <AppRouter/>
+                          <Footer/>
+                      </div>
+              )
           }
       </BrowserRouter>
   );

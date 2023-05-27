@@ -6,14 +6,16 @@ import {Context} from "../index";
 import CategoryCascader from "./CategoryCascader";
 import {Input, InputGroup} from "rsuite";
 import SearchIcon from '@rsuite/icons/Search';
-import {Col, Nav, Row} from "react-bootstrap";
+import {Nav} from "react-bootstrap";
 
 const ShopNavBar = observer(() => {
     const {filter} = useContext(Context)
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(filter.category);
+
+    console.log(filter.category)
 
     useEffect(() => {
-        filter.setCategory(selectedCategory)
+            filter.setCategory(selectedCategory)
     }, [selectedCategory])
 
     return (
