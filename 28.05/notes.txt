@@ -1,0 +1,117 @@
+-----------------------------------------------
+footer
+
+Footer.js:
+<div className='footer'>
+    ...
+</div>
+
+App.js:
+<div className='footerApp'>
+    <NavBar/>
+    <AppRouter/>
+    <Footer/>
+</div>
+
+App.css:
+/*
+footer
+ */
+.footerApp {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    margin-top: auto;
+}
+------------------------------------------
+
+Main
+перенаправление на категорию
+const {filter} = useContext(Context)
+    const navigate = useNavigate()
+    const handleClick = (id) => {
+        filter.setCategory(id)
+        navigate(SHOP_PAGE)
+    }
+...onClick={() => handleClick(category.value)}...
+
+toLowerCase - чтобы не было зависимости от регистра
+const renderDescription = (name) => {
+        let description = '';
+        let image = '';
+
+        if (name.toLowerCase() === 'купля') {
+            description = 'здесь вы можете что-нибудь продать';
+            image = FrogWithMoneyTagsAndDots;
+        } else if (name.toLowerCase() === 'продажа') {
+            description = 'здесь вы можете что-нибудь купить';
+            image = FrogInCart;
+        } else if (name.toLowerCase() === 'потеряшки') {
+            description = 'если что-то потеряли или нашли что-нибудь потерянное';
+            image = FrogWithCircles;
+        } else if (name.toLowerCase() === 'мероприятия') {
+            description = 'здесь вы можете организовать или присоединиться';
+            image = FrogInBirthdayHatWithSparks;
+        } else if (name.toLowerCase() === 'услуги') {
+            description = 'например помощь с домашкой';
+            image = FrogWithIdea;
+        } else if (name.toLowerCase() === 'другое') {
+            description = 'что-то другое';
+            image = QuestioningFrog;
+        }
+
+        return { description, image };
+    };
+
+----------------------------------------------------------
+
+AdEditModal
+категории
+<Form.Group style={{ width: '700px', marginBottom: -350 }}>
+убирает большой пробел и вывод дерева по ширине модального окна
+
+----------------------------------------------------------
+
+Ad
+
+изменила стиль категорий, сделала пробел поменьше, но не смогла убрать синий цвет ссылки
+так же и с временем
+(у названия убрать margin_, дате и категории добавить
+
+карточка профиля серая как характеристики и с темной тонкой рамкой
+<Card style={{ backgroundColor: '#D3D3D3'}}className="shadow-box">
+
+карусель картинок. У меня левая половина была закруглена, а правая нет
+убрала borderRadius: "10%" и мне так больше нравится - с прямыми углами
+так они вписываются в углы общей рамки
+<Carousel.Item
+                                    key={i.id}
+                                    style={{width: "400px", height: "400px", overflow: "hidden"}}
+                                >
+
+
+<Image
+                                        fluid           ????? поствила вместо 400 так как показалось так ровнее
+                                        style={{width: "365px", height: "400px"}}
+                                        src={process.env.REACT_APP_API_URL + i.image}
+                                        alt={"Фото загружается"}
+                                        onClick={() => handleImageClick(i.image, index + 1)}
+                                    />
+
+-----------------------------------------------------------
+NotFoundAd
+просто стиль текста
+<h1 style={{
+                color: '#133612',
+                fontFamily: 'Century Gothic',
+                fontWeight: 500,
+                fontSize: 40
+            }}>Объявление не найдено</h1>
+
+-----------------------------------------------------------
+
+AdsList
+если ничего не найдено, то выводится соответствующая надпись
