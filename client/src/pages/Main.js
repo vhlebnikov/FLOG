@@ -1,19 +1,17 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Context} from "../index";
 import {Panel} from "rsuite";
-import {Breadcrumb, BreadcrumbItem, Col, Form, Row} from "react-bootstrap";
+import {Row} from "react-bootstrap";
 import FrogWithMoneyTagsAndDots from "../assets/FrogWithMoneyTagsAndDots.jpg";
 import FrogInBirthdayHatWithSparks from "../assets/FrogInBirthdayHatWithSparks.jpg";
 import QuestioningFrog from "../assets/QuestioningFrog.jpg";
 import FrogWithCircles from "../assets/FrogWithCircles.jpg";
 import FrogInCart from "../assets/FrogInCart.jpg";
 import FrogWithIdea from "../assets/FrogWithIdea.jpg";
-import FrogSmileGreen from "../assets/FrogSmileGreen.svg";
+import FrogSmileGreen from "../assets/FrogSmile.svg";
 import {SHOP_PAGE} from "../utils/consts";
 import {useNavigate} from "react-router-dom";
 import {getCategories} from "../http/categoryApi";
-
-
 
 const Main = () => {
     const {filter} = useContext(Context)
