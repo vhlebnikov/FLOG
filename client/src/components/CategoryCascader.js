@@ -36,6 +36,17 @@ const CategoryCascader = (props) => {
     const [selectedCategory, setSelectedCategory, categoryRoute] = props.others
     const [value, setValue] = useState(selectedCategory);
 
+    let categoryPlaceholder = ""
+
+    if (categoryRoute) {
+        categoryRoute.forEach((i, index) => {
+            categoryPlaceholder = categoryPlaceholder + i.name
+            if (index !== categoryRoute.length - 1) {
+                categoryPlaceholder += ' / '
+            }
+        })
+    }
+
     const createNode = async (category) => {
         const children = await getCategories(category.id)
 
@@ -75,7 +86,7 @@ const CategoryCascader = (props) => {
                             setValue(v)
                             setSelectedCategory(v)
                         }}
-                        placeholder={"Категория"}
+                        placeholder={categoryPlaceholder}
                         data={rootCategories}
                         getChildren={fetchNodes}
                         renderMenu={(children, menu, parentNode) => {

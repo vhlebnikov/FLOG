@@ -56,7 +56,7 @@ const App = observer(() => {
               (user.isAuth && user.user.role === 'BANNED' ?
                 <BanPage/>
               :
-                      <div>
+                      <div className='footerApp'>
                           <NavBar/>
                           <AppRouter/>
                           <Footer/>

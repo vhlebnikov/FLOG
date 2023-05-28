@@ -38,17 +38,21 @@ function AdEditModal(props) {
             <Modal.Body>
                 <>
                     <InputGroup>
-                        <Form.Group>
-                            <Form.Label>Выберите категорию объявления</Form.Label>
+                        <Form.Group style={{ width: '700px', marginBottom: -350 }}>
+                            <Form.Label>
+                                Выберите категорию объявления
+                            </Form.Label>
+                            <Row>
+                                {categoryError ? <Form.Label
+                                    style={{
+                                        fontSize: 13,
+                                        WebkitTextFillColor: "#dc3545"
+                                    }}
+                                >
+                                    {categoryError}
+                                </Form.Label> : null}
+                            </Row>
                             <CategoryCascader others={[selectedCategory, setSelectedCategory, categoryRoute]}/>
-                            {categoryError ? <Form.Label
-                                style={{
-                                    fontSize: 13,
-                                    WebkitTextFillColor: "#dc3545"
-                                }}
-                            >
-                                {categoryError}
-                            </Form.Label> : null}
                         </Form.Group>
                     </InputGroup>
                 </>

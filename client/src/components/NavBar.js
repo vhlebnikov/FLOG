@@ -26,15 +26,15 @@ const NavBar = observer(() => {
     return (
         <Navbar variant="dark" className="mainNavBar shadow-box-nav">
             <Container>
-                <Navbar.Brand href={SHOP_PAGE}>
+                <Navbar.Brand href={SHOP_PAGE} style={{textDecoration: 'none'}}>
                     <div className="d-flex align-items-center">
                         <img src={frogSmile} alt="Error" style={{ width: '40px', height: '40px' }} />
                         <span>FLOG</span>
                     </div>
                 </Navbar.Brand>
                 {user.isAuth ?
-                    <Nav style={{textDecorationLine: "none"}}>
-
+                    <Nav style={{textDecorationLine: "none"}} variant="pills">
+                        <NavLink onClick={() => navigate(CREATE_AD_PAGE)}>Создать объявление</NavLink>
                         <NavDropdown
                             menuVariant="success"
                             title="Меню"
@@ -55,7 +55,6 @@ const NavBar = observer(() => {
                                 null
                             }
                         </NavDropdown>
-                        <NavLink onClick={() => navigate(CREATE_AD_PAGE)}>Создать объявление</NavLink>
                     </Nav>
                     :
                     <Nav className="ms-auto" style={{color: 'white'}}>

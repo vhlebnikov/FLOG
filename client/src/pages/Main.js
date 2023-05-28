@@ -16,13 +16,10 @@ import {getCategories} from "../http/categoryApi";
 
 
 const Main = () => {
-    const {ad} = useContext(Context) // общее состояние
-
-
+    const {filter} = useContext(Context)
     const navigate = useNavigate()
     const handleClick = (id) => {
-        //ad.setFilter("1")
-
+        filter.setCategory(id)
         navigate(SHOP_PAGE)
     }
 
@@ -34,6 +31,7 @@ const Main = () => {
         fontWeight: 500,
         fontSize: 50
     };
+
     const [rootCategories, setRootCategories] = useState([])
     const createNode = async (category) => {
         const children = await getCategories(category.id)
@@ -57,22 +55,22 @@ const Main = () => {
         let description = '';
         let image = '';
 
-        if (name === 'Купля') {
+        if (name.toLowerCase() === 'купля') {
             description = 'здесь вы можете что-нибудь продать';
             image = FrogWithMoneyTagsAndDots;
-        } else if (name === 'Продажа') {
+        } else if (name.toLowerCase() === 'продажа') {
             description = 'здесь вы можете что-нибудь купить';
             image = FrogInCart;
-        } else if (name === 'Потеряшки') {
+        } else if (name.toLowerCase() === 'потеряшки') {
             description = 'если что-то потеряли или нашли что-нибудь потерянное';
             image = FrogWithCircles;
-        } else if (name === 'Мероприятия') {
+        } else if (name.toLowerCase() === 'мероприятия') {
             description = 'здесь вы можете организовать или присоединиться';
             image = FrogInBirthdayHatWithSparks;
-        } else if (name === 'Услуги') {
+        } else if (name.toLowerCase() === 'услуги') {
             description = 'например помощь с домашкой';
             image = FrogWithIdea;
-        } else if (name === 'Другое') {
+        } else if (name.toLowerCase() === 'другое') {
             description = 'что-то другое';
             image = QuestioningFrog;
         }
@@ -95,7 +93,7 @@ const Main = () => {
                     const { description, image } = renderDescription(category.label);
                     return (
                         <div key={category.value} className="col-md-4">
-                            <Panel shaded style={{marginTop: 10, marginLeft: 20, marginRight: 20}} onClick={() => handleClick(1)}>
+                            <Panel shaded style={{marginTop: 10, marginLeft: 20, marginRight: 20}} onClick={() => handleClick(category.value)}>
                                 <h5>{category.label}</h5>
                                 <img src={image} width={100} height={100} style={{ float: "right"}} alt={"Загрузка"}/>
                                 <p>{description}</p>

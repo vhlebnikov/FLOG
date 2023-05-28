@@ -73,7 +73,7 @@ const findChildren = async (id, ads, price, status, substring) => {
         ads.rows = ads.rows.concat(newAds.rows)
         ads.count += newAds.count
 
-        await findChildren(c.id, ads)
+        await findChildren(c.id, ads, price, status, substring)
     }
 }
 
@@ -169,14 +169,6 @@ class AdController {
         let offset = page * limit - limit
         let ads = {count: 0, rows: []}
 
-        if (status) {
-            status = JSON.parse(status)
-        }
-
-        if (price) {
-            price = JSON.parse(price)
-        }
-
         if (categoryId) {
             let {count, rows} = await Ad.findAndCountAll({
                 include: [
@@ -242,7 +234,7 @@ class AdController {
         }
 
         if (ads.rows) {
-            ads.rows = ads.rows.slice(offset, Number(offset) + Number(limit))
+            ads.rows = ads.rows.slice(offset, Number(offset) + Number(limit)).reverse()
         }
 
         return res.json(ads)
@@ -276,6 +268,8 @@ class AdController {
             include: [{model: Image, as: 'image'}, {model: Price, as: 'price'}],
             distinct: true
         })
+
+        ads.rows = ads.rows.reverse()
 
         return res.json(ads)
     }

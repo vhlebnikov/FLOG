@@ -10,6 +10,7 @@ const PaginationShop = ({activePage, setActivePage, limit, setLimit, count}) => 
         Pagination: {
             limit: '{0} объявлений на странице'
         }};
+
     return (
         <CustomProvider locale = {locale}>
             {count<=12 ?
@@ -31,7 +32,10 @@ const PaginationShop = ({activePage, setActivePage, limit, setLimit, count}) => 
                     last={true}
                     boundaryLinks={true}
                     limitOptions={limitOptions}
-                    onChangeLimit={setLimit}
+                    onChangeLimit={v => {
+                        setLimit(v)
+                        setActivePage(1)
+                    }}
                 />
 
             }

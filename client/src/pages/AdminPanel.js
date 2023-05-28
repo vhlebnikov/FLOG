@@ -97,7 +97,7 @@ const AdminPanel = () => {
     }
 
     return (
-            <Container className="my-3 d-flex" style={{height: window.innerHeight - 350}}>
+            <Container className="my-3 d-flex">
                 <Row>
                     <Col md="auto">
                         <InputGroup className="mb-3" style={{ display: 'flex', alignItems: 'center' }}>

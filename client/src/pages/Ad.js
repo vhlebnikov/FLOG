@@ -237,7 +237,7 @@ const Ad = observer(() => {
 
     const handleDelete = async () => {
         await Promise.resolve(deleteAd(adState.id)).then(() => {
-            getAllAds(filter.category, null, null, null, 30, 1).then(data => ad.setAds(data.rows))
+            getAllAds(null, null, null, null, 30, 1).then(data => ad.setAds(data.rows))
         }).then(() => navigate(SHOP_PAGE))
     }
 
@@ -398,31 +398,31 @@ const Ad = observer(() => {
         }
     }, [selectedCategory])
 
-    const setCategoryAndSearch = (id) => {
-        filter.setCategory(id)
-        navigate(SHOP_PAGE)
-    }
-
     return (
         <Container>
             {/*Category Route*/}
             <Row>
                 {categoryRoute ? (
-                    <Form>
-                        <div style={{marginLeft: '10px', marginTop: '10px'}}>
-                            <Breadcrumb>
-                                {categoryRoute.map(i => (
-                                    <BreadcrumbItem key={i.id} onClick={() => setCategoryAndSearch(i.id)}>
-                                        {i.name}
-                                    </BreadcrumbItem>
-                                ))}
-                            </Breadcrumb>
-                        </div>
-                    </Form>
+                    <div style={{marginTop: '10px', marginBottom: '-20px'}}>
+                        <Breadcrumb>
+                            <div style={{fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 15}}>
+                                Категория:&nbsp;
+                            </div>
+                            {categoryRoute.map(i => (
+                                <BreadcrumbItem
+                                    key={i.id}
+                                    active
+                                    style={{fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 15}}
+                                >
+                                    {i.name}
+                                </BreadcrumbItem>
+                            ))}
+                        </Breadcrumb>
+                    </div>
                 ) : null}
             </Row>
 
-            <Row>
+            <Row style={{marginBottom: '-10px'}}>
                 {/*Дата*/}
                 {adState.createdAt ?
                     <div>
@@ -444,17 +444,14 @@ const Ad = observer(() => {
 
             <Row>
                 {/*Название*/}
-                <div >
-                    <div style={{display: 'flex', alignItems: 'center', marginTop: "10px"}}>
-                        <h1 style={{
-                            color: '#133612',
-                            fontFamily: 'Century Gothic',
-                            fontWeight: 500,
-                            fontSize: 40
-                        }}> {adState.name}</h1>
-                    </div>
+                <div style={{display: 'flex', alignItems: 'center'}}>
+                    <h1 style={{
+                        color: '#133612',
+                        fontFamily: 'Century Gothic',
+                        fontWeight: 500,
+                        fontSize: 40
+                    }}> {adState.name}</h1>
                 </div>
-
             </Row>
 
             <Row style={{
@@ -470,7 +467,7 @@ const Ad = observer(() => {
                             {adState.image.map((i, index) => (
                                 <Carousel.Item
                                     key={i.id}
-                                    style={{width: "400px", height: "400px", overflow: "hidden", borderRadius: "10%"}}
+                                    style={{width: "400px", height: "400px", overflow: "hidden", borderRadius: "2%"}}
                                 >
                                     <div
                                         className="blur"
@@ -515,7 +512,7 @@ const Ad = observer(() => {
                 <Col md={3}>
                     {/*Профиль*/}
                     {userLoc ?
-                        <Card className="shadow-box" border={"light"}>
+                        <Card style={{ backgroundColor: '#D3D3D3'}} className="shadow-box" onClick={() => navigate(PROFILE_PAGE + '/' + userLoc.id)}>
                             <div>
                                 {userLoc.image ?
                                     <div style={{
@@ -536,7 +533,7 @@ const Ad = observer(() => {
                                     null
                                 }
 
-                                <CardGroup onClick={() => navigate(PROFILE_PAGE + '/' + userLoc.id)}>
+                                <CardGroup>
                                     <h2 style={{
                                         fontFamily: 'Century Gothic',
                                         fontWeight: 500,

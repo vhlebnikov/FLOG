@@ -16,8 +16,8 @@ const Shop = observer(() => {
     const [count, setCount] = useState(0)
 
     useEffect(() => {
-        getAllAds(filter.category, null, null, null, limit, activePage).then(data => {ad.setAds(data.rows); setCount(data.count)})
-    }, [filter.category, limit, activePage])
+        getAllAds(filter.category, filter.price, filter.status, filter.substring, limit, activePage).then(data => {ad.setAds(data.rows); setCount(data.count)})
+    }, [filter.category, filter.price, filter.status, filter.substring, limit, activePage])
 
     return (
         <Container>
