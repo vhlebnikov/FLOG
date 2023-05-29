@@ -4,7 +4,7 @@ import {Container} from "react-bootstrap";
 
 const CreateAd = () => {
     return (
-        <Container className="m-4">
+        <Container className="mt-4">
             <CreateForm/>
         </Container>
     );

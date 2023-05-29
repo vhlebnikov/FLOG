@@ -512,33 +512,35 @@ const Ad = observer(() => {
                 <Col md={3}>
                     {/*Профиль*/}
                     {userLoc ?
-                        <Card style={{ backgroundColor: '#D3D3D3'}} className="shadow-box" onClick={() => navigate(PROFILE_PAGE + '/' + userLoc.id)}>
+                        <Card className="shadow-box" onClick={() => navigate(PROFILE_PAGE + '/' + userLoc.id)}>
                             <div>
-                                {userLoc.image ?
-                                    <div style={{
-                                        width: "60px",
-                                        height: "60px",
-                                        borderRadius: "50%",
-                                        margin: "0 auto",
-                                        overflow: "hidden"
-                                    }}>
-                                        <Card.Img
-                                            className="perImage"
-                                            variant="top"
-                                            src={process.env.REACT_APP_API_URL + userLoc.image}
-                                            alt="Profile Image"
-                                        />
-                                    </div>
-                                    :
-                                    null
-                                }
 
                                 <CardGroup>
+                                    {userLoc.image ?
+                                        <div style={{
+                                            width: "60px",
+                                            height: "60px",
+                                            borderRadius: "50%",
+                                            marginTop: "10px",
+                                            marginLeft: "10px",
+                                            overflow: "hidden"
+                                        }}>
+                                            <Card.Img
+                                                className="perImage"
+                                                variant="top"
+                                                src={process.env.REACT_APP_API_URL + userLoc.image}
+                                                alt="Profile Image"
+                                            />
+                                        </div>
+                                        :
+                                        null
+                                    }
                                     <h2 style={{
                                         fontFamily: 'Century Gothic',
                                         fontWeight: 500,
                                         fontSize: 35,
-                                        marginLeft: 15
+                                        marginTop: "15px",
+                                        marginLeft: '10px'
                                     }}>
                                         {userLoc.username}
                                     </h2>

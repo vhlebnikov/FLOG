@@ -43,9 +43,10 @@
 }
 
 .bord {
-    width: 350px;
-    border: 1px solid transparent;
-    margin-top: 10px;
+    width: auto;
+    height: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 img {
@@ -185,10 +186,10 @@ img {
     box-shadow: 0 0 0 0.2rem rgba(61, 203, 14, 0.46);
 }
 
-/* Скопиоовано из ImageUploader Даши*/
+/* Скопировано из ImageUploader Даши*/
 
 body {
-    background-color: #E7E5E5; /* replace with your desired color */
+    background-color: #ffffff;
 }
 
 .thumbnail {
@@ -384,4 +385,83 @@ main
     0%{background-position:10% 0%}
     50%{background-position:91% 100%}
     100%{background-position:10% 0%}
+}
+
+.rs-pagination-btn,
+.rs-pagination-btn.rs-pagination-btn-active,
+.rs-pagination-btn:hover {
+    background-color: #E7E5E5;
+    border-color: #0D6936;
+    color: #242424
+}
+.rs-pagination-btn:focus,
+.rs-pagination-btn:active {
+    border-color: #00A347 !important;
+    box-shadow: none !important;
+}
+.list-group-item {
+    background-color: #f1f1f1;
+}
+.list-group-item:hover {
+    background-color: #00A347;
+}
+
+.rs-input,
+.rs-input-group,
+.rs-select,
+.rs-picker-input,
+.rs-picker-menu,
+.rs-picker-toggle,
+.rs-cascader-menu,
+.rs-pagination-menu,
+.rs-avatar,
+.rs-badge,
+.rs-dropdown {
+    border-color: transparent;
+}
+
+.rs-input:focus,
+.rs-input-group:focus,
+.rs-select:focus,
+.rs-picker-input:focus,
+.rs-picker-menu:focus,
+.rs-picker-toggle:focus,
+.rs-cascader-menu:focus,
+.rs-pagination-menu:focus,
+.rs-avatar:focus,
+.rs-badge:focus,
+.rs-dropdown:focus {
+    box-shadow: 0 0 4px green !important;
+    border-color: green !important;
+}
+
+.rs-input:hover,
+.rs-input-group:hover,
+.rs-select:hover,
+.rs-picker-input:hover,
+.rs-picker-menu:hover,
+.rs-picker-toggle:hover,
+.rs-cascader-menu:hover,
+.rs-pagination-menu:hover,
+.rs-avatar:hover,
+.rs-badge:hover,
+.rs-dropdown:hover {
+    box-shadow: 0 0 4px green !important;
+    border-color: green !important;
+}
+
+.rs-input:active,
+.rs-input-group:active,
+.rs-select:active,
+.rs-picker-input:active,
+.rs-picker-menu:active,
+.rs-picker-toggle:active,
+.rs-cascader-menu:active,
+.rs-pagination-menu:active,
+.rs-avatar:active,
+.rs-badge:active,
+.rs-dropdown:active
+{
+    box-shadow: 0 0 4px green !important;
+    border-color: green !important;
 }

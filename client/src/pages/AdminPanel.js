@@ -181,7 +181,7 @@ const AdminPanel = () => {
                                 (
                                     <ListGroup>
                                         {users.map(user => (
-                                            <ListGroup.Item key={user.id}>
+                                            <ListGroup.Item key={user.id} style={{backgroundColor: "#ffffff"}}>
                                                 <Row>
                                                     <Col md="auto">
                                                         {user.confirmed ?

@@ -57,7 +57,7 @@ function AdEditModal(props) {
                     </InputGroup>
                 </>
 
-                <Form.Label>Название объявления</Form.Label>
+                <Form.Label style={{marginTop: "5px"}}>Название объявления</Form.Label>
                 <InputGroup hasValidation>
                     <Form.Control value={name} onChange={e => nameHandler(e)} required isInvalid={!!nameError}/>
                     <Form.Control.Feedback type="invalid">
@@ -65,15 +65,15 @@ function AdEditModal(props) {
                     </Form.Control.Feedback>
                 </InputGroup>
 
-                <Form.Label>Описание</Form.Label>
+                <Form.Label style={{marginTop: "5px"}}>Описание</Form.Label>
                 <InputGroup hasValidation>
-                    <Form.Control value={description} onChange={descriptionHandler} required isInvalid={!!descriptionError}/>
+                    <Form.Control value={description} onChange={descriptionHandler} required isInvalid={!!descriptionError} as="textarea" rows={3}/>
                     <Form.Control.Feedback type="invalid">
                         {descriptionError}
                     </Form.Control.Feedback>
                 </InputGroup>
 
-                <Form.Label>Адрес</Form.Label>
+                <Form.Label style={{marginTop: "5px"}}>Адрес</Form.Label>
                 <InputGroup hasValidation>
                     <Form.Control value={address} onChange={addressHandler} required isInvalid={!!addressError}/>
                     <Form.Control.Feedback type="invalid">
@@ -82,17 +82,18 @@ function AdEditModal(props) {
                 </InputGroup>
 
                 <Row>
-                    <Form.Label>{`Статус: ${getStatusText(status)}`}</Form.Label>
-                    <Button variant={"outline-dark"} style={{ marginTop:  '10px' }}
-                            onClick={statusHandler}
-                    >
-                        Изменить статус
-                    </Button>
+                    <Form.Label style={{marginTop: "5px"}}>{`Статус: ${getStatusText(status)}`}</Form.Label>
+                    <InputGroup>
+                        <Button variant={"outline-dark"} style={{ marginTop:  '10px' }}
+                                onClick={statusHandler}
+                        >
+                            Изменить статус
+                        </Button>
+                    </InputGroup>
                 </Row>
 
-                <Form.Label>Картинки</Form.Label>
+                <Form.Label style={{marginTop: "5px"}}>Картинки</Form.Label>
                 <Form.Control
-                    className="mt-3"
                     type="file"
                     multiple
                     required
@@ -101,7 +102,7 @@ function AdEditModal(props) {
 
 
                 <Dropdown className="mt-3">
-                    <Dropdown.Toggle className="expensive-button" variant="success" >{"Выберите тип цены"}</Dropdown.Toggle>
+                    <Dropdown.Toggle className="btn-expensive" variant="success" >{"Выберите тип цены"}</Dropdown.Toggle>
                     <Dropdown.Menu>
                         <Dropdown.Item onClick={() => priceLocHandler('type', 0)}>{"Без цены"}</Dropdown.Item>
                         <Dropdown.Item onClick={() => priceLocHandler('type', 1)}>{"Определенная цена"}</Dropdown.Item>

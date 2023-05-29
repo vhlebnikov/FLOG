@@ -1,4 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'rsuite/dist/rsuite.min.css';
 import './App.css';
 import {BrowserRouter, useNavigate} from "react-router-dom";
 import {observer} from "mobx-react-lite";

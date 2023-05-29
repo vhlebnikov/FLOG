@@ -10,7 +10,7 @@ function ExtraContainer({children, height = 400}) {
     const content = React.useRef();
     const containerStyle = {
         overflow: 'clip',
-        position: 'relative'
+        position: 'relative',
     };
 
     const contentStyle = {
@@ -79,6 +79,7 @@ const CategoryCascader = (props) => {
                         preventOverflow
                         container={getContainer}
                         style={{width:424}}
+                        menuWidth={150}
                         searchable={false}
                         parentSelectable={true}
                         value={value}
@@ -105,6 +106,7 @@ const CategoryCascader = (props) => {
                 style={{width:224}}
                 searchable={false}
                 parentSelectable={true}
+                menuWidth={150}
                 value={value}
                 onChange={v => {
                     setValue(v)

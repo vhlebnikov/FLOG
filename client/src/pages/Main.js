@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Context} from "../index";
 import {Panel} from "rsuite";
-import {Row} from "react-bootstrap";
+import {Col, Container, Row} from "react-bootstrap";
 import FrogWithMoneyTagsAndDots from "../assets/FrogWithMoneyTagsAndDots.jpg";
 import FrogInBirthdayHatWithSparks from "../assets/FrogInBirthdayHatWithSparks.jpg";
 import QuestioningFrog from "../assets/QuestioningFrog.jpg";
@@ -79,28 +79,40 @@ const Main = () => {
 
     return (
         <div>
-            <Row>
-                <div style={{ textAlign: 'center', marginTop: '50px'  }}>
-                    <h1 style={gradientTextStyles}>Добро пожаловать на FLOG</h1>
-                    <p style={{ fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 20}}> Ваше место для объявлений</p>
-                    <img className="gradientMain" src={FrogSmileGreen} style={{ width: '200px', height: '200px', marginTop: '10px', marginBottom: '40px'    }}  alt={"Загрузка"}/>
-                </div>
-            </Row>
-            <Row>
-                {rootCategories.map(category => {
-                    const { description, image } = renderDescription(category.label);
-                    return (
-                        <div key={category.value} className="col-md-4">
-                            <Panel shaded style={{marginTop: 10, marginLeft: 20, marginRight: 20}} onClick={() => handleClick(category.value)}>
-                                <h5>{category.label}</h5>
-                                <img src={image} width={100} height={100} style={{ float: "right"}} alt={"Загрузка"}/>
-                                <p>{description}</p>
-                            </Panel>
-                        </div>
-                    );
-                })}
-            </Row>
-
+            <Container>
+                <Row>
+                    <div style={{ textAlign: 'center', marginTop: '50px'  }}>
+                        <h1 style={gradientTextStyles}>Добро пожаловать на FLOG</h1>
+                        <p style={{ fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 20}}> Ваше место для объявлений</p>
+                        <img className="gradientMain" src={FrogSmileGreen} style={{ width: '200px', height: '200px', marginTop: '10px', marginBottom: '40px'    }}  alt={"Загрузка"}/>
+                    </div>
+                </Row>
+                <Row>
+                    {rootCategories.map(category => {
+                        const { description, image } = renderDescription(category.label);
+                        return (
+                            <div key={category.value} className="col-md-4">
+                                <Panel shaded style={{marginTop: 10, marginLeft: 20, marginRight: 20}} onClick={() => handleClick(category.value)}>
+                                    <h5>{category.label}</h5>
+                                    <img src={image} width={100} height={100} style={{ float: "right"}} alt={"Загрузка"}/>
+                                    <p>{description}</p>
+                                    {/*<Container>*/}
+                                    {/*    <Row>*/}
+                                    {/*        <h5>{category.label}</h5>*/}
+                                    {/*    </Row>*/}
+                                    {/*    <Row>*/}
+                                    {/*        <Col>*/}
+                                    {/*            <p>{description}</p>*/}
+                                    {/*        </Col>*/}
+                                    {/*        <img src={image} width={100} height={100} style={{ float: "right"}} alt={"Загрузка"}/>*/}
+                                    {/*    </Row>*/}
+                                    {/*</Container>*/}
+                                </Panel>
+                            </div>
+                        );
+                    })}
+                </Row>
+            </Container>
         </div>
     );
 };

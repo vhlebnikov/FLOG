@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Col, Container, Row} from "react-bootstrap";
 import AdsList from "../components/AdsList";
 import {Context} from "../index";
-import ShopNavBar from "../components/ShopNavBar";
+import TypeBar from "../components/TypeBar";
 import {getAllAds} from "../http/adApi";
 import PaginationShop from "../components/PaginationShop";
 import {observer} from "mobx-react-lite";
@@ -21,18 +21,20 @@ const Shop = observer(() => {
 
     return (
         <Container>
-            <ShopNavBar/>
-            <Row className="mt-2">
-                <Col md={12}>
-                    <AdsList/>
+            <Row className="mt-3">
+                <Col md={3}>
+                    <TypeBar/>
                 </Col>
-                <PaginationShop
-                    activePage={activePage}
-                    setActivePage={setActivePage}
-                    limit={limit}
-                    setLimit={setLimit}
-                    count={count}
-                />
+                <Col md={9}>
+                    <AdsList/>
+                    <PaginationShop
+                        activePage={activePage}
+                        setActivePage={setActivePage}
+                        limit={limit}
+                        setLimit={setLimit}
+                        count={count}
+                    />
+                </Col>
             </Row>
 
         </Container>
