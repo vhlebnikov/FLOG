@@ -1,9 +1,10 @@
 const uuid = require('uuid')
 const path = require('path')
-const {Ad, Info, Price, SubSubCategory, SubCategory, Image, Comment, Category} = require('../models/models')
+const {Ad, Info, Price, Image, Comment, Category} = require('../models/models')
 const ApiError = require('../error/ApiError')
 const jwt = require("jsonwebtoken");
 const fs = require('fs')
+const {Op} = require("sequelize");
 
 function isIterable(obj) {
     // checks for null and undefined
@@ -34,22 +35,45 @@ const getExtension = (filename) => {
     return "." + filename.name.split('.').pop()
 }
 
-const findChildren = async (id, ads) => {
+const findChildren = async (id, ads, price, status, substring) => {
     const categories = await Category.findAll({
         where: {parentId: id}
     })
 
     for (const c of categories) {
         let newAds = await Ad.findAndCountAll({
-            where: {categoryId: c.id},
-            include: [{model: Image, as: 'image'}],
-            distinct: true
+            include: [
+                {model: Image, as: 'image'},
+                {model: Price, as: 'price',
+                    where: price ? {
+                        [Op.or]: {
+                            start: {[Op.between]: price},
+                            end: {[Op.between]: price}
+                        }
+                    } : {type: {[Op.in]: [0, 1, 2]}}
+                }
+            ],
+            distinct: true,
+            where: {
+                categoryId: c.id,
+                [Op.or]: [
+                    {name: substring ? {
+                            [Op.like]: '%' + substring + '%'
+                        } : {[Op.like]: '%'}},
+                    {description: substring ? {
+                            [Op.like]: '%' + substring + '%'
+                        } : {[Op.like]: '%'}}
+                ],
+                status: status ? {
+                    [Op.in]: status
+                } : {[Op.in]: [1, 2, 3]}
+            }
         })
 
         ads.rows = ads.rows.concat(newAds.rows)
         ads.count += newAds.count
 
-        await findChildren(c.id, ads)
+        await findChildren(c.id, ads, price, status, substring)
     }
 }
 
@@ -136,53 +160,84 @@ class AdController {
     }
 
     async getAll(req, res, next) {
-        let {categoryId, limit, page} = req.query
+        let {categoryId, price, status, substring, limit, page} = req.query
         page = page || 1
         limit = limit || 9
         if (page <= 0 || limit <= 0) {
             return next(ApiError.badRequest('Неверные данные запроса'))
         }
         let offset = page * limit - limit
-        const ads = {count: 0, rows: []}
+        let ads = {count: 0, rows: []}
 
         if (categoryId) {
             let {count, rows} = await Ad.findAndCountAll({
-                where: {categoryId: categoryId},
-                include: [{model: Image, as: 'image'}],
-                distinct: true
+                include: [
+                    {model: Image, as: 'image'},
+                    {model: Price, as: 'price',
+                        where: price ? {
+                            [Op.or]: {
+                                start: {[Op.between]: price},
+                                end: {[Op.between]: price}
+                            }
+                        } : {type: {[Op.in]: [0, 1, 2]}}
+                    }
+                ],
+                distinct: true,
+                where: {
+                    categoryId: categoryId,
+                    [Op.or]: [
+                        {name: substring ? {
+                                [Op.like]: '%' + substring + '%'
+                            } : {[Op.like]: '%'}},
+                        {description: substring ? {
+                                [Op.like]: '%' + substring + '%'
+                            } : {[Op.like]: '%'}}
+                    ],
+                    status: status ? {
+                        [Op.in]: status
+                    } : {[Op.in]: [1, 2, 3]}
+                }
             })
 
             ads.rows = rows
             ads.count = count
 
-            await findChildren(categoryId, ads)
-
-            if (ads.rows) {
-                ads.rows = ads.rows.slice(offset, Number(offset) + Number(limit))
-            }
-
-            return res.json(ads)
+            await findChildren(categoryId, ads, price, status, substring)
+        } else {
+            ads = await Ad.findAndCountAll({
+                include: [
+                    {model: Image, as: 'image'},
+                    {model: Price, as: 'price',
+                    where: price ? {
+                        [Op.or]: {
+                            start: {[Op.between]: price},
+                            end: {[Op.between]: price}
+                        }
+                    } : {type: {[Op.in]: [0, 1, 2]}}
+                    }
+                ],
+                distinct: true,
+                where: {
+                    [Op.or]: [
+                        {name: substring ? {
+                                [Op.like]: '%' + substring + '%'
+                            } : {[Op.like]: '%'}},
+                        {description: substring ? {
+                                [Op.like]: '%' + substring + '%'
+                            } : {[Op.like]: '%'}}
+                    ],
+                    status: status ? {
+                        [Op.in]: status
+                    } : {[Op.in]: [1, 2, 3]}
+                }
+            })
         }
-        const ans = await Ad.findAndCountAll({
-            include: [{model: Image, as: 'image'}],
-            distinct: true,
-            limit, offset
-        })
-        return res.json(ans)
-    }
 
-    async getPrice(req, res, next) {
-        const {id} = req.params
-
-        if (isNaN(id)) {
-            return next(ApiError.badRequest('id должен быть числом'))
+        if (ads.rows) {
+            ads.rows = ads.rows.slice(offset, Number(offset) + Number(limit)).reverse()
         }
 
-        const price = await Price.findOne({
-            where: {id}
-        })
-
-        return res.json(price)
+        return res.json(ads)
     }
 
     async getOne(req, res, next) {
@@ -194,7 +249,7 @@ class AdController {
 
         const ad = await Ad.findOne({
                 where: {id},
-                include: [{model: Info, as: 'info'}, {model: Image, as: 'image'}],
+                include: [{model: Info, as: 'info'}, {model: Image, as: 'image'}, {model: Price, as: 'price'}],
             },
         )
 
@@ -210,9 +265,11 @@ class AdController {
 
         const ads = await Ad.findAndCountAll({
             where: {userId: id},
-            include: [{model: Image, as: 'image'}],
+            include: [{model: Image, as: 'image'}, {model: Price, as: 'price'}],
             distinct: true
         })
+
+        ads.rows = ads.rows.reverse()
 
         return res.json(ads)
     }
@@ -227,7 +284,6 @@ class AdController {
 
             const ad = await Ad.findOne({
                 where: {id},
-                include: [{model: Info, as: 'info'}]
             })
             if (!ad) {
                 return next(ApiError.badRequest('Объявление с таким id не существует'))
@@ -241,27 +297,31 @@ class AdController {
 
             const price = await Price.findOne({where: {id: ad.priceId}})
             if (price) {
-                price.destroy()
+                await price.destroy()
             }
 
             const oldInfo = await Info.findAll({where: {adId: ad.id}})
             if (oldInfo) {
-                oldInfo.forEach(i => i.destroy())
+                for (const i of oldInfo) {
+                    await i.destroy();
+                }
             }
 
             const oldImage = await Image.findAll({where: {adId: ad.id}})
             if (oldImage) {
-                oldImage.forEach(i => {
+                for (const i of oldImage) {
                     fs.unlinkSync(path.resolve(__dirname, "..", "static", i.image))
-                    i.destroy()
-                })
+                    await i.destroy()
+                }
             }
 
             const comments = await Comment.findAll({
                 where: {adId: id}
             })
             if (comments) {
-                comments.forEach(i => i.destroy())
+                for (const i of comments) {
+                    await i.destroy();
+                }
             }
 
             await ad.destroy()
@@ -349,10 +409,10 @@ class AdController {
             if (newImage) {
                 const oldImage = await Image.findAll({where: {adId: ad.id}})
                 if (oldImage) {
-                    oldImage.forEach(i => {
+                    for (const i of oldImage) {
                         fs.unlinkSync(path.resolve(__dirname, "..", "static", i.image))
-                        i.destroy()
-                    })
+                        await i.destroy()
+                    }
                 }
 
                 if (isIterable(newImage)) {
@@ -377,7 +437,9 @@ class AdController {
             if (info) {
                 const oldInfo = await Info.findAll({where: {adId: ad.id}})
                 if (oldInfo) {
-                    oldInfo.forEach(i => i.destroy())
+                    for (const i of oldInfo) {
+                        await i.destroy();
+                    }
                 }
 
                 info = JSON.parse(info)
@@ -392,7 +454,7 @@ class AdController {
 
             ad = await Ad.findOne({
                     where: {id: id},
-                    include: [{model: Info, as: 'info'}, {model: Image, as: 'image'}]
+                    include: [{model: Info, as: 'info'}, {model: Image, as: 'image'}, {model: Price, as: 'price'}]
                 }
             )
 

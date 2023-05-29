@@ -69,7 +69,7 @@ class CommentController {
 
         const adId = comment.adId
 
-        comment.destroy()
+        await comment.destroy()
 
         const comments = await Comment.findAll({
             where: {adId: adId},

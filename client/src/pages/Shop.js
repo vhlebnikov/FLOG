@@ -6,6 +6,8 @@ import ShopNavBar from "../components/ShopNavBar";
 import {getAllAds} from "../http/adApi";
 import PaginationShop from "../components/PaginationShop";
 import {observer} from "mobx-react-lite";
+import Filtration from "../components/Filtration";
+import TypeBar from "../components/TypeBar";
 
 
 const Shop = observer(() => {
@@ -16,24 +18,27 @@ const Shop = observer(() => {
     const [count, setCount] = useState(0)
 
     useEffect(() => {
-        getAllAds(filter.category, limit, activePage).then(data => {ad.setAds(data.rows); setCount(data.count)})
-        console.log(count)
-    }, [filter.category, limit, activePage])
+        getAllAds(filter.category, filter.price, filter.status, filter.substring, limit, activePage).then(data => {ad.setAds(data.rows); setCount(data.count)})
+    }, [filter.category, filter.price, filter.status, filter.substring, limit, activePage])
 
     return (
         <Container>
-            <ShopNavBar/>
-            <Row className="mt-2">
-                <Col md={12}>
-                    <AdsList/>
+            {/*<ShopNavBar/>*/}
+            <Row className="mt-3">
+                <Col md={3}>
+                    <TypeBar/>
                 </Col>
-                <PaginationShop
-                    activePage={activePage}
-                    setActivePage={setActivePage}
-                    limit={limit}
-                    setLimit={setLimit}
-                    count={count}
-                />
+                <Col md={9}>
+                    <AdsList/>
+                    <PaginationShop
+                        activePage={activePage}
+                        setActivePage={setActivePage}
+                        limit={limit}
+                        setLimit={setLimit}
+                        count={count}
+                    />
+                </Col>
+
             </Row>
 
         </Container>

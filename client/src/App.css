@@ -53,6 +53,20 @@ img {
     object-fit: contain;
 }
 
+.blur {
+    top: 0;
+    left: 0;
+    right:0;
+    bottom: 0;
+    max-height: 100%;
+    max-width: 100%;
+    filter: blur(20px);
+    overflow: hidden;
+    position: absolute;
+    background-size: cover;
+    z-index: -1;
+}
+
 .circle {
     display: flex;
     justify-content: center;
@@ -174,7 +188,13 @@ img {
 /* Скопиоовано из ImageUploader Даши*/
 
 body {
-    background-color: #E7E5E5; /* replace with your desired color */
+    background-color: #ffffff;
+}
+
+.thumbnail {
+    max-width: 200px;
+    max-height: 300px;
+    object-fit: contain;
 }
 
 .thumbnail {
@@ -279,7 +299,7 @@ body {
     margin-bottom: 3%;
     background-position: center;
     background-size: cover;
-    height: 30px;
+    /*height: 30px;*/
 }
 
 .blockPersonal {
@@ -317,4 +337,71 @@ body {
     height: 50px;
     background-position: center;
     background-size: cover;
+}
+
+/*
+footer
+ */
+.footerApp {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+/*
+main
+ */
+.gradientMain
+{
+    height:200px;
+    width:300px;
+    font-size:30px;
+    background: linear-gradient(130deg, #04ff00, #eeff00, #40a23d);
+    background-size: 200% 200%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+
+
+    -webkit-animation: Animation 5s ease infinite;
+    -moz-animation: Animation 5s ease infinite;
+    animation: Animation 5s ease infinite;
+}
+
+@-webkit-keyframes Animation {
+    0%{background-position:10% 0%}
+    50%{background-position:91% 100%}
+    100%{background-position:10% 0%}
+}
+@-moz-keyframes Animation {
+    0%{background-position:10% 0%}
+    50%{background-position:91% 100%}
+    100%{background-position:10% 0%}
+}
+@keyframes Animation {
+    0%{background-position:10% 0%}
+    50%{background-position:91% 100%}
+    100%{background-position:10% 0%}
+}
+
+.list-group-item {
+    background-color: #f1f1f1;
+}
+.list-group-item:hover {
+    background-color: #00A347;
+}
+
+.rs-pagination-btn,
+.rs-pagination-btn.rs-pagination-btn-active,
+.rs-pagination-btn:hover {
+    background-color: #E7E5E5;
+    border-color: #0D6936;
+    color: #242424
+}
+.rs-pagination-btn:focus,
+.rs-pagination-btn:active {
+    border-color: #00A347 !important;
+    box-shadow: none !important;
 }

@@ -3,7 +3,7 @@ import {
     CREATE_AD_PAGE,
     PROFILE_PAGE,
     AD_PAGE,
-    AUTH_PAGE, REGISTRATION_PAGE, NOT_FOUND_AD_PAGE, ADMIN_PANEL
+    AUTH_PAGE, REGISTRATION_PAGE, NOT_FOUND_AD_PAGE, ADMIN_PANEL, MAIN_PAGE
 } from "./utils/consts";
 import Shop from "./pages/Shop";
 import CreateAd from "./pages/CreateAd"
@@ -13,13 +13,7 @@ import Profile from "./pages/Profile"
 import Activation from "./pages/Activation"
 import NotFoundAd from "./pages/NotFoundAd";
 import AdminPanel from "./pages/AdminPanel";
-
-export const adminRoutes = [
-    {
-        path: ADMIN_PANEL,
-        Component: AdminPanel
-    }
-]
+import Main from "./pages/Main";
 
 export const authRoutes = [
     {
@@ -33,6 +27,10 @@ export const authRoutes = [
 ]
 
 export const publicRoutes = [
+    {
+      path: MAIN_PAGE,
+      Component: Main
+    },
     {
         path: '/activation/:id',
         Component: Activation
@@ -56,5 +54,12 @@ export const publicRoutes = [
     {
         path: NOT_FOUND_AD_PAGE,
         Component: NotFoundAd
+    }
+]
+
+export const adminRoutes = [
+    {
+        path: ADMIN_PANEL,
+        Component: AdminPanel
     }
 ]

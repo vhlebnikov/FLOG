@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Col, Dropdown, Form, InputGroup, Row, Toast, ToastContainer} from "react-bootstrap";
+import {Button, Col, Container, Dropdown, Form, InputGroup, Row, Toast, ToastContainer} from "react-bootstrap";
 import {observer} from "mobx-react-lite";
 import {createAd} from "../http/adApi";
 import {useNavigate} from "react-router-dom";
@@ -29,9 +29,10 @@ const CreateForm = observer(() => {
     const [priceStartError, setPriceStartError] = useState(null)
     const [priceEndError, setPriceEndError] = useState(null)
 
-    const [submit, setSubmit] = useState(false)
-
     const [selectedCategory, setSelectedCategory] = useState(null)
+    const [categoryError, setCategoryError] = useState(null)
+
+    const [submit, setSubmit] = useState(false)
 
     const notEmptyRegExp = VerEx().startOfLine().something().endOfLine()
     const isEmpty = (word) => {
@@ -118,8 +119,19 @@ const CreateForm = observer(() => {
         }
     }
 
+    useEffect(() => {
+        if (selectedCategory) {
+            setCategoryError(null)
+        }
+    }, [selectedCategory])
+
     const checkFields = async () => {
         let flag = true
+
+        if (!selectedCategory) {
+            await setCategoryError("Выберите категорию")
+            flag = false
+        }
 
         if (info.filter(i => isEmpty(i.name) || isEmpty(i.description)).length) {
             await setInfoError("Характеристики не могут быть пустыми")
@@ -181,14 +193,29 @@ const CreateForm = observer(() => {
                 formData.append('info', JSON.stringify(info))
                 createAd(formData).catch(e => {
                     setFileError(e.response.data.message)
-                }).then(() => {setSubmit(true)})
+                }).then(() => {
+                    setSubmit(true)
+                })
             }
         })
     }
 
     return (
         <Form>
-            <CategoryCascader others={[selectedCategory, setSelectedCategory]}/>
+            <Form.Label>Выберите категорию объявления</Form.Label>
+            <InputGroup>
+                <Form.Group>
+                    <CategoryCascader others={[selectedCategory, setSelectedCategory]}/>
+                </Form.Group>
+            </InputGroup>
+            {categoryError ? <Form.Label
+                style={{
+                    fontSize: 13,
+                    WebkitTextFillColor: "#dc3545"
+                }}
+            >
+                {categoryError}
+            </Form.Label> : null}
             <InputGroup hasValidation>
                 <Form.Control
                     value={name}
@@ -203,7 +230,7 @@ const CreateForm = observer(() => {
                 </Form.Control.Feedback>
             </InputGroup>
             <Dropdown className="mt-3">
-                <Dropdown.Toggle className="btn-expensive" variant="success" >{"Выберите тип цены"}</Dropdown.Toggle>
+                <Dropdown.Toggle className="btn-expensive" variant="success">{"Выберите тип цены"}</Dropdown.Toggle>
                 <Dropdown.Menu>
                     <Dropdown.Item onClick={() => changePrice('type', 0)}>{"Без цены"}</Dropdown.Item>
                     <Dropdown.Item onClick={() => changePrice('type', 1)}>{"Определенная цена"}</Dropdown.Item>
@@ -225,6 +252,9 @@ const CreateForm = observer(() => {
                                 className="mt-2"
                                 placeholder="Цена"
                             />
+                            <Form.Control.Feedback type={"invalid"}>
+                                {priceStartError}
+                            </Form.Control.Feedback>
                         </InputGroup>
                     </Col>
                     {price.type === 2 ?
@@ -239,6 +269,9 @@ const CreateForm = observer(() => {
                                     className="mt-2"
                                     placeholder="Конечная цена"
                                 />
+                                <Form.Control.Feedback type={"invalid"}>
+                                    {priceEndError}
+                                </Form.Control.Feedback>
                             </InputGroup>
                         </Col>
                         :
@@ -297,7 +330,7 @@ const CreateForm = observer(() => {
                         <InputGroup hasValidation>
                             <Form.Control
                                 required
-                                isInvalid={isEmpty(i.name) && !! !!infoError}
+                                isInvalid={isEmpty(i.name) && !!!!infoError}
                                 value={i.name}
                                 onChange={(e) => changeInfo('name', e.target.value, i.id)}
                                 placeholder="Введите название свойства"

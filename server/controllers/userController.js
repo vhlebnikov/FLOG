@@ -383,7 +383,9 @@ class UserController {
                 where: {userId: user.id}
             })
             if (oldContacts) {
-                oldContacts.forEach(c => c.destroy())
+                for (const c of oldContacts) {
+                    await c.destroy();
+                }
             }
 
             for (const c of contacts) {
@@ -439,6 +441,14 @@ class UserController {
         await user.save()
 
         return res.json(user)
+    }
+
+    async getAllUsers(req, res, next) {
+        const users = await User.findAndCountAll({
+
+        })
+
+        return res.json(users)
     }
 }
 

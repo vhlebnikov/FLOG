@@ -1,22 +1,24 @@
 import React, {useEffect, useState} from 'react';
-import {Modal, Button, Col, Form, Row, Dropdown, InputGroup,} from "react-bootstrap";
+import {Modal, Button, Col, Form, Row, Dropdown, InputGroup, ModalDialog,} from "react-bootstrap";
+import CategoryCascader from "../components/CategoryCascader";
 
 function AdEditModal(props) {
     const [name, nameHandler, description, descriptionHandler, address, addressHandler,
            status, getStatusText, statusHandler, imageHandler, priceLoc, priceLocHandler,
             addInfo, info, changeInfo, removeInfo, adUpdate, nameError, descriptionError,
-             addressError, infoError, imageError, priceStartError, priceEndError, isEmpty, checkFields] = props.others
+             addressError, infoError, imageError, priceStartError, priceEndError, isEmpty, checkFields,
+              categoryError, setCategoryError, selectedCategory, setSelectedCategory, categoryRoute] = props.others
 
     const [submit, setSubmit] = useState(false)
 
     useEffect(() => {
-        if (!nameError && !descriptionError && !addressError && !infoError
+        if (!categoryError && !nameError && !descriptionError && !addressError && !infoError
         && !imageError && !priceStartError && !priceEndError) {
             setSubmit(true)
         } else {
             setSubmit(false)
         }
-    }, [nameError, descriptionError, addressError, infoError,
+    }, [categoryError, nameError, descriptionError, addressError, infoError,
     imageError, priceStartError, priceEndError, props.show])
 
     const handleClick = () => {
@@ -34,6 +36,27 @@ function AdEditModal(props) {
                 <Modal.Title>Редактирование объявления</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+                <>
+                    <InputGroup>
+                        <Form.Group style={{ width: '700px', marginBottom: -350 }}>
+                            <Form.Label>
+                                Выберите категорию объявления
+                            </Form.Label>
+                            <Row>
+                                {categoryError ? <Form.Label
+                                    style={{
+                                        fontSize: 13,
+                                        WebkitTextFillColor: "#dc3545"
+                                    }}
+                                >
+                                    {categoryError}
+                                </Form.Label> : null}
+                            </Row>
+                            <CategoryCascader others={[selectedCategory, setSelectedCategory, categoryRoute]}/>
+                        </Form.Group>
+                    </InputGroup>
+                </>
+
                 <Form.Label>Название объявления</Form.Label>
                 <InputGroup hasValidation>
                     <Form.Control value={name} onChange={e => nameHandler(e)} required isInvalid={!!nameError}/>

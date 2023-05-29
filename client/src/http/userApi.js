@@ -27,6 +27,11 @@ export const setRole = async (id, role) => {
     return data
 }
 
+export const getAllUsers = async () => {
+    const {data} = await $authHost.get('/api/user/users')
+    return data
+}
+
 export const checkPassword = async (password) => {
     const {data} = await $authHost.post('api/user/password', {password})
     return data

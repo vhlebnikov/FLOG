@@ -5,6 +5,8 @@ import UserStore from "./store/UserStore";
 import AdStore from "./store/AdStore";
 import FilterStore from "./store/FilterStore";
 
+import "rsuite/dist/rsuite.min.css";
+
 export const Context = createContext(null)
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

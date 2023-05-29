@@ -4,7 +4,6 @@ const adController = require('../controllers/adController')
 const authMiddleWare = require('../middleware/authMiddleware')
 
 router.get('/', adController.getAll)
-router.get('/price/:id', adController.getPrice)
 router.get('/user/:id', adController.getAds)
 router.get('/:id', adController.getOne)
 

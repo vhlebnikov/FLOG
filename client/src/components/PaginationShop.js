@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {CustomProvider, Pagination} from "rsuite";
 
 
@@ -10,13 +10,14 @@ const PaginationShop = ({activePage, setActivePage, limit, setLimit, count}) => 
         Pagination: {
             limit: '{0} объявлений на странице'
         }};
+
     return (
         <CustomProvider locale = {locale}>
             {count<=12 ?
                 null
                 :
                 <Pagination
-                    style={{WebkitTextFillColor: "#025b2a"}}
+                    style={{WebkitTextFillColor: "#0D6936", borderColor: "#0D6936"}}
                     color="green"
                     appearance="ghost"
                     className="mt-2 success"
@@ -31,7 +32,10 @@ const PaginationShop = ({activePage, setActivePage, limit, setLimit, count}) => 
                     last={true}
                     boundaryLinks={true}
                     limitOptions={limitOptions}
-                    onChangeLimit={setLimit}
+                    onChangeLimit={v => {
+                        setLimit(v)
+                        setActivePage(1)
+                    }}
                 />
 
             }
