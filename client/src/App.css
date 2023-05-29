@@ -1,0 +1,467 @@
+.mainNavBar {
+    background: #0D6936;
+    border-radius: 0;
+}
+
+.shopNavBar {
+    background: #00A347;
+}
+
+.shadow-box {
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.shadow-box-nav {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-expensive {
+    background-color: #0D6936;
+    color: #fff;
+    font-weight: 400;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.btn-expensive:hover {
+    background-color: #0D6936;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+.btn-expensive:active {
+    background-color: #008037;
+    color: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    transform: translateY(1px);
+}
+
+.bord {
+    width: auto;
+    height: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+img {
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.blur {
+    top: 0;
+    left: 0;
+    right:0;
+    bottom: 0;
+    max-height: 100%;
+    max-width: 100%;
+    filter: blur(20px);
+    overflow: hidden;
+    position: absolute;
+    background-size: cover;
+    z-index: -1;
+}
+
+.circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 20px;
+}
+
+.letters {
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/*
+    Отсюда начинаются стили для личного кабинета
+ */
+
+.perButton {
+    background-color: #0D6936;
+    color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.perImage {
+    width: auto;
+    height: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.perImageBorder {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    width: 70%;
+    height: 70%;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.perText {
+    margin-bottom: 4.2%;
+}
+
+.perInput {
+    margin-bottom: 5.3%;
+}
+
+.perHead {
+    margin-top: 1%;
+    margin-bottom: 1%;
+    text-align: center;
+}
+
+.perLi {
+    counter-reset: li;
+    list-style: none;
+    font: 14px "Trebuchet MS", "Lucida Sans";
+    padding: 0;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+}
+.perLi a {
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em .8em;
+    margin: .5em 0 .5em 2.5em;
+    background: #D3D4DA;
+    color: #444;
+    text-decoration: none;
+    transition: all .3s ease-out;
+}
+.perLi a:hover {background: #DCDDE1;}
+.perLi a:before {
+    content: counter(li);
+    counter-increment: li;
+    position: absolute;
+    left: -2.5em;
+    top: 50%;
+    margin-top: -1em;
+    background: #9097A2;
+    height: 2em;
+    width: 2em;
+    line-height: 2em;
+    text-align: center;
+    font-weight: bold;
+}
+.perLi a:after {
+    position: absolute;
+    content: "";
+    border: .5em solid transparent;
+    left: -1em;
+    top: 50%;
+    margin-top: -.5em;
+    transition: all .3s ease-out;
+}
+.perLi a:hover:after {
+    left: -.5em;
+    border-left-color: #9097A2;
+}
+
+.perData {
+    box-shadow: 6px 6px 6px 6px rgba(0, 0, 0, .2);
+    padding-top: 4.5%;
+    padding-bottom: 1.5%;
+}
+
+.perRow {
+    margin-bottom: 1%;
+}
+
+.form-control:focus {
+    border-color: #154205;
+    box-shadow: 0 0 0 0.2rem rgba(61, 203, 14, 0.46);
+}
+
+/* Скопировано из ImageUploader Даши*/
+
+body {
+    background-color: #ffffff;
+}
+
+.thumbnail {
+    max-width: 200px;
+    max-height: 300px;
+    object-fit: contain;
+}
+
+.thumbnail {
+    max-width: 200px;
+    max-height: 300px;
+    object-fit: contain;
+}
+
+.component-5 {
+    width: 8%;
+    height: 8%;
+    object-fit: contain;
+    position: fixed;
+    left: 0;
+    top: 20%;
+}
+
+.main {
+    margin-top: 30px; /* Add a top margin to avoid content overlay */
+}
+
+.image-2 {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    position: absolute;
+    left: 120px;
+    top: 100px;
+}
+
+.image-2 div {
+    width: 200px;
+    height: 300px;
+    background-position: center;
+    background-size: cover;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.image-button {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    position: fixed; /* Set the navbar to fixed position */
+    top: 20%; /* Position the navbar at the top of the page */
+    width: 10%;
+}
+
+.image-button div {
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-size: cover;
+}
+
+.image-button2 {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    position: fixed; /* Set the navbar to fixed position */
+    top: 20%; /* Position the navbar at the top of the page */
+    right: 0;
+}
+
+.image-button2 div {
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-size: cover;
+}
+
+/* Скопировано из DropDown Даши */
+
+.dropdown-menu li {
+    position: relative;
+}
+.dropdown-menu .dropdown-submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: -7px;
+}
+.dropdown-menu .dropdown-submenu-left {
+    right: 100%;
+    left: auto;
+}
+.dropdown-menu > li:hover > .dropdown-submenu {
+    display: block;
+}
+
+/* Скопирован из St */
+* {
+    box-sizing: border-box;
+}
+
+.forPersonal {
+    margin-left: 5%;
+    margin-bottom: 3%;
+    background-position: center;
+    background-size: cover;
+    /*height: 30px;*/
+}
+
+.blockPersonal {
+    float: inside;
+}
+
+.personalInput {
+    width : 70%;
+    height: 30px;
+    outline: none;
+    padding-left: 15px;
+    border-radius: 10px;
+}
+
+
+.personalMain {
+    height: 70%;
+    width: 100%;
+    margin-top: 40px;
+}
+
+/* возвращение легенды */
+.image-button2 {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    cursor: pointer;
+    position: fixed; /* Set the navbar to fixed position */
+    top: 20%; /* Position the navbar at the top of the page */
+    right: 0;
+}
+
+.image-button2 div {
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-size: cover;
+}
+
+/*
+footer
+ */
+.footerApp {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+/*
+main
+ */
+.gradientMain
+{
+    height:200px;
+    width:300px;
+    font-size:30px;
+    background: linear-gradient(130deg, #04ff00, #eeff00, #40a23d);
+    background-size: 200% 200%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+
+
+    -webkit-animation: Animation 5s ease infinite;
+    -moz-animation: Animation 5s ease infinite;
+    animation: Animation 5s ease infinite;
+}
+
+@-webkit-keyframes Animation {
+    0%{background-position:10% 0%}
+    50%{background-position:91% 100%}
+    100%{background-position:10% 0%}
+}
+@-moz-keyframes Animation {
+    0%{background-position:10% 0%}
+    50%{background-position:91% 100%}
+    100%{background-position:10% 0%}
+}
+@keyframes Animation {
+    0%{background-position:10% 0%}
+    50%{background-position:91% 100%}
+    100%{background-position:10% 0%}
+}
+
+.rs-pagination-btn,
+.rs-pagination-btn.rs-pagination-btn-active,
+.rs-pagination-btn:hover {
+    background-color: #E7E5E5;
+    border-color: #0D6936;
+    color: #242424
+}
+.rs-pagination-btn:focus,
+.rs-pagination-btn:active {
+    border-color: #00A347 !important;
+    box-shadow: none !important;
+}
+.list-group-item {
+    background-color: #f1f1f1;
+}
+.list-group-item:hover {
+    background-color: #00A347;
+}
+
+.rs-input,
+.rs-input-group,
+.rs-select,
+.rs-picker-input,
+.rs-picker-menu,
+.rs-picker-toggle,
+.rs-cascader-menu,
+.rs-pagination-menu,
+.rs-avatar,
+.rs-badge,
+.rs-dropdown {
+    border-color: transparent;
+}
+
+.rs-input:focus,
+.rs-input-group:focus,
+.rs-select:focus,
+.rs-picker-input:focus,
+.rs-picker-menu:focus,
+.rs-picker-toggle:focus,
+.rs-cascader-menu:focus,
+.rs-pagination-menu:focus,
+.rs-avatar:focus,
+.rs-badge:focus,
+.rs-dropdown:focus {
+    box-shadow: 0 0 4px green !important;
+    border-color: green !important;
+}
+
+.rs-input:hover,
+.rs-input-group:hover,
+.rs-select:hover,
+.rs-picker-input:hover,
+.rs-picker-menu:hover,
+.rs-picker-toggle:hover,
+.rs-cascader-menu:hover,
+.rs-pagination-menu:hover,
+.rs-avatar:hover,
+.rs-badge:hover,
+.rs-dropdown:hover {
+    box-shadow: 0 0 4px green !important;
+    border-color: green !important;
+}
+
+.rs-input:active,
+.rs-input-group:active,
+.rs-select:active,
+.rs-picker-input:active,
+.rs-picker-menu:active,
+.rs-picker-toggle:active,
+.rs-cascader-menu:active,
+.rs-pagination-menu:active,
+.rs-avatar:active,
+.rs-badge:active,
+.rs-dropdown:active
+{
+    box-shadow: 0 0 4px green !important;
+    border-color: green !important;
+}

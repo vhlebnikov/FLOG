@@ -1,36 +1,65 @@
-import Admin from "./pages/Admin";
-import {AD_ROUTE, ADMIN_ROUTE, FAVOURITES_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE} from "./utils/consts";
-import Favourites from "./pages/Favourites";
+import {
+    SHOP_PAGE,
+    CREATE_AD_PAGE,
+    PROFILE_PAGE,
+    AD_PAGE,
+    AUTH_PAGE, REGISTRATION_PAGE, NOT_FOUND_AD_PAGE, ADMIN_PANEL, MAIN_PAGE
+} from "./utils/consts";
 import Shop from "./pages/Shop";
-import Auth from "./pages/Auth";
-import AdPage from "./pages/AdPage";
+import CreateAd from "./pages/CreateAd"
+import Ad from "./pages/Ad"
+import Auth from "./pages/Auth"
+import Profile from "./pages/Profile"
+import Activation from "./pages/Activation"
+import NotFoundAd from "./pages/NotFoundAd";
+import AdminPanel from "./pages/AdminPanel";
+import Main from "./pages/Main";
 
 export const authRoutes = [
     {
-        path: ADMIN_ROUTE,
-        Component: Admin
+        path: CREATE_AD_PAGE,
+        Component: CreateAd
     },
     {
-        path: FAVOURITES_ROUTE,
-        Component: Favourites
+        path: PROFILE_PAGE + '/:id',
+        Component: Profile
     }
 ]
 
 export const publicRoutes = [
     {
-        path: SHOP_ROUTE,
+      path: MAIN_PAGE,
+      Component: Main
+    },
+    {
+        path: '/activation/:id',
+        Component: Activation
+    },
+    {
+        path: SHOP_PAGE,
         Component: Shop
     },
     {
-        path: LOGIN_ROUTE,
+        path: AD_PAGE + '/:id',
+        Component: Ad
+    },
+    {
+        path: AUTH_PAGE,
         Component: Auth
     },
     {
-        path: REGISTRATION_ROUTE,
+        path: REGISTRATION_PAGE,
         Component: Auth
     },
     {
-        path: AD_ROUTE + '/:id',
-        Component: AdPage
+        path: NOT_FOUND_AD_PAGE,
+        Component: NotFoundAd
+    }
+]
+
+export const adminRoutes = [
+    {
+        path: ADMIN_PANEL,
+        Component: AdminPanel
     }
 ]

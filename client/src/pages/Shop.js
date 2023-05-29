@@ -1,57 +1,44 @@
-import React, {useState} from 'react';
-import MyModal from "../vlad/components/UI/MyModal/MyModal";
-import PostForm from "../vlad/components/PostForm";
-import PostFilter from "../vlad/components/PostFilter";
-import PostList from "../vlad/components/PostList";
-import {usePosts} from "../vlad/hooks/usePosts";
-import {Button, Container, Row} from "react-bootstrap";
+import React, {useContext, useEffect, useState} from 'react';
+import {Col, Container, Row} from "react-bootstrap";
+import AdsList from "../components/AdsList";
+import {Context} from "../index";
+import TypeBar from "../components/TypeBar";
+import {getAllAds} from "../http/adApi";
+import PaginationShop from "../components/PaginationShop";
+import {observer} from "mobx-react-lite";
 
-const Shop = () => {
-    const [posts, setPosts] = useState([])
-    const [filter, setFilter] = useState({sort: '', query: ''})
-    const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
-    const [modal, setModal] = useState(false)
 
-    const createPost = (newPost) => {
-        setPosts([...posts, newPost])
-        setModal(false)
-    }
+const Shop = observer(() => {
+    const {ad} = useContext(Context)
+    const {filter} = useContext(Context)
+    const [activePage, setActivePage] = useState(1)
+    const [limit, setLimit] = useState(12)
+    const [count, setCount] = useState(0)
 
-    const changePost = (editPost) => {
-        const copy = posts
-        copy.map((post) => {
-            if (editPost.id === post.id) {
-                post.title = editPost.title
-                post.place = editPost.place
-                post.body = editPost.body
-                post.cost = editPost.cost
-                post.category = editPost.category
-                post.cnt = editPost.cnt
-                post.images = editPost.images
-            }
-            return post
-        })
-        setPosts(copy)
-    }
+    useEffect(() => {
+        getAllAds(filter.category, filter.price, filter.status, filter.substring, limit, activePage).then(data => {ad.setAds(data.rows); setCount(data.count)})
+    }, [filter.category, filter.price, filter.status, filter.substring, limit, activePage])
 
-    const removePost = (post) => {
-        setPosts(posts.filter(p => p.id !== post.id))
-    }
     return (
-        <Container className="Album">
-            <Row>
-                <Button variant="success" className="my-3 text-center" onClick={() => setModal(true)}>
-                    Создать объявление
-                </Button>
+        <Container>
+            <Row className="mt-3">
+                <Col md={3}>
+                    <TypeBar/>
+                </Col>
+                <Col md={9}>
+                    <AdsList/>
+                    <PaginationShop
+                        activePage={activePage}
+                        setActivePage={setActivePage}
+                        limit={limit}
+                        setLimit={setLimit}
+                        count={count}
+                    />
+                </Col>
             </Row>
-            <MyModal visible={modal}>
-                <PostForm create={createPost} visible={modal} setVisible={setModal}/>
-            </MyModal>
-            <PostFilter filter={filter} setFilter={setFilter}/>
-            <PostList remove={removePost} posts={sortedAndSearchedPosts} setPosts={changePost}
-                      title="Список объявлений"/>
+
         </Container>
-    )
-};
+    );
+});
 
 export default Shop;

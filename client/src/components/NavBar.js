@@ -1,36 +1,61 @@
 import {observer} from "mobx-react-lite";
+import React, {useContext} from "react";
+import {Button, Container, Dropdown, Nav, Navbar, NavDropdown, NavLink} from "react-bootstrap";
+import {useNavigate} from "react-router-dom";
+import {ADMIN_PANEL, AUTH_PAGE, CREATE_AD_PAGE, MAIN_PAGE, PROFILE_PAGE, SHOP_PAGE} from "../utils/consts";
+import frogSmile from "../assets/FrogSmileWhite.svg"
+
 import {Context} from "../index";
-import {useContext} from "react";
-import {Button, Container, Nav, Navbar} from "react-bootstrap";
-import {Link, useNavigate} from "react-router-dom";
-import {LOGIN_ROUTE, SHOP_ROUTE} from "../utils/consts";
 
 const NavBar = observer(() => {
     const {user} = useContext(Context)
     const navigate = useNavigate()
-
     const logOut = () => {
         user.setUser({})
         user.setIsAuth(false)
+        localStorage.removeItem('token')
+        navigate(SHOP_PAGE)
+    }
+    const checkAdmin = () => {
+        if (user.isAuth) {
+            return user.user.role === 'ADMIN'
+        }
+        return false
     }
 
     return (
-        <Navbar bg="success" variant="light">
+        <Navbar  variant="dark" className="mainNavBar shadow-box-nav">
             <Container>
-                <Navbar.Brand as={Link} to={SHOP_ROUTE} style={{color:'white'}}>FLOG</Navbar.Brand>
+                <Navbar.Brand href={MAIN_PAGE} style={{textDecoration: 'none'}}>
+                    <div className="d-flex align-items-center">
+                        <img src={frogSmile} alt="Error" style={{ width: '40px', height: '40px' }} />
+                        <span>FLOG</span>
+                    </div>
+                </Navbar.Brand>
                 {user.isAuth ?
-                    <Nav className="ms-auto" style={{color: 'white'}}>
-                        <Button
-                            variant={"outline-light"}
-                            onClick={() => logOut()}
-                            className="ms-3"
-                        >
-                            Выйти
-                        </Button>
+                    <Nav style={{textDecorationLine: "none"}} variant="pills">
+                        <Button className="btn-expensive" variant="outline-success" onClick={() => navigate(CREATE_AD_PAGE)}>Создать объявление</Button>
+                        <Dropdown className="ms-2">
+                            <Dropdown.Toggle className="btn-expensive" variant="success">{"Меню"}</Dropdown.Toggle>
+                            <Dropdown.Menu>
+                                <Dropdown.Item onClick={() => navigate(PROFILE_PAGE + '/' + user.user.id)}>
+                                    Личный кабинет
+                                </Dropdown.Item>
+                                <Dropdown.Item onClick={() => logOut()}>Выйти</Dropdown.Item>
+                                {checkAdmin() ?
+                                    <>
+                                        <Dropdown.Divider/>
+                                        <Dropdown.Item onClick={() => navigate(ADMIN_PANEL)}>Админ панель</Dropdown.Item>
+                                    </>
+                                    :
+                                    null
+                                }
+                            </Dropdown.Menu>
+                        </Dropdown>
                     </Nav>
                     :
                     <Nav className="ms-auto" style={{color: 'white'}}>
-                        <Button variant={"outline-light"} onClick={() => navigate(LOGIN_ROUTE)}>Авторизация</Button>
+                        <Button className="btn-expensive" variant="outline-success" onClick={() => navigate(AUTH_PAGE)}>Авторизация</Button>
                     </Nav>
                 }
             </Container>
