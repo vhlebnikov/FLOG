@@ -77,3 +77,8 @@ export const deleteContacts = async (id) => {
     const {data} = await $authHost.delete('api/user/contacts/' + id)
     return data
 }
+
+export const deleteUser = async (id) => {
+    const {data} = await $authHost.delete('api/user/' + id)
+    return data
+}

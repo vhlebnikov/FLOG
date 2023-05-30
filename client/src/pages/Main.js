@@ -84,7 +84,13 @@ const Main = () => {
                     <div style={{ textAlign: 'center', marginTop: '50px'  }}>
                         <h1 style={gradientTextStyles}>Добро пожаловать на FLOG</h1>
                         <p style={{ fontFamily: 'Century Gothic', fontWeight: 500, fontSize: 20}}> Ваше место для объявлений</p>
-                        <img className="gradientMain" src={FrogSmileGreen} style={{ width: '200px', height: '200px', marginTop: '10px', marginBottom: '40px'    }}  alt={"Загрузка"}/>
+                        <img
+                            className="gradientMain"
+                            src={FrogSmileGreen}
+                            style={{ width: '200px', height: '200px', marginTop: '10px', marginBottom: '40px'}}
+                            alt={"Загрузка"}
+                            onClick={() => navigate(SHOP_PAGE)}
+                        />
                     </div>
                 </Row>
                 <Row>

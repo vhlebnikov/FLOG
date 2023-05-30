@@ -10,7 +10,7 @@ import {
     CardGroup,
     ButtonGroup,
     Breadcrumb,
-    BreadcrumbItem, InputGroup, Toast, ToastContainer
+    BreadcrumbItem, InputGroup, Toast, ToastContainer, CloseButton
 } from "react-bootstrap";
 import {NOT_FOUND_AD_PAGE, PROFILE_PAGE, SHOP_PAGE} from "../utils/consts";
 import {Link, useNavigate} from "react-router-dom";
@@ -444,7 +444,7 @@ const Ad = observer(() => {
 
             <Row>
                 {/*Название*/}
-                <div style={{display: 'flex', alignItems: 'center'}}>
+                <div style={{display: 'flex', alignItems: 'center', wordBreak: 'break-word'}}>
                     <h1 style={{
                         color: '#133612',
                         fontFamily: 'Century Gothic',
@@ -461,7 +461,7 @@ const Ad = observer(() => {
                 paddingBottom: "3%"
             }}>
                 {/*Картииинки!*/}
-                <Col md={4}>
+                <Col xxl={"auto"} xl={5} lg={6} md={8} sm={10} xs={"auto"}>
                     {adState.image ?
                         <Carousel slide={false} interval={null}>
                             {adState.image.map((i, index) => (
@@ -498,8 +498,8 @@ const Ad = observer(() => {
                 </Col>
 
                 {/*Описание*/}
-                <Col md={5}>
-                    <Row className="d-flex flex-column align-items-center">
+                <Col xxl={5} xl={4} lg={3} md={9} sm={11} xs={12}>
+                    <Row className="d-flex flex-column align-items-center me-2">
                         <div className="forPersonal" style={{wordBreak: 'break-word'}}>
                             <h4 style={{fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}>Описание: </h4>
                             <h3 style={{fontFamily: 'Century Gothic', fontWeight: 400, fontSize: 20}}>
@@ -512,7 +512,11 @@ const Ad = observer(() => {
                 <Col md={3}>
                     {/*Профиль*/}
                     {userLoc ?
-                        <Card className="shadow-box" onClick={() => navigate(PROFILE_PAGE + '/' + userLoc.id)}>
+                        <Card className="shadow-box" onClick={() => {
+                            if (user.isAuth) {
+                                navigate(PROFILE_PAGE + '/' + userLoc.id)
+                            }
+                        }}>
                             <div>
 
                                 <CardGroup>
@@ -547,7 +551,7 @@ const Ad = observer(() => {
                                 </CardGroup>
                             </div>
                             <Card.Body>
-                                <Card.Text>{userLoc.email}</Card.Text>
+                                {user.isAuth ? <Card.Text>{userLoc.email}</Card.Text> : null}
 
                                 <Card.Text>Адрес: {adState.address}</Card.Text>
 
@@ -657,15 +661,20 @@ const Ad = observer(() => {
 
                                                 {comment.createdAt ?
                                                     <>
-                                                        <h6 style={{
-                                                            color: '#b7b5b5',
-                                                            fontWeight: 'lighter'
-                                                        }}>· {(new Date(comment.createdAt)).toLocaleDateString('ru-RU')}</h6>
-                                                        <h6 style={{
-                                                            color: '#b7b5b5',
-                                                            marginLeft: 5,
-                                                            fontWeight: 'lighter'
-                                                        }}>{(new Date(comment.createdAt)).toLocaleTimeString('ru-RU')}</h6>
+                                                        {window.innerWidth >= 400 ?
+                                                            <>
+                                                                <h6 style={{
+                                                                    color: '#b7b5b5',
+                                                                    fontWeight: 'lighter'
+                                                                }}>· {(new Date(comment.createdAt)).toLocaleDateString('ru-RU')}</h6>
+                                                                <h6 style={{
+                                                                    color: '#b7b5b5',
+                                                                    marginLeft: 5,
+                                                                    fontWeight: 'lighter'
+                                                                }}>{(new Date(comment.createdAt)).toLocaleTimeString('ru-RU')}</h6>
+                                                            </>
+                                                            : null
+                                                        }
                                                     </>
                                                     :
                                                     <div className="spinner-border " role="status">
@@ -673,12 +682,13 @@ const Ad = observer(() => {
                                                     </div>
                                                 }
                                             </div>
-                                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                            <div style={{display: 'flex', alignItems: 'center', wordBreak: 'break-word'}}>
                                                 <h6 style={{marginLeft: '10px'}}>{comment.text}</h6>
                                                 {checkCommentAccess(comment) ?
-                                                    <Button variant={"outline-dark"} style={{marginLeft: 'auto'}}
-                                                            onClick={() => handleCommentDelete(comment.id)}>Удалить
-                                                        комментарий</Button>
+                                                    <CloseButton style={{marginLeft: 'auto'}}
+                                                                 onClick={() => handleCommentDelete(comment.id)}
+                                                    >
+                                                    </CloseButton>
                                                     : null
                                                 }
                                             </div>

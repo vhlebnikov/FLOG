@@ -40,7 +40,7 @@ const TypeBar = observer(() => {
         filter.setSubstring(null)
     }
     return (
-        <ListGroup>
+        <ListGroup className={"mb-3"}>
             <ListGroup.Item>
                 <Input
                     value={subString}

@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Button, Col, Container, Row, Image, Modal, InputGroup, Toast, ToastContainer, ModalBody} from 'react-bootstrap';
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {checkPassword, getContacts, getUser, updateContacts, updateData, updatePassword} from "../http/userApi";
 import Form from "react-bootstrap/Form";
 import {Context} from "../index";
@@ -9,6 +9,7 @@ import {observer} from "mobx-react-lite";
 import {getAdsForUser} from "../http/adApi";
 import VerEx from "verbal-expressions";
 import frog from "../assets/FrogSmile.svg";
+import {MAIN_PAGE} from "../utils/consts";
 
 function ChangePasswordModal(props) {
     const [passwordLoc, setPasswordLoc] = useState("")
@@ -145,6 +146,8 @@ function ChangePasswordModal(props) {
 }
 
 const Profile = observer(() => {
+    const navigate = useNavigate()
+
     const [userLoc, setUserLoc] = useState(undefined)
     const [username, setUsername] = useState(undefined)
     const [usernameError, setUsernameError] = useState(null)
@@ -179,7 +182,13 @@ const Profile = observer(() => {
     }, [])
 
     useEffect(() => {
-        getUser(id).then(data => setUserLoc(data))
+        getUser(id).then(data => {
+            if (data && data.confirmed) {
+                setUserLoc(data)
+            } else {
+                navigate(MAIN_PAGE)
+            }
+        })
         getContacts(id).then(data => setContacts(data))
     }, [])
 
@@ -419,7 +428,7 @@ const Profile = observer(() => {
             />
 
             <Row>
-                <h2 className="perHead">Ваши объявления</h2>
+                {userLoc && userLoc.username ? <h2 className="perHead">Объявления {userLoc.username}</h2> : null}
                 {Array.isArray(adsLoc) && adsLoc.map(i => (
                     i.userId === id ? (
                         <AdItem key={i.id} ad={i}/>

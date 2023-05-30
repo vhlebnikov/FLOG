@@ -8,7 +8,7 @@ const AdItem = ({ad}) => {
     const navigate = useNavigate()
 
     return (
-        <Col xxl={4} xl={5} lg={6} md={12} sm={"auto"} xs={"auto"} className={"mb-3 mt-3"}>
+        <Col xxl={4} xl={5} lg={6} md={12} sm={"auto"} xs={"auto"} className={"mb-3"}>
             <Card className="shadow-box" style={{backgroundImage: "linear-gradient(to bottom, #d7d7d7 60.5%, #0D6936 50%)", overflow: "hidden"}} border={"light"}>
                 <Carousel slide={false} interval={null}>
                     {ad.image && ad.image.map(image =>
@@ -45,12 +45,12 @@ const AdItem = ({ad}) => {
                         )}
                     <Card.Text style={{color: "#E7E5E5"}}>
                         Цена: {" "}
-                        {ad.price.type === 0 ? "Без цены"
+                        {ad.price && ad.price.type === 0 ? "Без цены"
                         :
-                        ad.price.type === 1 ?
+                        ad.price && ad.price.type === 1 ?
                             (ad.price.start !== null ? ad.price.start + " ₽" : "Загрузка")
                             :
-                        ad.price.type === 2 ?
+                        ad.price && ad.price.type === 2 ?
                             (ad.price.start !== null && ad.price.end !== null ? ad.price.start + "-" + ad.price.end + " ₽" : "Загрузка")
                             : "Загрузка"
                         }

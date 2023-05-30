@@ -40,7 +40,7 @@ const Category = sequelize.define('category', {
 const Ad = sequelize.define('ad', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     name: {type: DataTypes.STRING, allowNull: false},
-    description: {type: DataTypes.STRING},
+    description: {type: DataTypes.TEXT},
     address: {type: DataTypes.STRING},
     status: {type: DataTypes.INTEGER, allowNull: false}
 })

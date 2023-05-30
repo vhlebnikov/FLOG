@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Context} from "../index";
 import {useNavigate, useParams} from "react-router-dom";
-import {AUTH_PAGE, SHOP_PAGE} from "../utils/consts";
+import {AUTH_PAGE, MAIN_PAGE, SHOP_PAGE} from "../utils/consts";
 import jwt_decode from "jwt-decode";
 import {observer} from "mobx-react-lite";
 import frogSmile from "../assets/FrogSmile.svg";
@@ -35,7 +35,7 @@ const Activation = observer( () => {
             if (error) {
                 navigate(AUTH_PAGE, {replace: true})
             } else {
-                navigate(SHOP_PAGE, {replace: true})
+                navigate(MAIN_PAGE, {replace: true})
             }
         }, 2000)
     }, [])

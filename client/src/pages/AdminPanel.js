@@ -6,7 +6,7 @@ import {addCategory, deleteCategory, getCategoryRoute, updateCategory} from "../
 import Button from "react-bootstrap/Button";
 import AdminCategoryCascader from "../components/AdminCategoryCascader";
 import VerEx from "verbal-expressions";
-import {getAllUsers, setRole} from "../http/userApi";
+import {deleteUser, getAllUsers, setRole} from "../http/userApi";
 import {Input} from "rsuite";
 
 const AdminPanel = () => {
@@ -94,6 +94,10 @@ const AdminPanel = () => {
         } else {
             setRole(user.id, "USER").then(() => window.location.reload())
         }
+    }
+
+    const handleDeleteUser = (user) => {
+        deleteUser(user.id).then(() => window.location.reload())
     }
 
     return (
@@ -197,9 +201,10 @@ const AdminPanel = () => {
                                                         :   <Button size="sm" variant="success" onClick={() => handleBan(user)}>Разбанить</Button>
                                                         }
                                                         {user.role !== 'ADMIN' ?
-                                                            <Button size="sm" variant="warning" onClick={() => handleRole(user)}>Назначить админом</Button>
-                                                        :   <Button size="sm" variant="warning" onClick={() => handleRole(user)}>Понизить до USER'а</Button>
+                                                            <Button size="sm" variant="info" onClick={() => handleRole(user)}>Назначить админом</Button>
+                                                        :   <Button size="sm" variant="info" onClick={() => handleRole(user)}>Понизить до USER'а</Button>
                                                         }
+                                                        <Button size="sm" variant="danger" onClick={() => handleDeleteUser(user)}>Удалить</Button>
                                                     </Col>
                                                 </Row>
                                             </ListGroup.Item>

@@ -58,11 +58,11 @@ const findChildren = async (id, ads, price, status, substring) => {
                 categoryId: c.id,
                 [Op.or]: [
                     {name: substring ? {
-                            [Op.like]: '%' + substring + '%'
-                        } : {[Op.like]: '%'}},
+                            [Op.iLike]: '%' + substring + '%'
+                        } : {[Op.iLike]: '%'}},
                     {description: substring ? {
-                            [Op.like]: '%' + substring + '%'
-                        } : {[Op.like]: '%'}}
+                            [Op.iLike]: '%' + substring + '%'
+                        } : {[Op.iLike]: '%'}}
                 ],
                 status: status ? {
                     [Op.in]: status
@@ -187,11 +187,11 @@ class AdController {
                     categoryId: categoryId,
                     [Op.or]: [
                         {name: substring ? {
-                                [Op.like]: '%' + substring + '%'
-                            } : {[Op.like]: '%'}},
+                                [Op.iLike]: '%' + substring + '%'
+                            } : {[Op.iLike]: '%'}},
                         {description: substring ? {
-                                [Op.like]: '%' + substring + '%'
-                            } : {[Op.like]: '%'}}
+                                [Op.iLike]: '%' + substring + '%'
+                            } : {[Op.iLike]: '%'}}
                     ],
                     status: status ? {
                         [Op.in]: status
@@ -220,11 +220,11 @@ class AdController {
                 where: {
                     [Op.or]: [
                         {name: substring ? {
-                                [Op.like]: '%' + substring + '%'
-                            } : {[Op.like]: '%'}},
+                                [Op.iLike]: '%' + substring + '%'
+                            } : {[Op.iLike]: '%'}},
                         {description: substring ? {
-                                [Op.like]: '%' + substring + '%'
-                            } : {[Op.like]: '%'}}
+                                [Op.iLike]: '%' + substring + '%'
+                            } : {[Op.iLike]: '%'}}
                     ],
                     status: status ? {
                         [Op.in]: status

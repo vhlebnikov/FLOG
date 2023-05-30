@@ -1,7 +1,7 @@
 const ApiError = require('../error/ApiError');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const {User, Contact} = require('../models/models')
+const {User, Contact, Ad, Price, Info, Image, Comment} = require('../models/models')
 const nodemailer = require("nodemailer");
 const uuid = require('uuid');
 const path = require("path");
@@ -362,7 +362,9 @@ class UserController {
             where: {userId: id}
         })
         if (contacts) {
-            contacts.forEach(c => c.destroy())
+            for (const c of contacts) {
+                await c.destroy();
+            }
         }
         return res.json(contacts)
     }
@@ -449,6 +451,64 @@ class UserController {
         })
 
         return res.json(users)
+    }
+
+    async deleteUser(req, res, next) {
+        const {id} = req.params
+
+        const user = await User.findOne({where: {id}})
+
+        const contacts = await Contact.findAll({
+            where: {userId: id}
+        })
+        if (contacts) {
+            for (const c of contacts) {
+                await c.destroy();
+            }
+        }
+
+        const ads = await Ad.findAll({
+            where: {userId: id}
+        })
+
+        if (ads) {
+            for (const ad of ads) {
+                const price = await Price.findOne({where: {id: ad.priceId}})
+                if (price) {
+                    await price.destroy()
+                }
+
+                const oldInfo = await Info.findAll({where: {adId: ad.id}})
+                if (oldInfo) {
+                    for (const i of oldInfo) {
+                        await i.destroy();
+                    }
+                }
+
+                const oldImage = await Image.findAll({where: {adId: ad.id}})
+                if (oldImage) {
+                    for (const i of oldImage) {
+                        fs.unlinkSync(path.resolve(__dirname, "..", "static", i.image))
+                        await i.destroy()
+                    }
+                }
+
+                const comments = await Comment.findAll({
+                    where: {adId: ad.id}
+                })
+                if (comments) {
+                    for (const i of comments) {
+                        await i.destroy();
+                    }
+                }
+
+                await ad.destroy()
+            }
+        }
+
+        await user.destroy()
+
+        return res.json(user)
     }
 }
 

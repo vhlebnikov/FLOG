@@ -23,6 +23,7 @@ router.put('/contacts', authMiddleware, userController.updateContacts)
 router.put('/password', authMiddleware, userController.updatePassword)
 
 router.delete('/contacts/:id', checkRole('ADMIN'), userController.deleteContacts)
+router.delete('/:id', checkRole('ADMIN'), userController.deleteUser)
 
 
 module.exports = router

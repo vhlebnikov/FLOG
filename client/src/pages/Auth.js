@@ -15,7 +15,7 @@ import {observer} from "mobx-react-lite";
 import {useContext, useEffect, useState} from "react";
 import {Context} from "../index";
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import {AUTH_PAGE, REGISTRATION_PAGE, SHOP_PAGE} from "../utils/consts";
+import {AUTH_PAGE, MAIN_PAGE, REGISTRATION_PAGE, SHOP_PAGE} from "../utils/consts";
 import {login, registration, sendConfirmationMail} from "../http/userApi";
 import VerEx from "verbal-expressions";
 import frog from "../assets/FrogSmile.svg";
@@ -59,7 +59,7 @@ const Auth = observer(() => {
             setEmailError("Введите email")
             setSubmit(false)
         } else if (!isValidEmail(e.target.value)) {
-            setEmailError("Некорректный email")
+            setEmailError("Некорректный email (домен должен принадлежать НГУ)")
             setSubmit(false)
         } else {
             setEmailError(null)
@@ -125,7 +125,7 @@ const Auth = observer(() => {
                 data = await login(email, password);
                 user.setUser(data)
                 user.setIsAuth(true)
-                navigate(SHOP_PAGE)
+                navigate(MAIN_PAGE)
             } else {
                 if (!notEmpty(email) || !notEmpty(password) || !notEmpty(username)) {
                     if (!notEmpty(email)) {

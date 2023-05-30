@@ -1,13 +1,11 @@
 import React from 'react';
 import {CustomProvider, Pagination} from "rsuite";
 
-
-
 const PaginationShop = ({activePage, setActivePage, limit, setLimit, count}) => {
 
     return (
         <>
-            {count<=12 && false ?
+            {count<=12 ?
                 null
                 :
                 <Pagination

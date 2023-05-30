@@ -34,6 +34,7 @@ const AdminCategoryCascader = (props) => {
         <div>
             <Cascader
                 style={{width:224}}
+                menuWidth={150}
                 searchable={false}
                 parentSelectable={true}
                 value={value}

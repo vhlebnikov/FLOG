@@ -14,7 +14,7 @@ const NavBar = observer(() => {
         user.setUser({})
         user.setIsAuth(false)
         localStorage.removeItem('token')
-        navigate(SHOP_PAGE)
+        navigate(MAIN_PAGE)
     }
     const checkAdmin = () => {
         if (user.isAuth) {
@@ -32,32 +32,35 @@ const NavBar = observer(() => {
                         <span>FLOG</span>
                     </div>
                 </Navbar.Brand>
-                {user.isAuth ?
-                    <Nav style={{textDecorationLine: "none"}} variant="pills">
-                        <Button className="btn-expensive" variant="outline-success" onClick={() => navigate(CREATE_AD_PAGE)}>Создать объявление</Button>
-                        <Dropdown className="ms-2">
-                            <Dropdown.Toggle className="btn-expensive" variant="success">{"Меню"}</Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                <Dropdown.Item onClick={() => navigate(PROFILE_PAGE + '/' + user.user.id)}>
-                                    Личный кабинет
-                                </Dropdown.Item>
-                                <Dropdown.Item onClick={() => logOut()}>Выйти</Dropdown.Item>
-                                {checkAdmin() ?
-                                    <>
-                                        <Dropdown.Divider/>
-                                        <Dropdown.Item onClick={() => navigate(ADMIN_PANEL)}>Админ панель</Dropdown.Item>
-                                    </>
-                                    :
-                                    null
-                                }
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </Nav>
-                    :
-                    <Nav className="ms-auto" style={{color: 'white'}}>
-                        <Button className="btn-expensive" variant="outline-success" onClick={() => navigate(AUTH_PAGE)}>Авторизация</Button>
-                    </Nav>
-                }
+                <Navbar.Toggle/>
+                <Navbar.Collapse className={"justify-content-end"}>
+                    {user.isAuth ?
+                        <Nav style={{textDecorationLine: "none"}} variant="pills">
+                            <Button className="btn-expensive" variant="outline-success" onClick={() => navigate(CREATE_AD_PAGE)}>Создать объявление</Button>
+                            <Dropdown className="ms-2" drop={"down-centered"}>
+                                <Dropdown.Toggle className="btn-expensive" variant="success" style={{width: 100}}>{"Меню"}</Dropdown.Toggle>
+                                <Dropdown.Menu align={"end"}>
+                                    <Dropdown.Item onClick={() => navigate(PROFILE_PAGE + '/' + user.user.id)}>
+                                        Личный кабинет
+                                    </Dropdown.Item>
+                                    <Dropdown.Item onClick={() => logOut()}>Выйти</Dropdown.Item>
+                                    {checkAdmin() ?
+                                        <>
+                                            <Dropdown.Divider/>
+                                            <Dropdown.Item onClick={() => navigate(ADMIN_PANEL)}>Админ панель</Dropdown.Item>
+                                        </>
+                                        :
+                                        null
+                                    }
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </Nav>
+                        :
+                        <Nav className="ms-auto" style={{color: 'white'}}>
+                            <Button className="btn-expensive" variant="outline-success" onClick={() => navigate(AUTH_PAGE)}>Авторизация</Button>
+                        </Nav>
+                    }
+                </Navbar.Collapse>
             </Container>
         </Navbar>
     );

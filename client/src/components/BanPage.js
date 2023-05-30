@@ -1,7 +1,6 @@
 import React, {useContext} from 'react';
 import frog from "../assets/FrogSad.svg";
 import {Button} from "react-bootstrap";
-import {SHOP_PAGE} from "../utils/consts";
 import {Context} from "../index";
 
 const AdBlockDetected = () => {
